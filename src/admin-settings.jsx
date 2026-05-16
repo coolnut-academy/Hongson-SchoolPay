@@ -1,4 +1,4 @@
-// Admin: Settings (Providers, Counter Service, Webhook, Receipt Template)
+// Admin: Settings (QR PromptPay Provider, Webhook, Receipt Template)
 
 const AdminSettings = ({ tab, setRoute }) => {
   const tabs = [
@@ -55,7 +55,7 @@ const ProvidersTab = () => {
 
       <div style={{marginTop: 18, marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center"}}>
         <h3 style={{margin: 0}}>ผู้ให้บริการ Mobile Banking / QR Payment</h3>
-        <button className="btn primary sm"><Icon name="plus" size={12} /> เพิ่มผู้ให้บริการ</button>
+        <button className="btn primary sm" onClick={() => handleAction("ผู้ให้บริการใหม่", "save")}><Icon name="plus" size={12} /> เพิ่มผู้ให้บริการ</button>
       </div>
 
       <div className="flex-col" style={{gap: 10}}>
@@ -172,156 +172,15 @@ const ProvidersTab = () => {
       </div>
 
       <div className="flex" style={{justifyContent: "flex-end", marginTop: 24, gap: 8}}>
-        <button className="btn">ยกเลิก</button>
-        <button className="btn"><Icon name="refresh" size={12} /> ทดสอบการเชื่อมต่อ</button>
-        <button className="btn primary">บันทึกการตั้งค่า</button>
+        <button className="btn" onClick={() => handleAction("ยกเลิกการเปลี่ยนแปลง", "save")}>ยกเลิก</button>
+        <button className="btn" onClick={() => handleAction("การเชื่อมต่อธนาคาร", "save")}><Icon name="refresh" size={12} /> ทดสอบการเชื่อมต่อ</button>
+        <button className="btn primary" onClick={() => handleAction("การตั้งค่าผู้ให้บริการ", "save")}>บันทึกการตั้งค่า</button>
       </div>
     </>
   );
 };
 
-// ===== Counter Service tab =====
-const CounterTab = () => {
-  return (
-    <>
-      <Banner kind="info" title="Counter Service / Bill Payment">
-        ผู้ปกครองสามารถนำใบแจ้งชำระเงินไปชำระผ่าน Counter Service และจุดรับชำระที่ผู้ให้บริการกำหนด ระบบจะรับยอดเงินผ่านไฟล์ Settlement รายวันจากผู้ให้บริการ
-      </Banner>
 
-      <div className="flex-col" style={{gap: 12, marginTop: 18}}>
-        <div className="card" style={{padding: 16}}>
-          <div className="flex" style={{justifyContent: "space-between"}}>
-            <div className="flex">
-              <div style={{width: 40, height: 40, borderRadius: 8, background: "var(--emerald-soft)", color: "var(--emerald)", display: "grid", placeItems: "center"}}>
-                <Icon name="store" size={18} />
-              </div>
-              <div>
-                <div style={{fontWeight: 600}}>Counter Service · จุดรับชำระเงิน</div>
-                <div className="tiny muted">ชำระผ่าน Counter Service และจุดรับชำระที่ผู้ให้บริการกำหนด · เปิดใช้สำหรับใบแจ้งชำระที่มียอด ≥ 100 บาท</div>
-              </div>
-            </div>
-            <Switch on={true} />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid-2-equal" style={{marginTop: 18}}>
-        <div className="flex-col">
-          <h3 style={{margin: "0 0 4px"}}>รหัสและรูปแบบบาร์โค้ด</h3>
-          <div className="field-row">
-            <div className="field">
-              <div className="label">Biller Code</div>
-              <input className="input mono" defaultValue="099400" />
-            </div>
-            <div className="field">
-              <div className="label">Service Code</div>
-              <input className="input mono" defaultValue="0155" />
-            </div>
-          </div>
-          <div className="field-row">
-            <div className="field">
-              <div className="label">Company Code</div>
-              <input className="input mono" defaultValue="01" />
-            </div>
-            <div className="field">
-              <div className="label">Merchant ID</div>
-              <input className="input mono" defaultValue="099400015501" />
-            </div>
-          </div>
-
-          <div className="field">
-            <div className="label">REF1 Pattern <span className="muted" style={{fontWeight: 400}}>(13 หลัก)</span></div>
-            <input className="input mono" defaultValue="{studentId}{yearTerm}" />
-            <div className="hint">ตัวอย่าง: <span className="mono">65120184026901</span> ← รหัสนักเรียน(8) + ปีการศึกษา(2) + ภาคเรียน(1) + ปี(3)</div>
-          </div>
-          <div className="field">
-            <div className="label">REF2 Pattern <span className="muted" style={{fontWeight: 400}}>(10 หลัก)</span></div>
-            <input className="input mono" defaultValue="{campaignSeq}{invoiceSeq}" />
-            <div className="hint">รหัสรอบเก็บเงิน + ลำดับใบแจ้ง · ใช้ค้นหาใบแจ้งใน Reconciliation</div>
-          </div>
-          <div className="field">
-            <div className="label">Checksum (REF3) Algorithm</div>
-            <select className="select" defaultValue="mod11">
-              <option value="mod11">Mod-11 (มาตรฐาน Counter Service)</option>
-              <option value="luhn">Luhn</option>
-              <option value="none">ไม่ใช้ Checksum</option>
-            </select>
-          </div>
-
-          <div className="card" style={{padding: 12, background: "var(--bg-soft)", marginTop: 6}}>
-            <div className="tiny muted" style={{marginBottom: 8}}>ตัวอย่าง Barcode ที่จะออกในใบแจ้งชำระ</div>
-            <BarcodePlaceholder payload="099400015501020230610" />
-            <div className="mono" style={{fontSize: 11, marginTop: 6, textAlign: "center"}}>| 099400015501 | 65120184026901 | 569018421 | 0420000 |</div>
-            <div className="flex" style={{justifyContent: "center", marginTop: 8}}>
-              <button className="btn sm"><Icon name="refresh" size={11} /> ทดสอบสร้างบาร์โค้ด</button>
-              <button className="btn sm"><Icon name="upload" size={11} /> ทดสอบนำเข้าไฟล์ Settlement</button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-col">
-          <h3 style={{margin: "0 0 4px"}}>กฎการจับคู่ &amp; การชำระ</h3>
-
-          <div className="switch-row">
-            <div className="grow">
-              <div className="switch-title">จับคู่อัตโนมัติด้วย REF1, REF2 และยอดเงิน</div>
-              <div className="switch-desc">หากไม่ตรง 3 ใน 3 ระบบจะส่งเข้า Manual Review</div>
-            </div>
-            <Switch on={true} />
-          </div>
-          <div className="switch-row">
-            <div className="grow">
-              <div className="switch-title">อนุญาตให้ชำระบางส่วน (Partial Payment)</div>
-              <div className="switch-desc">ค่าเริ่มต้น: ปิด · กรณีนโยบายโรงเรียนต่างไปจึงเปิด</div>
-            </div>
-            <Switch on={false} />
-          </div>
-          <div className="switch-row">
-            <div className="grow">
-              <div className="switch-title">อนุญาตให้ชำระเกินยอด (Overpayment)</div>
-              <div className="switch-desc">เปิดจะถือว่าส่วนเกินเป็นเครดิตยกยอดไปงวดถัดไป</div>
-            </div>
-            <Switch on={false} />
-          </div>
-
-          <div className="field" style={{marginTop: 6}}>
-            <div className="label">การจัดการค่าธรรมเนียม Counter Service (10 บาท/รายการ)</div>
-            <div className="flex-col" style={{gap: 6}}>
-              {[
-                { id: "parent", t: "ผู้ปกครองชำระเอง", d: "ใบแจ้งชำระแสดงยอดและค่าธรรมเนียมแยก · Counter เก็บค่าธรรมเนียมที่หน้าเคาน์เตอร์" },
-                { id: "school", t: "โรงเรียนรับภาระค่าธรรมเนียม", d: "ระบบจะหัก 10 บาทจากยอดที่ได้รับ ก่อนตัดใบแจ้งชำระ" },
-                { id: "include", t: "รวมในยอดใบแจ้งชำระ", d: "ใบแจ้งจะแสดงค่าธรรมเนียมรวมอยู่ในยอดเดียวกับค่าธรรมเนียมการศึกษา · เลือกใช้นี้" },
-              ].map((r, i) => (
-                <label key={i} className="method-card" style={{padding: 12, borderColor: r.id === "include" ? "var(--navy)" : "var(--border)", background: r.id === "include" ? "var(--navy-soft)" : "var(--surface)"}}>
-                  <input type="radio" name="fee" defaultChecked={r.id === "include"} style={{marginRight: 8}} />
-                  <div className="grow">
-                    <div style={{fontSize: 13, fontWeight: 500}}>{r.t}</div>
-                    <div className="tiny muted">{r.d}</div>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <div className="field">
-            <div className="label">ใบแจ้งชำระหมดอายุภายใน</div>
-            <div className="flex">
-              <input className="input mono" defaultValue="60" style={{width: 80}} />
-              <span style={{color: "var(--muted)"}}>วันหลังออกใบแจ้ง</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex" style={{justifyContent: "flex-end", marginTop: 24, gap: 8}}>
-        <button className="btn">ยกเลิก</button>
-        <button className="btn primary">บันทึกการตั้งค่า</button>
-      </div>
-    </>
-  );
-};
-
-// ===== Webhook tab =====
 const WebhookTab = () => {
   const events = [
     { ts: "15 พ.ค. 09:42:18", ok: true,  src: "KTB",  ref: "TX-KB-26051509421783", reason: "Signature valid · matched invoice INV-2569-018421" },
@@ -638,7 +497,7 @@ const ReceiptTemplateTab = () => {
             <h3 style={{margin: 0}}>ตัวอย่างก่อนพิมพ์</h3>
             <div className="flex">
               <span className="badge issued"><Icon name="eye" size={11} /> A4 Preview</span>
-              <button className="btn sm"><Icon name="print" size={11} /> พิมพ์ทดสอบ</button>
+              <button className="btn sm" onClick={() => handleAction("ใบเสร็จทดสอบ", "print")}><Icon name="print" size={11} /> พิมพ์ทดสอบ</button>
             </div>
           </div>
           <div style={{transform: "scale(0.72)", transformOrigin: "top center", display: "flex", justifyContent: "center", marginBottom: -160}}>
@@ -648,9 +507,9 @@ const ReceiptTemplateTab = () => {
       </div>
 
       <div className="flex" style={{justifyContent: "flex-end", marginTop: 24, gap: 8}}>
-        <button className="btn">ยกเลิก</button>
-        <button className="btn"><Icon name="eye" size={12} /> ดูตัวอย่างเต็มหน้า</button>
-        <button className="btn primary">บันทึกเทมเพลต</button>
+        <button className="btn" onClick={() => handleAction("ยกเลิกการเปลี่ยนแปลง", "save")}>ยกเลิก</button>
+        <button className="btn" onClick={() => handleAction("ใบเสร็จฉบับสมบูรณ์", "print")}><Icon name="eye" size={12} /> ดูตัวอย่างเต็มหน้า</button>
+        <button className="btn primary" onClick={() => handleAction("เทมเพลตใบเสร็จ", "save")}>บันทึกเทมเพลต</button>
       </div>
     </>
   );

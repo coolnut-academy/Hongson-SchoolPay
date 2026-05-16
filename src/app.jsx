@@ -4,6 +4,12 @@ const App = () => {
   const [route, setRoute] = React.useState("dashboard");
   const [mode, setMode] = React.useState("admin"); // admin | parent
   const [showNote, setShowNote] = React.useState(true);
+  const [toast, setToast] = React.useState(null);
+
+  window.showToast = (msg, type = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
 
   // Listen for cross-link from parent flow back to admin and vice versa
   React.useEffect(() => {
@@ -35,6 +41,7 @@ const App = () => {
         </div>
         <ParentFlow />
         </div>
+        {toast && <Toast msg={toast.msg} type={toast.type} />}
       </>
     );
   }
@@ -89,6 +96,7 @@ const App = () => {
           </button>
         </div>
       </main>
+      {toast && <Toast msg={toast.msg} type={toast.type} />}
     </div>
   );
 };
@@ -118,8 +126,8 @@ const AdminReports = ({ setRoute }) => {
     { t: "สรุปการชำระต่อรอบเก็บเงิน", d: "ภาพรวมยอดที่ต้องเก็บ · ชำระแล้ว · คงค้าง", icon: "campaign" },
     { t: "สถานะการชำระต่อชั้นเรียน", d: "ตารางชั้น · จำนวนชำระแล้ว / รอชำระ", icon: "classes" },
     { t: "นักเรียนที่ยังไม่ชำระ", d: "พร้อมเหตุผลและข้อมูลติดต่อผู้ปกครอง", icon: "students" },
-    { t: "รายการรับชำระผ่าน Counter Service", d: "ตามไฟล์ Settlement ของผู้ให้บริการ", icon: "store" },
-    { t: "รายการรับชำระผ่าน Mobile Banking QR", d: "ตามรายงาน Webhook ของธนาคาร", icon: "qr" },
+    { t: "รายการรับชำระผ่าน QR PromptPay", d: "ตามรายงาน Webhook ของธนาคาร", icon: "qr" },
+    { t: "รายการชำระผ่าน KTB สาขา", d: "ยืนยันโดยเจ้าหน้าที่หลังตรวจ Bank Statement", icon: "bank" },
     { t: "รายงานการกระทบยอด", d: "Matched · Unmatched · Manual Review", icon: "recon" },
     { t: "รายงานใบเสร็จที่ออกแล้ว", d: "พร้อมเลขที่และผู้อนุมัติ", icon: "receipt" },
     { t: "รายงานใบเสร็จเบิกค่าการศึกษาบุตร", d: "สำหรับเจ้าหน้าที่ราชการที่เป็นผู้ปกครอง", icon: "fileText" },
@@ -162,17 +170,17 @@ const AdminReports = ({ setRoute }) => {
 // Light "Payments" page = filtered transaction list
 const AdminPayments = ({ setRoute }) => {
   const rows = [
-    { ts: "15 พ.ค. 09:42", ref: "TX-KB-26051509421783", ch: "qr", inv: "INV-2569-018421", name: "เด็กชายภาคิน วงศ์อิสรกุล", amt: 4200.00, status: "paid" },
-    { ts: "15 พ.ค. 09:37", ref: "TX-CS-7E-2605150038", ch: "cs", inv: "INV-2569-018407", name: "เด็กหญิงพิมพ์ลภัส รักษ์เผ่า", amt: 4200.00, status: "paid" },
-    { ts: "15 พ.ค. 09:31", ref: "TX-BB-26051509310028", ch: "qr", inv: "INV-2569-018395", name: "เด็กชายธีรเดช สุขสันต์ชัย", amt: 5800.00, status: "paid" },
-    { ts: "15 พ.ค. 09:18", ref: "TX-KB-26051509180014", ch: "qr", inv: "INV-2569-018307", name: "เด็กหญิงณิชาภา จันทรานนท์", amt: 3800.00, status: "under_review" },
-    { ts: "15 พ.ค. 09:06", ref: "TX-CS-7E-2605150037", ch: "cs", inv: "INV-2569-018384", name: "เด็กชายกฤตเมธ เรืองศิริ", amt: 4200.00, status: "paid" },
-    { ts: "15 พ.ค. 08:54", ref: "TX-MAN-2605150004",   ch: "bank", inv: "INV-2569-018220", name: "เด็กหญิงปุณยาพร เกษมสุข", amt: 7800.00, status: "under_review" },
-    { ts: "15 พ.ค. 08:48", ref: "TX-KB-26051508481129", ch: "qr", inv: "INV-2569-018201", name: "เด็กชายภาณุพงศ์ ตั้งใจดี", amt: 4200.00, status: "paid" },
-    { ts: "15 พ.ค. 08:36", ref: "TX-SCB-26051508361002", ch: "qr", inv: "INV-2569-018178", name: "เด็กหญิงอัญชิสา ภักดีศรี", amt: 5800.00, status: "paid" },
+    { ts: "15 พ.ค. 09:42", ref: "TX-KB-26051509421783", ch: "qr",  inv: "INV-2569-018421", name: "เด็กชายภาคิน วงศ์อิสรกุล", amt: 4200.00, status: "paid" },
+    { ts: "15 พ.ค. 09:37", ref: "TX-KB-26051509370022", ch: "qr",  inv: "INV-2569-018407", name: "เด็กหญิงพิมพ์ลภัส รักษ์เผ่า", amt: 4200.00, status: "paid" },
+    { ts: "15 พ.ค. 09:31", ref: "TX-BB-26051509310028", ch: "qr",  inv: "INV-2569-018395", name: "เด็กชายธีรเดช สุขสันต์ชัย", amt: 5800.00, status: "paid" },
+    { ts: "15 พ.ค. 09:18", ref: "TX-KB-26051509180014", ch: "qr",  inv: "INV-2569-018307", name: "เด็กหญิงณิชาภา จันทรานนท์", amt: 3800.00, status: "under_review" },
+    { ts: "15 พ.ค. 09:06", ref: "TX-KTB-BRANCH-0021",  ch: "ktb", inv: "INV-2569-018384", name: "เด็กชายกฤตเมธ เรืองศิริ", amt: 4200.00, status: "paid" },
+    { ts: "15 พ.ค. 08:54", ref: "TX-KTB-BRANCH-0020",  ch: "ktb", inv: "INV-2569-018220", name: "เด็กหญิงปุณยาพร เกษมสุข", amt: 7800.00, status: "under_review" },
+    { ts: "15 พ.ค. 08:48", ref: "TX-KB-26051508481129", ch: "qr",  inv: "INV-2569-018201", name: "เด็กชายภาณุพงศ์ ตั้งใจดี", amt: 4200.00, status: "paid" },
+    { ts: "15 พ.ค. 08:36", ref: "TX-SCB-26051508361002", ch: "qr",  inv: "INV-2569-018178", name: "เด็กหญิงอัญชิสา ภักดีศรี", amt: 5800.00, status: "paid" },
   ];
-  const chIcon = { qr: "qr", cs: "store", bank: "bank" };
-  const chLabel = { qr: "Mobile Banking QR", cs: "Counter Service", bank: "โอนผ่านธนาคาร" };
+  const chIcon =  { qr: "qr", ktb: "bank" };
+  const chLabel = { qr: "Mobile Banking QR", ktb: "KTB สาขา (เจ้าหน้าที่)" };
   return (
     <>
       <Topbar crumb={["การชำระเงิน"]} />
@@ -183,7 +191,6 @@ const AdminPayments = ({ setRoute }) => {
             <p className="page-sub">รายการธุรกรรมที่เข้าระบบจากทุกช่องทาง · อัปเดตอัตโนมัติจาก Webhook ของผู้ให้บริการ</p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="upload" size={13} /> นำเข้าไฟล์ Settlement</button>
             <button className="btn"><Icon name="download" size={13} /> ส่งออก CSV</button>
           </div>
         </div>
@@ -194,7 +201,6 @@ const AdminPayments = ({ setRoute }) => {
             <div className="filter">ช่องทาง: <b>ทั้งหมด</b> <Icon name="chevronDown" size={11} /></div>
             <div className="filter">รอบเก็บเงิน: <b>CMP-2569-01</b> <span className="x">×</span></div>
             <div className="filter">สถานะ: <b>ทั้งหมด</b> <Icon name="chevronDown" size={11} /></div>
-            <div className="filter">ผู้ให้บริการ: <b>ทั้งหมด</b> <Icon name="chevronDown" size={11} /></div>
             <div style={{flex: 1}} />
             <div className="filter"><Icon name="filter" size={12} /> ตัวกรองเพิ่มเติม</div>
           </div>

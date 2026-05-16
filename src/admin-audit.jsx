@@ -4,13 +4,13 @@ const AdminAudit = ({ setRoute }) => {
   const events = [
     { ts: "15 พ.ค. 2569 09:42:18", actor: "ระบบอัตโนมัติ", role: "system", action: "ยืนยันการชำระเงินอัตโนมัติ", target: "INV-2569-018421", diff: ["pending → paid"], ip: "—", risk: "low" },
     { ts: "15 พ.ค. 2569 09:14:02", actor: "ครูชนัญพร", role: "finance", action: "ออกใบเสร็จรับเงิน", target: "R6907-00482 (INV-2569-018421)", diff: ["receipt_status: ready → issued"], ip: "10.16.4.22", risk: "low" },
-    { ts: "15 พ.ค. 2569 08:31:00", actor: "ระบบอัตโนมัติ", role: "system", action: "นำเข้าไฟล์ Settlement", target: "settlement_2605151700.csv", diff: ["imported: 248 records"], ip: "—", risk: "low" },
+    { ts: "15 พ.ค. 2569 08:31:00", actor: "ระบบอัตโนมัติ", role: "system", action: "ยืนยัน Webhook QR", target: "TX-KB-26051508310014", diff: ["invoice INV-2569-018399: pending → paid"], ip: "—", risk: "low" },
     { ts: "15 พ.ค. 2569 08:02:14", actor: "ระบบอัตโนมัติ", role: "system", action: "ตรวจพบยอดไม่ตรง · ส่งเข้า Manual Review", target: "INV-2569-018307", diff: ["pending → under_review"], ip: "—", risk: "med" },
     { ts: "14 พ.ค. 2569 17:48:09", actor: "ครูชนัญพร", role: "super_admin", action: "หมุนรหัสลับ Webhook", target: "Webhook KTB Production", diff: ["secret: ••5102 → ••2c8f"], ip: "10.16.4.18", risk: "high" },
     { ts: "14 พ.ค. 2569 14:12:33", actor: "ครูชนัญพร", role: "finance", action: "ยกเลิกใบเสร็จ &amp; ออกใหม่", target: "R6907-00478 → R6907-00478A", diff: ["receipt: issued → voided · reissued"], ip: "10.16.4.22", risk: "high" },
     { ts: "14 พ.ค. 2569 11:30:48", actor: "ครูพิมพ์ลดา", role: "finance", action: "ปรับยอดใบแจ้งชำระด้วยมือ", target: "INV-2569-016842", diff: ["amount: 4,200 → 3,800 (ส่วนลดทุนช่วยเหลือ)"], ip: "10.16.4.31", risk: "med" },
-    { ts: "13 พ.ค. 2569 10:08:22", actor: "ครูชนัญพร", role: "super_admin", action: "เปลี่ยนการตั้งค่า Counter Service", target: "Fee handling", diff: ["fee_mode: parent → include"], ip: "10.16.4.18", risk: "high" },
-    { ts: "13 พ.ค. 2569 09:54:11", actor: "ครูพิมพ์ลดา", role: "finance", action: "ส่งออกรายงาน", target: "รายการรับชำระ Counter Service 1–13 พ.ค.", diff: ["format: xlsx · rows: 1,184"], ip: "10.16.4.31", risk: "low" },
+    { ts: "13 พ.ค. 2569 10:08:22", actor: "ครูชนัญพร", role: "super_admin", action: "อัปเดตการตั้งค่า QR Provider", target: "KTB API Mode", diff: ["mode: sandbox → production"], ip: "10.16.4.18", risk: "high" },
+    { ts: "13 พ.ค. 2569 09:54:11", actor: "ครูพิมพ์ลดา", role: "finance", action: "ส่งออกรายงาน", target: "รายการรับชำระ QR PromptPay 1–13 พ.ค.", diff: ["format: xlsx · rows: 1,253"], ip: "10.16.4.31", risk: "low" },
     { ts: "12 พ.ค. 2569 09:00:00", actor: "ระบบอัตโนมัติ", role: "system", action: "สร้างใบแจ้งชำระแบบกลุ่ม", target: "CMP-2569-02 · ค่ากิจกรรมพัฒนาผู้เรียน", diff: ["created: 1,742 invoices · ฿2,090,400"], ip: "—", risk: "low" },
   ];
 
@@ -33,8 +33,8 @@ const AdminAudit = ({ setRoute }) => {
             <p className="page-sub">บันทึกทุกการกระทำที่กระทบยอดเงิน · การตั้งค่า · และเอกสารทางการเงิน · ไม่สามารถลบได้</p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="download" size={13} /> ส่งออก CSV</button>
-            <button className="btn"><Icon name="shield" size={13} /> รายงานความปลอดภัย</button>
+            <button className="btn" onClick={() => handleAction("Audit Log (CSV)", "export")}><Icon name="download" size={13} /> ส่งออก CSV</button>
+            <button className="btn" onClick={() => handleAction("รายงานความปลอดภัย", "export")}><Icon name="shield" size={13} /> รายงานความปลอดภัย</button>
           </div>
         </div>
 

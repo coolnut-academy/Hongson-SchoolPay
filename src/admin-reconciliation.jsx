@@ -14,18 +14,16 @@ const AdminReconciliation = ({ setRoute }) => {
   const transactions = [
     { ref: "TX-KB-26051509180014", ch: "qr", ts: "15 พ.ค. 09:18", amt: 3800, ref1: "65120190026901", note: "ยอดต่ำกว่ายอดในใบแจ้ง 400 บาท", k: "mismatch", inv: "INV-2569-018307" },
     { ref: "TX-MAN-2605150004", ch: "bank", ts: "15 พ.ค. 08:54", amt: 7800, ref1: "—", note: "โอนผ่านสลิป · ไม่มี REF · ต้องจับคู่มือ", k: "unknown" },
-    { ref: "TX-CS-7E-2605110234", ch: "cs", ts: "11 พ.ค. 14:22", amt: 4200, ref1: "65120155026901", note: "ใบแจ้งหมดอายุก่อนชำระ 4 วัน", k: "expired", inv: "INV-2568-099821" },
+    { ref: "TX-KTB-BRANCH-0019", ch: "ktb", ts: "11 พ.ค. 14:22", amt: 4200, ref1: "65120155026901", note: "โอนเข้าก่อนใบแจ้งหมดอายุ", k: "expired", inv: "INV-2568-099821" },
     { ref: "TX-KB-26050816220019", ch: "qr", ts: "08 พ.ค. 16:22", amt: 4200, ref1: "65120184026901", note: "ตรวจพบ TX-KB-26051509421783 มียอดเดียวกัน", k: "duplicate", inv: "INV-2569-018421" },
     { ref: "TX-SCB-26051011030081", ch: "qr", ts: "10 พ.ค. 11:03", amt: 4200, ref1: "65120094026901", note: "ตรงทุกประการ", k: "matched", inv: "INV-2569-018094" },
     { ref: "TX-BB-26050918341277", ch: "qr", ts: "09 พ.ค. 18:34", amt: 8400, ref1: "65120155026901", note: "ชำระเกินยอด 4,200 บาท", k: "overpay", inv: "INV-2569-018155" },
   ];
 
   const settlement = [
-    { batch: "CS-2605150001", file: "settlement_2605151700.csv", count: 248, amt: 942600, status: "imported" },
-    { batch: "CS-2605140001", file: "settlement_2605141700.csv", count: 186, amt: 781200, status: "imported" },
-    { batch: "KTB-2605151200", file: "krungthai_2605151200.xml", count: 184, amt: 772800, status: "imported" },
-    { batch: "KTB-2605141200", file: "krungthai_2605141200.xml", count: 156, amt: 655200, status: "imported" },
-    { batch: "SCB-26051409", file: "scb_qr_2605140900.json", count: 98, amt: 411600, status: "verifying" },
+    { batch: "KTB-20260515", file: "ktb_statement_20260515.pdf", count: 8, amt: 38400, status: "imported" },
+    { batch: "KTB-20260514", file: "ktb_statement_20260514.pdf", count: 5, amt: 24000, status: "imported" },
+    { batch: "KTB-20260513", file: "ktb_statement_20260513.pdf", count: 12, amt: 50400, status: "imported" },
   ];
 
   const kindMeta = {
@@ -44,12 +42,12 @@ const AdminReconciliation = ({ setRoute }) => {
         <div className="page-head">
           <div>
             <h1 className="page-h1">ศูนย์กระทบยอด <span style={{fontSize: 14, fontWeight: 400, color: "var(--muted)", marginLeft: 8}}>Reconciliation Center</span></h1>
-            <p className="page-sub">เปรียบเทียบใบแจ้งชำระ · ธุรกรรมจากผู้ให้บริการ · และไฟล์ Settlement เพื่อยืนยันการรับเงินอย่างถูกต้อง</p>
+            <p className="page-sub">เปรียบเทียบใบแจ้งชำระ · ธุรกรรมจาก Webhook และการยืนยัน KTB สาขา เพื่อยืนยันการรับเงินอย่างถูกต้อง</p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="upload" size={13} /> อัปโหลด Settlement</button>
-            <button className="btn"><Icon name="refresh" size={13} /> จับคู่ใหม่ทั้งหมด</button>
-            <button className="btn primary"><Icon name="download" size={13} /> ส่งออกรายงาน</button>
+            <button className="btn" onClick={() => handleAction("Bank Statement", "download")}><Icon name="upload" size={13} /> อัปโหลด Statement</button>
+            <button className="btn" onClick={() => handleAction("การจับคู่ธุรกรรมใหม่", "save")}><Icon name="refresh" size={13} /> จับคู่ใหม่ทั้งหมด</button>
+            <button className="btn primary" onClick={() => handleAction("รายงานการกระทบยอด", "export")}><Icon name="download" size={13} /> ส่งออกรายงาน</button>
           </div>
         </div>
 
@@ -138,7 +136,7 @@ const AdminReconciliation = ({ setRoute }) => {
 
             {/* Panel 3: settlement batches */}
             <div className="recon-panel">
-              <PanelHead title="ไฟล์ Settlement / รายงานธนาคาร" count="5 batch ในรอบ" icon="fileText" />
+              <PanelHead title="Bank Statement · KTB สาขา" count="3 ไฟล์ในรอบ" icon="bank" />
               <div style={{border: "1px solid var(--border)", borderRadius: 6, overflow: "hidden"}}>
                 {settlement.map((s, i) => (
                   <div key={i} style={{padding: "12px 14px", borderBottom: i < settlement.length - 1 ? "1px solid var(--border)" : "none"}}>
@@ -154,7 +152,7 @@ const AdminReconciliation = ({ setRoute }) => {
                   </div>
                 ))}
                 <div style={{padding: "10px 14px", textAlign: "center", background: "var(--surface-2)"}}>
-                  <button className="btn sm ghost" style={{color: "var(--info)"}}><Icon name="upload" size={11} /> เพิ่มไฟล์ Settlement</button>
+                  <button className="btn sm ghost" style={{color: "var(--info)"}} onClick={() => handleAction("เพิ่มไฟล์ Bank Statement", "download")}><Icon name="upload" size={11} /> เพิ่มไฟล์ Bank Statement</button>
                 </div>
               </div>
             </div>
@@ -206,7 +204,7 @@ const ManualReviewDetail = ({ tx, onClose }) => {
   const kindBlurb = {
     mismatch: "ยอดที่โอนจริงต่ำกว่ายอดในใบแจ้งชำระ ระบบ Auto-Match ปฏิเสธโดยอัตโนมัติ ต้องตัดสินใจว่าจะรับเป็น Partial Payment หรือคืนเงินให้ผู้ปกครอง",
     unknown:  "ระบบไม่พบใบแจ้งที่ตรงกับ REF1/REF2 ของธุรกรรมนี้ อาจเป็นการโอนตรงโดยไม่ผ่าน QR ที่ระบบสร้าง",
-    expired:  "ผู้ปกครองชำระเงินผ่าน Counter Service หลังจากใบแจ้งหมดอายุไปแล้ว 4 วัน สามารถยืนยันด้วยมือหรือคืนเงินตามนโยบายโรงเรียน",
+    expired:  "ผู้ปกครองโอนเข้าในบัญชี KTB หลังจากใบแจ้งหมดอายุไปแล้ว สามารถยืนยันด้วยมือหรือออกใบแจ้งใหม่ตามนโยบายโรงเรียน",
     duplicate:"มีการชำระเข้ามาสองครั้งภายในวันเดียวกันสำหรับใบแจ้งเดียว ระบบเลือกยึดธุรกรรมแรกและเก็บอันที่สองไว้รอตรวจสอบ",
     matched:  "จับคู่อัตโนมัติเรียบร้อย ทั้ง REF1, REF2, ยอด, และรหัสนักเรียนตรงทุกประการ",
     overpay:  "ผู้ปกครองชำระเกินยอดในใบแจ้งชำระ 4,200 บาท ต้องตรวจสอบกับนโยบายโรงเรียนว่าจะนำส่วนเกินมาตัดยอดงวดถัดไปหรือคืนเงิน",
@@ -230,11 +228,11 @@ const ManualReviewDetail = ({ tx, onClose }) => {
         <div>
           <div className="section-h">รายละเอียดธุรกรรม</div>
           <KVCompact k="รหัสธุรกรรม" v={tx.ref} mono />
-          <KVCompact k="ช่องทาง" v={tx.ch === "qr" ? "Mobile Banking QR" : tx.ch === "cs" ? "Counter Service" : "โอนผ่านธนาคาร"} />
+          <KVCompact k="ช่องทาง" v={tx.ch === "qr" ? "Mobile Banking QR" : "KTB สาขา (เจ้าหน้าที่)"} />
           <KVCompact k="เวลา" v={tx.ts} />
           <KVCompact k="ยอดที่โอนเข้า" v={"฿" + fmt(tx.amt)} bold />
           <KVCompact k="REF1 จากธุรกรรม" v={tx.ref1} mono />
-          <KVCompact k="ผู้ให้บริการ" v={tx.ch === "cs" ? "Counter Service" : "Krungthai Bank"} />
+          <KVCompact k="ผู้ให้บริการ" v="Krungthai Bank" />
         </div>
 
         {/* Invoice match */}
@@ -265,11 +263,11 @@ const ManualReviewDetail = ({ tx, onClose }) => {
             </Banner>
           )}
           <div className="flex-col" style={{gap: 8, marginTop: 12}}>
-            <button className="btn emerald" style={{justifyContent: "center"}}><Icon name="check" size={13} /> ยืนยันจับคู่ &amp; ยอมรับยอด</button>
-            <button className="btn" style={{justifyContent: "center"}}><Icon name="link" size={13} /> เปลี่ยนใบแจ้งที่จับคู่</button>
-            <button className="btn" style={{justifyContent: "center"}}><Icon name="receipt" size={13} /> รับเป็นชำระบางส่วน (Partial)</button>
-            <button className="btn" style={{justifyContent: "center"}}><Icon name="refresh" size={13} /> ทำเครื่องหมายเป็นซ้ำ</button>
-            <button className="btn danger" style={{justifyContent: "center"}}><Icon name="x" size={13} /> ส่งคืน / คืนเงินผู้ปกครอง</button>
+            <button className="btn emerald" style={{justifyContent: "center"}} onClick={() => handleAction("การจับคู่และยืนยันยอด", "save")}><Icon name="check" size={13} /> ยืนยันจับคู่ &amp; ยอมรับยอด</button>
+            <button className="btn" style={{justifyContent: "center"}} onClick={() => handleAction("การเปลี่ยนใบแจ้งที่จับคู่", "save")}><Icon name="link" size={13} /> เปลี่ยนใบแจ้งที่จับคู่</button>
+            <button className="btn" style={{justifyContent: "center"}} onClick={() => handleAction("การรับชำระบางส่วน", "save")}><Icon name="receipt" size={13} /> รับเป็นชำระบางส่วน (Partial)</button>
+            <button className="btn" style={{justifyContent: "center"}} onClick={() => handleAction("การทำเครื่องหมายธุรกรรมซ้ำ", "save")}><Icon name="refresh" size={13} /> ทำเครื่องหมายเป็นซ้ำ</button>
+            <button className="btn danger" style={{justifyContent: "center"}} onClick={() => handleAction("การส่งคืน/คืนเงิน", "save")}><Icon name="x" size={13} /> ส่งคืน / คืนเงินผู้ปกครอง</button>
           </div>
         </div>
       </div>

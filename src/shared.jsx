@@ -167,6 +167,28 @@ const Pagination = ({ total, page = 1, pageSize = 20 }) => (
   </div>
 );
 
+// ===== Toast notification =====
+const Toast = ({ msg, type = "success" }) => (
+  <div className={"toast " + type}>
+    <Icon name={type === "success" ? "check" : "alert"} size={14} />
+    <span>{msg}</span>
+  </div>
+);
+
+// ===== Action Handler (Prototype Helper) =====
+const handleAction = (label, type = "download") => {
+  if (type === "print") {
+    window.print();
+  } else {
+    const verb = type === "download" ? "ดาวน์โหลด" : type === "export" ? "ส่งออก" : "บันทึก";
+    window.showToast(`${verb}${label}...`, "success");
+    // Simulate delay
+    setTimeout(() => {
+      window.showToast(`${verb}${label} สำเร็จแล้ว`, "success");
+    }, 1500);
+  }
+};
+
 // ===== QR placeholder (deterministic visual) =====
 const QRPlaceholder = ({ size = 220, seed = 7 }) => {
   // Build a deterministic 25x25 grid
@@ -242,7 +264,8 @@ const Avatar = ({ name, size = 28 }) => {
 
 Object.assign(window, {
   fmt, fmt0,
-  Sidebar, Topbar, Badge, Switch, Banner, Modal, Pagination,
+  Sidebar, Topbar, Badge, Switch, Banner, Modal, Pagination, Toast,
   QRPlaceholder, BarcodePlaceholder, Avatar,
+  handleAction,
   STATUS,
 });

@@ -1211,3 +1211,29 @@ a { color: inherit; }
   color: var(--muted);
   font-size: 13px;
 }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  z-index: 9999;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: toastIn 0.3s ease-out;
+}
+.toast.success { background: var(--emerald); }
+.toast.danger { background: var(--danger); }
+
+@keyframes toastIn {
+  from { bottom: 0; opacity: 0; }
+  to { bottom: 24px; opacity: 1; }
+}

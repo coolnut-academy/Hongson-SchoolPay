@@ -23,8 +23,8 @@ const AdminReceipts = ({ setRoute }) => {
             <p className="page-sub">ออกใบเสร็จอย่างเป็นทางการของโรงเรียน · พร้อมเทมเพลตสำหรับการเบิกค่าการศึกษาบุตรของผู้ปกครองข้าราชการ</p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="print" size={13} /> พิมพ์ทั้งหมด</button>
-            <button className="btn primary"><Icon name="receipt" size={13} /> ออกใบเสร็จกลุ่ม 74 รายการ</button>
+            <button className="btn" onClick={() => handleAction("ใบเสร็จทั้งหมด", "print")}><Icon name="print" size={13} /> พิมพ์ทั้งหมด</button>
+            <button className="btn primary" onClick={() => handleAction("การออกใบเสร็จกลุ่ม", "save")}><Icon name="receipt" size={13} /> ออกใบเสร็จกลุ่ม 74 รายการ</button>
           </div>
         </div>
 
@@ -58,7 +58,7 @@ const AdminReceipts = ({ setRoute }) => {
               <h3>คิวการออกใบเสร็จ</h3>
               <div className="flex" style={{gap: 6}}>
                 <button className="btn sm"><Icon name="filter" size={11} /> ตัวกรอง</button>
-                <button className="btn sm"><Icon name="download" size={11} /> ส่งออก</button>
+                <button className="btn sm" onClick={() => handleAction("รายงานคิวใบเสร็จ", "export")}><Icon name="download" size={11} /> ส่งออก</button>
               </div>
             </div>
             <div className="filters" style={{padding: "8px 14px"}}>
@@ -140,7 +140,7 @@ const AdminReceipts = ({ setRoute }) => {
               </div>
               <div className="flex" style={{gap: 8}}>
                 <button className="btn"><Icon name="x" size={13} /> ปฏิเสธ &amp; แจ้งกลับ</button>
-                <button className="btn primary grow" style={{justifyContent: "center"}}><Icon name="check" size={13} /> อนุมัติและออกใบเสร็จ</button>
+                <button className="btn primary grow" style={{justifyContent: "center"}} onClick={() => handleAction("การอนุมัติและออกใบเสร็จ", "save")}><Icon name="check" size={13} /> อนุมัติและออกใบเสร็จ</button>
               </div>
               <div className="tiny muted" style={{marginTop: 10, textAlign: "center"}}>
                 <Icon name="shield" size={11} /> การออกใบเสร็จจะถูกบันทึกใน Audit Log พร้อม IP และเวลา ไม่สามารถลบได้ ใช้ Void/Reissue เท่านั้น
@@ -284,7 +284,7 @@ const DocPackPreview = () => {
       <div className="card" style={{marginTop: 14}}>
         <div className="card-head">
           <h3>เอกสารในชุด (รวม 5 ฉบับ)</h3>
-          <button className="btn sm primary"><Icon name="download" size={11} /> ดาวน์โหลดทั้งชุด .ZIP</button>
+          <button className="btn sm primary" onClick={() => handleAction("ชุดเอกสารเบิกค่าการศึกษาบุตร", "download")}><Icon name="download" size={11} /> ดาวน์โหลดทั้งชุด .ZIP</button>
         </div>
         <div>
           {docs.map((d, i) => (
@@ -310,7 +310,7 @@ const DocPackPreview = () => {
       </div>
 
       <Banner kind="warn" title="ข้อควรทราบสำหรับผู้ปกครอง">
-        ใบรับเงินจาก Counter Service หรือสลิปการโอนเงินไม่ใช่หลักฐานการเบิกค่าการศึกษาบุตร ต้องใช้ใบเสร็จรับเงินของโรงเรียนพร้อมชุดเอกสารฉบับนี้เท่านั้น
+        ใบรับเงินหรือสลิปการโอนเงินไม่ใช่หลักฐานการเบิกค่าการศึกษาบุตร ต้องใช้ใบเสร็จรับเงินของโรงเรียนพร้อมชุดเอกสารฉบับนี้เท่านั้น
       </Banner>
     </div>
   );

@@ -11,7 +11,7 @@
 ปัจจุบัน: **Design Prototype** (React + Babel + GitHub Pages)  
 เป้าหมาย: Production (Next.js 15 + TypeScript + Vercel + Firebase)
 
-**ช่องทางชำระเงิน: QR PromptPay เท่านั้น** (ตัด Counter Service ออกแล้ว)
+**ช่องทางชำระเงิน: QR PromptPay และ KTB Branch (เจ้าหน้าที่ธนาคาร)** (ตัด Counter Service ออกแล้ว)
 
 ---
 
@@ -35,7 +35,7 @@ Hongson-SchoolPay/
     ├── admin-receipts.jsx  ← ใบเสร็จ + ReceiptPreview
     ├── admin-settings.jsx  ← Providers, Webhook, Receipt Template (3 tabs)
     ├── admin-audit.jsx     ← Audit log
-    ├── parent-flow.jsx     ← 6 หน้าจอผู้ปกครอง (QR only)
+    ├── parent-flow.jsx     ← 6 หน้าจอผู้ปกครอง (QR + KTB Branch)
     └── app.jsx             ← Root app + routing
 ```
 

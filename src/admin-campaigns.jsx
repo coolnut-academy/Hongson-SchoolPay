@@ -30,7 +30,7 @@ const AdminCampaigns = ({ setRoute }) => {
             <p className="page-sub">การจัดเก็บค่าธรรมเนียมการศึกษา · กำหนดกลุ่มเป้าหมาย · กำหนดรายการค่าธรรมเนียม · ออกใบแจ้งชำระอัตโนมัติ</p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="upload" size={13} /> นำเข้าไฟล์ Excel</button>
+            <button className="btn" onClick={() => handleAction("ข้อมูล Excel", "download")}><Icon name="upload" size={13} /> นำเข้าไฟล์ Excel</button>
             <button className="btn primary" onClick={() => setWizard(true)}>
               <Icon name="plus" size={14} /> สร้างรอบเก็บเงิน
             </button>
@@ -260,8 +260,8 @@ const CampaignDetailCard = ({ setRoute }) => {
           <div className="tiny muted">เปิดรับชำระ 1 พ.ค. – 30 มิ.ย. 2569 · ออกใบแจ้งชำระ 1,742 ราย · ค่าธรรมเนียมต่อนักเรียน 4,200–8,500 บาท</div>
         </div>
         <div className="flex">
-          <button className="btn"><Icon name="chat" size={12} /> ส่งเตือนผู้ปกครอง</button>
-          <button className="btn"><Icon name="download" size={12} /> ส่งออกรายการ</button>
+          <button className="btn" onClick={() => handleAction("ส่งเตือนผู้ปกครอง", "export")}><Icon name="chat" size={12} /> ส่งเตือนผู้ปกครอง</button>
+          <button className="btn" onClick={() => handleAction("รายงานสรุปรอบเก็บเงิน", "download")}><Icon name="download" size={12} /> ส่งออกรายงาน</button>
           <button className="btn primary" onClick={() => setRoute("invoices")}>เปิดใบแจ้งทั้งหมด <Icon name="arrowRight" size={12} /></button>
         </div>
       </div>
@@ -353,8 +353,8 @@ const AdminInvoiceDetail = ({ setRoute }) => {
             </p>
           </div>
           <div className="flex">
-            <button className="btn"><Icon name="print" size={13} /> พิมพ์ใบแจ้งชำระ</button>
-            <button className="btn"><Icon name="download" size={13} /> ใบเสร็จ PDF</button>
+            <button className="btn" onClick={() => handleAction("ใบแจ้งชำระ", "print")}><Icon name="print" size={13} /> พิมพ์ใบแจ้งชำระ</button>
+            <button className="btn" onClick={() => handleAction("ใบเสร็จรับเงิน (PDF)", "download")}><Icon name="download" size={13} /> ใบเสร็จ PDF</button>
             <button className="btn primary"><Icon name="receipt" size={13} /> ออกใบเสร็จเบิกฯ</button>
           </div>
         </div>

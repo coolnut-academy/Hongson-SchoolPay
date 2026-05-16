@@ -183,74 +183,54 @@ const QRScreen = () => (
     </Banner>
 
     <div className="flex" style={{gap: 8, marginTop: 14}}>
-      <button className="btn grow" style={{justifyContent: "center"}}><Icon name="download" size={13} /> บันทึก QR</button>
-      <button className="btn grow" style={{justifyContent: "center"}}><Icon name="copy" size={13} /> คัดลอกเลขอ้างอิง</button>
+      <button className="btn grow" style={{justifyContent: "center"}} onClick={() => handleAction("QR Code", "save")}><Icon name="download" size={13} /> บันทึก QR</button>
+      <button className="btn grow" style={{justifyContent: "center"}} onClick={() => handleAction("คัดลอก REF1/REF2", "save")}><Icon name="copy" size={13} /> คัดลอกเลขอ้างอิง</button>
     </div>
   </>
 );
 
-// ===== Screen 4: Counter Service barcode =====
+// ===== Screen: KTB Branch payment info =====
 const CounterScreen = () => (
   <>
-    <div style={{textAlign: "center", marginBottom: 10}}>
-      <div style={{display: "inline-flex", alignItems: "center", gap: 8, padding: "4px 12px", background: "var(--emerald-soft)", color: "var(--emerald-2)", borderRadius: 999, fontSize: 12, fontWeight: 500}}>
-        <Icon name="store" size={12} /> ชำระที่ Counter Service / 7-Eleven
+    <div style={{textAlign: "center", padding: "12px 0 8px"}}>
+      <div style={{width: 52, height: 52, borderRadius: 14, background: "var(--info-soft)", color: "var(--info)", display: "grid", placeItems: "center", margin: "0 auto 10px"}}>
+        <Icon name="bank" size={24} />
+      </div>
+      <div style={{fontWeight: 700, fontSize: 16}}>ชำระที่ธนาคารกรุงไทย สาขา</div>
+      <div className="tiny muted" style={{marginTop: 4}}>แจ้งเจ้าหน้าที่โอนเข้าบัญชีโรงเรียน</div>
+    </div>
+
+    <div className="card" style={{padding: 14, background: "var(--navy-soft)", border: "none", marginBottom: 12}}>
+      <div style={{fontSize: 12, fontWeight: 600, color: "var(--navy)", marginBottom: 8}}>ข้อมูลบัญชี</div>
+      <div className="flex" style={{justifyContent: "space-between", marginBottom: 6}}>
+        <span className="tiny muted">ชื่อบัญชี</span>
+        <span style={{fontSize: 12, fontWeight: 600}}>โรงเรียนห้องสอนศึกษาฯ</span>
+      </div>
+      <div className="flex" style={{justifyContent: "space-between", marginBottom: 6}}>
+        <span className="tiny muted">เลขที่บัญชี</span>
+        <span className="mono" style={{fontSize: 12, fontWeight: 600}}>123-4-56789-0</span>
+      </div>
+      <div className="flex" style={{justifyContent: "space-between", marginBottom: 6}}>
+        <span className="tiny muted">ยอดที่ต้องโอน</span>
+        <span style={{fontSize: 14, fontWeight: 700, color: "var(--navy)"}}>฿4,200.00</span>
+      </div>
+      <div className="flex" style={{justifyContent: "space-between"}}>
+        <span className="tiny muted">หมายเหตุ (REF)</span>
+        <span className="mono" style={{fontSize: 12}}>65120184</span>
       </div>
     </div>
 
-    <div className="parent-amount" style={{padding: "6px 0 14px"}}>
-      <div className="label">ยอดที่ต้องชำระ + ค่าบริการ 10 บาท</div>
-      <div className="value"><span className="cur">฿</span>4,210<span style={{fontSize: 18, color: "var(--muted)"}}>.00</span></div>
-      <div className="sub">ภาคิน วงศ์อิสรกุล · ม.5/1 · INV-2569-018421</div>
-    </div>
-
-    <div style={{background: "#fff", padding: 12, border: "1px solid var(--border)", borderRadius: 6}}>
-      <BarcodePlaceholder payload="099400015501651201840269015690184210" />
-      <div className="mono" style={{fontSize: 11, textAlign: "center", marginTop: 6, letterSpacing: "0.05em"}}>
-        | 099400015501 | 65120184026901 | 569018421 | 4210 |
-      </div>
-    </div>
-
-    <div className="card" style={{padding: 10, margin: "12px 0", background: "var(--surface-2)"}}>
-      <div className="flex" style={{justifyContent: "space-between", fontSize: 11.5, padding: "3px 0"}}>
-        <span className="muted">Biller / Service code</span>
-        <span className="mono">099400 / 0155</span>
-      </div>
-      <div className="flex" style={{justifyContent: "space-between", fontSize: 11.5, padding: "3px 0"}}>
-        <span className="muted">REF1</span>
-        <span className="mono">65120184026901</span>
-      </div>
-      <div className="flex" style={{justifyContent: "space-between", fontSize: 11.5, padding: "3px 0"}}>
-        <span className="muted">REF2</span>
-        <span className="mono">569018421</span>
-      </div>
-      <div className="flex" style={{justifyContent: "space-between", fontSize: 11.5, padding: "3px 0"}}>
-        <span className="muted">กำหนดชำระภายใน</span>
-        <span className="mono">30 มิ.ย. 2569</span>
-      </div>
-    </div>
-
-    <div className="card" style={{padding: 12, marginBottom: 10}}>
-      <div style={{fontSize: 12.5, fontWeight: 600, marginBottom: 8}}>ขั้นตอน 6 ข้อ</div>
-      <ol style={{paddingLeft: 18, margin: 0, fontSize: 12, lineHeight: 1.7, color: "var(--text-2)"}}>
-        <li>บันทึกหรือพิมพ์ใบแจ้งชำระฉบับนี้</li>
-        <li>นำใบไปที่ 7-Eleven / Counter Service ทุกสาขา</li>
-        <li>ชำระ <b>ตามยอดที่ระบุเท่านั้น</b></li>
-        <li>เก็บใบรับเงินจากเคาน์เตอร์ไว้</li>
-        <li>รอการยืนยันจากระบบโรงเรียน (1–2 ชั่วโมง)</li>
-        <li>ดาวน์โหลดใบเสร็จรับเงินจากเว็บไซต์</li>
-      </ol>
-    </div>
-
-    <Banner kind="danger">
-      <b>สลิป Counter ไม่ใช่ใบเสร็จของโรงเรียน</b> โปรดรอใบเสร็จรับเงินอย่างเป็นทางการที่ออกโดยระบบโรงเรียน
+    <Banner kind="warn">
+      ใส่รหัสนักเรียนในช่อง "หมายเหตุ" หรือ "REF" ทุกครั้ง เพื่อให้เจ้าหน้าที่การเงินจับคู่การชำระได้
     </Banner>
 
-    <button className="btn primary lg" style={{width: "100%", justifyContent: "center", marginTop: 10}}>
-      <Icon name="download" size={13} /> ดาวน์โหลดใบแจ้งชำระ PDF
-    </button>
+    <div className="tiny muted" style={{textAlign: "center", marginTop: 12}}>
+      เจ้าหน้าที่การเงินจะยืนยันภายในวันเดียวกัน · ตรวจสอบจาก Bank Statement
+    </div>
   </>
 );
+
+
 
 // ===== Screen 5: Waiting for confirmation =====
 const StatusPendingScreen = () => (
@@ -386,7 +366,7 @@ const ReceiptReadyScreen = () => (
           <div className="doc-title">ใบเสร็จรับเงินของโรงเรียน</div>
           <div className="doc-meta">R6907-00482.pdf · 124 KB · มี QR ตรวจสอบความถูกต้อง</div>
         </div>
-        <button className="btn sm primary"><Icon name="download" size={12} /></button>
+        <button className="btn sm primary" onClick={() => handleAction("ใบเสร็จรับเงิน", "download")}><Icon name="download" size={12} /></button>
       </div>
       <div className="doc-card">
         <div className="doc-icon" style={{background: "var(--gold-soft)", borderColor: "#E8D2A0", color: "var(--gold-2)"}}>ZIP</div>
@@ -394,7 +374,7 @@ const ReceiptReadyScreen = () => (
           <div className="doc-title">ชุดเอกสารเบิกค่าการศึกษาบุตร</div>
           <div className="doc-meta">5 ฉบับ · 1.4 MB · สำหรับข้าราชการ</div>
         </div>
-        <button className="btn sm primary"><Icon name="download" size={12} /></button>
+        <button className="btn sm primary" onClick={() => handleAction("ชุดเอกสารเบิกค่าการศึกษาบุตร", "download")}><Icon name="download" size={12} /></button>
       </div>
       <div className="doc-card">
         <div className="doc-icon" style={{background: "var(--bg-soft)", borderColor: "var(--border)", color: "var(--muted)"}}>PDF</div>
@@ -402,7 +382,7 @@ const ReceiptReadyScreen = () => (
           <div className="doc-title">ใบแจ้งชำระเงิน (สำเนา)</div>
           <div className="doc-meta">INV-2569-018421.pdf · 88 KB</div>
         </div>
-        <button className="btn sm"><Icon name="download" size={12} /></button>
+        <button className="btn sm" onClick={() => handleAction("ใบแจ้งชำระเงิน (สำเนา)", "download")}><Icon name="download" size={12} /></button>
       </div>
     </div>
 
@@ -450,10 +430,10 @@ const ReimbursementScreen = () => {
         ))}
       </div>
 
-      <button className="btn primary lg" style={{width: "100%", justifyContent: "center"}}>
+      <button className="btn primary lg" style={{width: "100%", justifyContent: "center"}} onClick={() => handleAction("ชุดเอกสารเบิกค่าการศึกษาบุตร (.ZIP)", "download")}>
         <Icon name="download" size={14} /> ดาวน์โหลดทั้งชุด (.ZIP · 1.4 MB)
       </button>
-      <button className="btn lg" style={{width: "100%", justifyContent: "center", marginTop: 8}}>
+      <button className="btn lg" style={{width: "100%", justifyContent: "center", marginTop: 8}} onClick={() => handleAction("ชุดเอกสารแบบรวมไฟล์ (PDF)", "download")}>
         <Icon name="eye" size={14} /> ดูแบบรวมไฟล์เดียว PDF
       </button>
 
@@ -469,7 +449,7 @@ const ReimbursementScreen = () => {
 const PaymentNoticePreview = () => (
   <>
     <h2 style={{fontSize: 15, fontWeight: 600, margin: "4px 0 4px"}}>ใบแจ้งชำระเงิน</h2>
-    <p className="tiny muted" style={{margin: "0 0 12px"}}>ตัวอย่าง PDF · พิมพ์หรือบันทึกเพื่อใช้ที่ Counter Service</p>
+    <p className="tiny muted" style={{margin: "0 0 12px"}}>ตัวอย่าง PDF · พิมพ์หรือบันทึกเพื่อใช้ที่ธนาคารกรุงไทย สาขา</p>
 
     <div className="card" style={{padding: 12, background: "#fff", border: "1px solid var(--border)"}}>
       <div style={{borderBottom: "2px solid var(--navy)", paddingBottom: 8, marginBottom: 8, display: "flex", gap: 10, alignItems: "center"}}>
@@ -506,17 +486,22 @@ const PaymentNoticePreview = () => (
           <div><b>QR PromptPay</b></div>
           <div className="mono">REF1 65120184026901</div>
           <div className="mono">REF2 569018421</div>
-          <div className="muted">หรือชำระที่ Counter Service</div>
+          <div className="muted">หรือชำระที่ธนาคารกรุงไทย สาขา</div>
         </div>
       </div>
 
-      <BarcodePlaceholder payload="099400015501651201840269015690184200" />
-      <div className="mono" style={{fontSize: 9, textAlign: "center", marginTop: 2}}>099400015501 65120184026901 569018421 4200</div>
+      <div style={{marginTop: 10, padding: "8px 10px", background: "var(--info-soft)", borderRadius: 6, border: "1px dashed var(--info)"}}>
+        <div style={{fontSize: 10, fontWeight: 700, color: "var(--info)", marginBottom: 2}}>ข้อมูลสำหรับเจ้าหน้าที่ธนาคารกรุงไทย</div>
+        <div className="flex" style={{justifyContent: "space-between", fontSize: 10}}>
+          <span className="muted">บัญชี: 123-4-56789-0</span>
+          <span className="muted">REF: 65120184</span>
+        </div>
+      </div>
     </div>
 
     <div className="flex" style={{gap: 8, marginTop: 14}}>
-      <button className="btn grow" style={{justifyContent: "center"}}><Icon name="download" size={12} /> บันทึก PDF</button>
-      <button className="btn grow primary" style={{justifyContent: "center"}}><Icon name="print" size={12} /> พิมพ์</button>
+      <button className="btn grow" style={{justifyContent: "center"}} onClick={() => handleAction("ใบแจ้งชำระเงิน (PDF)", "download")}><Icon name="download" size={12} /> บันทึก PDF</button>
+      <button className="btn grow primary" style={{justifyContent: "center"}} onClick={() => handleAction("ใบแจ้งชำระเงิน", "print")}><Icon name="print" size={12} /> พิมพ์</button>
     </div>
 
     <Banner kind="warn" style={{marginTop: 12}}>

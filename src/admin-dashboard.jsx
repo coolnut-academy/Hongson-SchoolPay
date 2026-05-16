@@ -13,11 +13,11 @@ const AdminDashboard = ({ setRoute }) => {
 
   const activity = [
     { t: "08:42", who: "ระบบ", text: "ยืนยันการชำระอัตโนมัติจาก KrungThai Webhook · ใบแจ้งชำระ INV-2569-018421", amount: 4200, status: "paid" },
-    { t: "08:31", who: "ระบบ", text: "นำเข้าไฟล์ Settlement จาก Counter Service · 248 รายการ", amount: 942600, status: "paid" },
+    { t: "08:31", who: "ระบบ", text: "ยืนยันการชำระอัตโนมัติ QR PromptPay · INV-2569-018407 · 4,200.00 บาท", amount: 4200, status: "paid" },
     { t: "08:14", who: "ครูชนัญพร", text: "ออกใบเสร็จเลขที่ R6907-00482 ให้นักเรียน เด็กชายภาคิน วงศ์อิสรกุล", amount: 7800, status: "receipt_issued" },
     { t: "08:02", who: "ระบบ", text: "ตรวจพบยอดไม่ตรง · INV-2569-018307 โอน 3,800.00 จากยอด 4,200.00", amount: 3800, status: "under_review" },
     { t: "07:55", who: "ระบบ", text: "ปิดใบแจ้งชำระอัตโนมัติ (เกินกำหนด) · 12 รายการ", amount: 0, status: "expired" },
-    { t: "07:48", who: "ครูชนัญพร", text: "หมุนรหัสลับ Webhook สำหรับ SCB QR · เหตุผล: หมุนรหัสประจำไตรมาส", amount: 0, status: "issued" },
+    { t: "07:48", who: "ครูชนัญพร", text: "ยืนยันการชำระ KTB สาขา · INV-2569-018220 · ตรวจสลิปแล้ว", amount: 7800, status: "paid" },
   ];
 
   return (
@@ -40,7 +40,7 @@ const AdminDashboard = ({ setRoute }) => {
               <button className="btn primary">ภาคเรียนนี้</button>
               <button className="btn">ปีการศึกษานี้</button>
             </div>
-            <button className="btn"><Icon name="download" size={13} />ส่งออก</button>
+            <button className="btn" onClick={() => handleAction("รายงานภาพรวมการเงิน", "export")}><Icon name="download" size={13} />ส่งออก</button>
           </div>
         </div>
 
@@ -77,9 +77,9 @@ const AdminDashboard = ({ setRoute }) => {
             <div className="kpi-delta">42 รอเจ้าหน้าที่อนุมัติ</div>
           </div>
           <div className="kpi">
-            <div className="kpi-label"><Icon name="store" size={13} color="#5C6878" /> Counter Service รอตัดบัญชี</div>
-            <div className="kpi-value" style={{fontSize: 20}}>฿186,400</div>
-            <div className="kpi-delta">จะนำเข้าวันถัดไป 17:00</div>
+            <div className="kpi-label"><Icon name="bank" size={13} color="#5C6878" /> KTB สาขา · รอยืนยันวันนี้</div>
+            <div className="kpi-value" style={{fontSize: 20}}>8</div>
+            <div className="kpi-delta">สลิปรอเจ้าหน้าที่ตรวจสอบ</div>
           </div>
           <div className="kpi">
             <div className="kpi-label"><Icon name="recon" size={13} color="#5C6878" /> Webhook สำเร็จ 24 ชม.</div>
@@ -130,10 +130,9 @@ const AdminDashboard = ({ setRoute }) => {
                 </div>
               </div>
               <div className="legend">
-                <div className="legend-item"><span className="legend-sw" style={{background: "var(--emerald)"}} /> Mobile Banking QR · 72%</div>
-                <div className="legend-item"><span className="legend-sw" style={{background: "var(--info-soft)"}} /> Counter Service · 16%</div>
-                <div className="legend-item"><span className="legend-sw" style={{background: "var(--gold-soft)"}} /> โอนรอตรวจสอบ · 8%</div>
-                <div className="legend-item"><span className="legend-sw" style={{background: "var(--danger-soft)"}} /> ปัญหา · 4%</div>
+                <div className="legend-item"><span className="legend-sw" style={{background: "var(--emerald)"}} /> Mobile Banking QR · 88%</div>
+                <div className="legend-item"><span className="legend-sw" style={{background: "var(--info-soft)"}} /> KTB สาขา · 8%</div>
+                <div className="legend-item"><span className="legend-sw" style={{background: "var(--danger-soft)"}} /> รอตรวจสอบ · 4%</div>
               </div>
             </div>
           </div>
@@ -192,11 +191,11 @@ const AdminDashboard = ({ setRoute }) => {
                 </div>
                 <div className="list-row" style={{cursor: "pointer"}}>
                   <div style={{width: 30, height: 30, borderRadius: 8, background: "var(--info-soft)", color: "var(--info)", display: "grid", placeItems: "center"}}>
-                    <Icon name="store" size={14} />
+                    <Icon name="bank" size={14} />
                   </div>
                   <div className="grow">
-                    <div style={{fontSize: 13, fontWeight: 500}}>นำเข้าไฟล์ Settlement วันนี้</div>
-                    <div className="tiny muted">Counter Service · ETA 17:00 · ยอด 186,400.00 บาท</div>
+                    <div style={{fontSize: 13, fontWeight: 500}}>ยืนยันการชำระ KTB สาขา 8 รายการ</div>
+                    <div className="tiny muted">มีสลิปรอตรวจสอบ · กดเพื่อเปิด Reconciliation</div>
                   </div>
                   <Icon name="chevronRight" size={14} color="#5C6878" />
                 </div>
