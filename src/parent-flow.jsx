@@ -56,7 +56,7 @@ const PhoneScreen = ({ label, children }) => (
 
 const PhoneHeader = () => (
   <div className="phone-header">
-    <div className="school-mark">หส</div>
+    <img src="assets/logo.png" alt="Logo" style={{width: 32, height: 32, borderRadius: 6}} />
     <div className="grow" style={{minWidth: 0}}>
       <div className="phone-title" style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>โรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ</div>
       <div className="phone-subtitle">ระบบรับชำระเงินโรงเรียน</div>
@@ -453,7 +453,7 @@ const PaymentNoticePreview = () => (
 
     <div className="card" style={{padding: 12, background: "#fff", border: "1px solid var(--border)"}}>
       <div style={{borderBottom: "2px solid var(--navy)", paddingBottom: 8, marginBottom: 8, display: "flex", gap: 10, alignItems: "center"}}>
-        <div className="school-mark" style={{width: 28, height: 28, fontSize: 11}}>หส</div>
+        <img src="assets/logo.png" alt="Logo" style={{width: 36, height: 36, borderRadius: 6}} />
         <div>
           <div style={{fontSize: 12, fontWeight: 700, color: "var(--navy)"}}>โรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ</div>
           <div className="tiny muted">ใบแจ้งชำระเงิน Payment Notice</div>

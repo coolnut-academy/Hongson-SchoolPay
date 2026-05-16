@@ -971,6 +971,31 @@ a { color: inherit; }
   display: grid; place-items: center;
   font-size: 11px;
 }
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.school-crest, .school-mark {
+  background: var(--navy-soft);
+  color: var(--navy);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-weight: 700;
+  overflow: hidden;
+}
+
+.school-crest img, .school-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .method-icon {
   width: 44px; height: 44px;
   border-radius: 8px;
@@ -1236,4 +1261,88 @@ a { color: inherit; }
 @keyframes toastIn {
   from { bottom: 0; opacity: 0; }
   to { bottom: 24px; opacity: 1; }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  /* Hide all UI elements */
+  .sidebar, 
+  .topbar, 
+  .page-head, 
+  .kpis, 
+  .tabs, 
+  .card-head,
+  .filters,
+  .pagination,
+  .btn,
+  .avatar,
+  .banner,
+  .modal-backdrop,
+  .sidebar-brand,
+  .card:not(.print-container),
+  .flex-col:not(.print-container) {
+    display: none !important;
+  }
+
+  /* Reset layout for print */
+  body, html {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+  }
+  
+  .app {
+    display: block !important;
+    min-width: auto !important;
+    background: #fff !important;
+  }
+
+  .main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    display: block !important;
+    background: #fff !important;
+  }
+
+  .grid-2 {
+    display: block !important;
+  }
+
+  /* Target the receipt specifically */
+  .receipt {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    background: #fff !important;
+  }
+
+  /* Force colors and backgrounds for watermarks and badges */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ensure page breaks if multiple receipts are printed */
+  .receipt {
+    page-break-after: always;
+  }
+
+  /* Hide print container background/borders if any */
+  .card.print-container {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
 }

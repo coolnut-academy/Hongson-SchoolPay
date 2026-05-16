@@ -107,8 +107,8 @@ const AdminReceipts = ({ setRoute }) => {
           </div>
 
           {/* RIGHT: preview pane */}
-          <div className="flex-col" style={{gap: 12}}>
-            <div className="card">
+          <div className="flex-col print-container" style={{gap: 12}}>
+            <div className="card print-container">
               <div className="tabs" style={{padding: "0 12px"}}>
                 <div className={"tab " + (tab === "preview" ? "active" : "")} onClick={() => setTab("preview")}>
                   <Icon name="eye" size={13} /> ใบเสร็จรับเงิน
@@ -119,6 +119,12 @@ const AdminReceipts = ({ setRoute }) => {
                 <div className={"tab " + (tab === "qr" ? "active" : "")} onClick={() => setTab("qr")}>
                   <Icon name="qr" size={13} /> QR ตรวจสอบความถูกต้อง
                 </div>
+                <div style={{flex: 1}} />
+                {tab === "preview" && (
+                  <button className="btn sm" style={{margin: "auto 12px"}} onClick={() => window.print()}>
+                    <Icon name="print" size={12} /> พิมพ์ใบเสร็จ
+                  </button>
+                )}
               </div>
               <div style={{padding: 16, background: "var(--bg-soft)"}}>
                 {tab === "preview" && <ReceiptPreview />}
@@ -167,7 +173,7 @@ const ReceiptPreview = () => {
       <div className="receipt" style={{maxWidth: 720, padding: "36px 44px"}}>
         <div className="receipt-watermark">ORIGINAL</div>
         <div className="receipt-head">
-          <div className="school-crest">ตราโรงเรียน<br/>SCHOOL<br/>SEAL</div>
+          <img src="assets/logo.png" alt="Logo" style={{width: 60, height: 60, borderRadius: 8}} />
           <div>
             <h2 className="receipt-school-name">โรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ</h2>
             <div className="receipt-school-sub">
