@@ -31,7 +31,7 @@ const Sidebar = ({ route, setRoute }) => {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand" onClick={() => setRoute("dashboard")} style={{cursor: "pointer"}}>
-        <img src="assets/logo.png" alt="Logo" className="brand-logo" style={{width: 38, height: 38, borderRadius: 8, objectFit: "cover"}} />
+        <img src="assets/logo-schoolpay.png" alt="Logo" className="brand-logo" style={{width: 38, height: 38, borderRadius: 8, objectFit: "cover"}} />
         <div style={{minWidth: 0}}>
           <div className="brand-name">ระบบรับชำระเงินโรงเรียน</div>
           <div className="brand-sub" style={{whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis"}}>โรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ</div>

@@ -90,7 +90,7 @@ const AdminAudit = ({ setRoute }) => {
                   <td>
                     <div className="flex" style={{gap: 8}}>
                       {e.role === "system" ?
-                        <div className="avatar-sm" style={{background: "transparent"}}><img src="assets/logo.png" alt="S" style={{width: "100%", height: "100%", borderRadius: "50%"}} /></div> :
+                        <div className="avatar-sm" style={{background: "transparent"}}><img src="assets/logo-schoolpay.png" alt="S" style={{width: "100%", height: "100%", borderRadius: "50%"}} /></div> :
                         <Avatar name={e.actor} size={26} />}
                       <div className="stack">
                         <span style={{fontSize: 12.5, fontWeight: 500}}>{e.actor}</span>

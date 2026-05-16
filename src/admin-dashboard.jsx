@@ -148,7 +148,7 @@ const AdminDashboard = ({ setRoute }) => {
             <div>
               {activity.map((a, i) => (
                 <div className="list-row" key={i}>
-                  <div className="avatar-sm" style={{background: "transparent"}}>{a.who === "ระบบ" ? <img src="assets/logo.png" alt="S" style={{width: "100%", height: "100%", borderRadius: "50%"}} /> : a.who.split("")[0]}</div>
+                  <div className="avatar-sm" style={{background: "transparent"}}>{a.who === "ระบบ" ? <img src="assets/logo-schoolpay.png" alt="S" style={{width: "100%", height: "100%", borderRadius: "50%"}} /> : a.who.split("")[0]}</div>
                   <div className="grow" style={{minWidth: 0}}>
                     <div style={{fontSize: 13}}>{a.text}</div>
                     <div className="tiny muted" style={{marginTop: 2}}>

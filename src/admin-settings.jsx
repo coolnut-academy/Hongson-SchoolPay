@@ -364,7 +364,7 @@ const ReceiptTemplateTab = () => {
             <h3 style={{margin: "0 0 10px"}}>โลโก้ และตราโรงเรียน</h3>
             <div className="grid-2-equal" style={{gap: 12}}>
               <div className="card" style={{padding: 12, textAlign: "center", borderStyle: "dashed"}}>
-                <img src="assets/logo.png" alt="Logo" style={{width: 64, height: 64, margin: "0 auto", borderRadius: 8, display: "block"}} />
+                <img src="assets/logo-schoolpay.png" alt="Logo" style={{width: 64, height: 64, margin: "0 auto", borderRadius: 8, display: "block"}} />
                 <div className="tiny muted" style={{marginTop: 8}}>logo.png · 1024×1024</div>
                 <button className="btn sm" style={{marginTop: 6}}><Icon name="upload" size={11} /> เปลี่ยน</button>
               </div>

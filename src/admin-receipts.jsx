@@ -173,7 +173,7 @@ const ReceiptPreview = () => {
       <div className="receipt" style={{maxWidth: 720, padding: "36px 44px"}}>
         <div className="receipt-watermark">ORIGINAL</div>
         <div className="receipt-head">
-          <img src="assets/logo.png" alt="Logo" style={{width: 60, height: 60, borderRadius: 8}} />
+          <img src="assets/logo-schoolpay.png" alt="Logo" style={{width: 60, height: 60, borderRadius: 8}} />
           <div>
             <h2 className="receipt-school-name">โรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ</h2>
             <div className="receipt-school-sub">

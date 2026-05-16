@@ -1,4 +1,4 @@
-# <img src="assets/logo.png" width="48" align="center" style="border-radius: 8px;"> SchoolPay — ระบบรับชำระเงินโรงเรียน (Prototype)
+# <img src="assets/logo-schoolpay.png" width="48" align="center" style="border-radius: 8px;"> SchoolPay — ระบบรับชำระเงินโรงเรียน (Prototype)
 
 > **ต้นแบบ (Design Prototype)** สำหรับโรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ  
 > ช่องทางชำระ: **QR PromptPay เท่านั้น** | ต้นทุน: **฿0/เดือน**
