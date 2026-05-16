@@ -1,34 +1,29 @@
 # SchoolPay — ระบบรับชำระเงินโรงเรียน (Prototype)
 
 > **ต้นแบบ (Design Prototype)** สำหรับโรงเรียนห้องสอนศึกษา ในพระอุปถัมภ์ฯ  
-> ยังไม่ใช่ระบบที่พร้อมรับเงินจริง — ต้องการ Backend ก่อนใช้งานจริง
+> ช่องทางชำระ: **QR PromptPay เท่านั้น** | ต้นทุน: **฿0/เดือน**
 
 ## 🌐 ดูต้นแบบ
 
-[**SchoolPay Prototype →**](https://coolnutmacbook.github.io/Hongson-SchoolPay/)
+[**SchoolPay Prototype →**](https://coolnut-academy.github.io/Hongson-SchoolPay/)
 
-## ✨ ฟีเจอร์ที่แสดงในต้นแบบ
+## ✨ ฟีเจอร์ในต้นแบบ
 
 ### มุมมองเจ้าหน้าที่การเงิน (Admin)
-- **Dashboard** — ภาพรวมยอดเก็บ, KPI, กราฟรายเดือน
-- **รอบเก็บเงิน** — สร้าง/จัดการรอบการเก็บเงิน
-- **ใบแจ้งชำระ** — รายการ + รายละเอียดพร้อม Timeline
-- **การชำระเงิน** — ธุรกรรมจากทุกช่องทาง (QR, Counter Service, โอนเงิน)
-- **ศูนย์กระทบยอด** — Matched / Unmatched / Manual Review
-- **ใบเสร็จรับเงิน** — ดู, ออก, พิมพ์ พร้อม Template เต็มรูปแบบ
-- **รายงาน** — ส่งออก CSV / Excel / PDF
-- **ตั้งค่าระบบ** — ผู้ให้บริการ, Counter Service, Webhook, เทมเพลตใบเสร็จ
-- **ประวัติการเปลี่ยนแปลง (Audit Log)**
+Dashboard · รอบเก็บเงิน · ใบแจ้งชำระ · การชำระเงิน · กระทบยอด · ใบเสร็จ · รายงาน · ตั้งค่า QR / Webhook · Audit Log
 
-### มุมมองผู้ปกครอง (Parent Flow)
-- **7 หน้าจอหลัก** — ค้นหา → เลือกวิธีชำระ → QR / Counter → รอยืนยัน → ใบเสร็จ → เอกสารเบิกค่าการศึกษาบุตร
-- **ใบแจ้งชำระ PDF** — พร้อม QR PromptPay + Barcode Counter Service
+### มุมมองผู้ปกครอง (QR Only — 6 หน้าจอ)
+ค้นหา → สแกน QR PromptPay → รอยืนยัน → ใบเสร็จ → เอกสารเบิกค่าการศึกษาบุตร
+
+## 💰 ต้นทุนจริงเมื่อ Deploy
+
+| รายการ | ค่าใช้จ่าย |
+|--------|-----------|
+| Vercel + Firebase (1,800 นักเรียน ปีละ 2 ครั้ง) | **฿0/เดือน** |
+| Bank API / QR | ฿0 (ผลักค่าธรรมเนียม 1–2% ให้ผู้ปกครอง) |
 
 ## 🛠 Stack
 
-| Component | Technology |
-|-----------|-----------|
-| UI | React 18 (UMD via CDN) |
 | Transpiler | Babel Standalone (browser) |
 | Styling | Vanilla CSS (design system) |
 | Fonts | Sarabun + IBM Plex Sans + IBM Plex Mono |

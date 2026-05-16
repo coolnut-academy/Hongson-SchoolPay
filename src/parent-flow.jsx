@@ -3,29 +3,28 @@
 const ParentFlow = () => {
   return (
     <div className="phone-stage" style={{minHeight: "calc(100vh - 60px)", padding: "32px 16px"}}>
-      <div style={{maxWidth: 1620, margin: "0 auto"}}>
+      <div style={{maxWidth: 1220, margin: "0 auto"}}>
         <div style={{textAlign: "center", marginBottom: 24, padding: "0 16px"}}>
           <h2 style={{margin: "0 0 6px", fontSize: 18}}>ขั้นตอนการชำระเงินสำหรับผู้ปกครอง</h2>
           <p className="page-sub" style={{margin: 0}}>
-            หน้าจอผู้ปกครองออกแบบให้เรียบง่ายและทำงานได้ดีบนมือถือ · 7 หน้าจอหลักของเส้นทางการชำระเงิน
+            ชำระผ่าน QR PromptPay · สแกนผ่านแอพ Mobile Banking ทุกธนาคาร · 6 หน้าจอหลัก
           </p>
         </div>
 
         <div className="phone-multi">
           <PhoneScreen label="1 · ค้นหาใบแจ้งชำระ"><LookupScreen /></PhoneScreen>
-          <PhoneScreen label="2 · เลือกวิธีชำระเงิน"><MethodScreen /></PhoneScreen>
-          <PhoneScreen label="3 · ชำระด้วย QR"><QRScreen /></PhoneScreen>
+          <PhoneScreen label="2 · เลือกช่องทาง QR"><MethodScreen /></PhoneScreen>
+          <PhoneScreen label="3 · สแกน QR PromptPay"><QRScreen /></PhoneScreen>
         </div>
 
         <div className="phone-multi" style={{marginTop: 32}}>
-          <PhoneScreen label="4 · ชำระที่ Counter Service"><CounterScreen /></PhoneScreen>
-          <PhoneScreen label="5 · รอการยืนยัน"><StatusPendingScreen /></PhoneScreen>
-          <PhoneScreen label="6 · ยืนยันแล้ว · ดาวน์โหลดใบเสร็จ"><ReceiptReadyScreen /></PhoneScreen>
+          <PhoneScreen label="4 · รอการยืนยันจากธนาคาร"><StatusPendingScreen /></PhoneScreen>
+          <PhoneScreen label="5 · ยืนยันแล้ว · ดาวน์โหลดใบเสร็จ"><ReceiptReadyScreen /></PhoneScreen>
+          <PhoneScreen label="6 · ชุดเอกสารเบิกค่าการศึกษาบุตร"><ReimbursementScreen /></PhoneScreen>
         </div>
 
         <div className="phone-multi" style={{marginTop: 32}}>
-          <PhoneScreen label="7 · ชุดเอกสารเบิกค่าการศึกษาบุตร"><ReimbursementScreen /></PhoneScreen>
-          <PhoneScreen label="A · ใบแจ้งชำระ PDF"><PaymentNoticePreview /></PhoneScreen>
+          <PhoneScreen label="A · ใบแจ้งชำระ PDF (QR เท่านั้น)"><PaymentNoticePreview /></PhoneScreen>
         </div>
       </div>
     </div>
@@ -122,39 +121,33 @@ const MethodScreen = () => (
     {/* Amount */}
     <div className="parent-amount" style={{padding: "8px 0 16px"}}>
       <div className="label">ยอดที่ต้องชำระ</div>
-      <div className="value"><span className="cur">฿</span>4,200<span style={{fontSize: 18, color: "var(--muted)"}}>.00</span></div>
+      <div className="value"><span className="cur">฿</span>4,200<span style={{fontSize: 18, color: "var(--muted)"}}>. 00</span></div>
       <div className="sub">ใบแจ้งชำระเลขที่ <span className="mono">INV-2569-018421</span> · กำหนด 30 มิ.ย. 2569</div>
     </div>
 
-    <h3 style={{fontSize: 13, margin: "0 0 10px"}}>เลือกช่องทางชำระเงิน</h3>
-
-    <div className="flex-col" style={{gap: 8}}>
-      <div className="method-card qr selected">
-        <div className="method-icon"><Icon name="qr" size={20} /></div>
-        <div className="grow">
-          <div className="method-title">Mobile Banking QR</div>
-          <div className="method-desc">สแกน QR ผ่านแอพธนาคารของผู้ปกครอง · ระบบยืนยันยอดอัตโนมัติ</div>
-        </div>
-      </div>
-      <div className="method-card cs">
-        <div className="method-icon"><Icon name="store" size={20} /></div>
-        <div className="grow">
-          <div className="method-title">Counter Service / 7-Eleven</div>
-          <div className="method-desc">นำใบแจ้งชำระเงินไปชำระที่เคาน์เตอร์ · ค่าบริการ 10 บาท</div>
-        </div>
-      </div>
-      <div className="method-card bank">
-        <div className="method-icon"><Icon name="chat" size={20} /></div>
-        <div className="grow">
-          <div className="method-title">ติดต่อฝ่ายการเงิน</div>
-          <div className="method-desc">กรณีพิเศษ · นัดชำระเงินสดที่โรงเรียนหรือสอบถามรายละเอียดเพิ่มเติม</div>
-        </div>
+    <div className="flex" style={{gap: 8, alignItems: "center", padding: "10px 14px", background: "var(--navy-soft)", borderRadius: 8, marginBottom: 16}}>
+      <Icon name="qr" size={18} color="var(--navy)" />
+      <div>
+        <div style={{fontSize: 13, fontWeight: 600, color: "var(--navy)"}}>ชำระผ่าน QR PromptPay</div>
+        <div className="tiny muted">สแกนผ่านแอพธนาคารทุกธนาคาร · ยืนยันอัตโนมัติภายใน 5 นาที</div>
       </div>
     </div>
 
-    <button className="btn primary lg" style={{width: "100%", justifyContent: "center", marginTop: 16}}>
-      ดำเนินการต่อ <Icon name="arrowRight" size={14} />
+    <div className="flex-col" style={{gap: 8, marginBottom: 16}}>
+      {["KrungThai NEXT", "SCB Easy", "K PLUS", "Bangkok Bank", "Krungthai", "ทุกธนาคารที่รองรับ PromptPay"].map((b, i) => (
+        <div key={i} className="flex" style={{gap: 8, fontSize: 12.5, color: "var(--text-2)"}}>
+          <Icon name="check" size={13} color="var(--emerald)" />{b}
+        </div>
+      ))}
+    </div>
+
+    <button className="btn primary lg" style={{width: "100%", justifyContent: "center"}}>
+      รับ QR Code <Icon name="arrowRight" size={14} />
     </button>
+
+    <div className="tiny muted" style={{textAlign: "center", marginTop: 12}}>
+      ค่าธรรมเนียมการชำระ: ฿0 (โรงเรียนรับภาระให้)
+    </div>
   </>
 );
 

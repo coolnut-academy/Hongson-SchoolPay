@@ -53,8 +53,7 @@ const Sidebar = ({ route, setRoute }) => {
 
       <div className="nav-section" style={{marginTop: 10}}>การตั้งค่า</div>
       <NavItem id="settings-providers" iconName="settings" label="ตั้งค่าระบบ" children={[
-        { id: "settings-providers", label: "ผู้ให้บริการชำระเงิน" },
-        { id: "settings-counter", label: "Counter Service" },
+        { id: "settings-providers", label: "ผู้ให้บริการ QR PromptPay" },
         { id: "settings-webhook", label: "Webhook / รหัสลับ" },
         { id: "settings-receipt", label: "เทมเพลตใบเสร็จ" },
       ]} />

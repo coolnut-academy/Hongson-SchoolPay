@@ -46,12 +46,12 @@ const App = () => {
     case "invoices":         page = <AdminInvoiceDetail setRoute={setRoute} />; break;
     case "payments":         page = <AdminPayments setRoute={setRoute} />; break;
     case "reconciliation":   page = <AdminReconciliation setRoute={setRoute} />; break;
+
     case "receipts":         page = <AdminReceipts setRoute={setRoute} />; break;
     case "students":         page = <AdminStub title="นักเรียน" sub="รายชื่อนักเรียนทั้งหมด · 1,742 ราย" />; break;
     case "classes":          page = <AdminStub title="ชั้นเรียน" sub="โครงสร้างชั้นเรียนปีการศึกษา 2569" />; break;
     case "reports":          page = <AdminReports setRoute={setRoute} />; break;
     case "settings-providers": page = <AdminSettings tab="providers" setRoute={setRoute} />; break;
-    case "settings-counter":   page = <AdminSettings tab="counter" setRoute={setRoute} />; break;
     case "settings-webhook":   page = <AdminSettings tab="webhook" setRoute={setRoute} />; break;
     case "settings-receipt":   page = <AdminSettings tab="receipt" setRoute={setRoute} />; break;
     case "audit":              page = <AdminAudit setRoute={setRoute} />; break;

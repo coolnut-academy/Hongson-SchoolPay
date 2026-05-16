@@ -2,11 +2,9 @@
 
 const AdminSettings = ({ tab, setRoute }) => {
   const tabs = [
-    { id: "providers", label: "ผู้ให้บริการชำระเงิน", icon: "bank" },
-    { id: "counter",   label: "Counter Service",      icon: "store" },
+    { id: "providers", label: "ผู้ให้บริการ QR PromptPay", icon: "bank" },
     { id: "webhook",   label: "Webhook / รหัสลับ",     icon: "key" },
     { id: "receipt",   label: "เทมเพลตใบเสร็จ",       icon: "receipt" },
-    { id: "settlement",label: "Settlement &amp; Recon", icon: "recon" },
   ];
 
   return (
@@ -33,10 +31,8 @@ const AdminSettings = ({ tab, setRoute }) => {
 
           <div style={{padding: 24}}>
             {tab === "providers" && <ProvidersTab />}
-            {tab === "counter"   && <CounterTab />}
             {tab === "webhook"   && <WebhookTab />}
             {tab === "receipt"   && <ReceiptTemplateTab />}
-            {tab === "settlement" && <ProvidersTab />}
           </div>
         </div>
       </div>
