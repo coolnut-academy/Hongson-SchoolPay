@@ -1,0 +1,927 @@
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+console.log("Generating refined Hongson-SchoolPay-Executive-Proposal.pdf...");
+
+const htmlContent = `<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>ข้อเสนอโครงการเพื่อขออนุมัติจัดทำและพัฒนาระบบ Hongson-SchoolPay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm 12mm 14mm;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    font-family: 'Sarabun', 'TH Sarabun New', sans-serif;
+    font-size: 13.5pt;
+    line-height: 1.45;
+    color: #1e293b;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Prompt', 'Sarabun', sans-serif;
+    color: #0f172a;
+    margin-top: 0;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 16pt;
+    line-height: 1.3;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 4px;
+    margin-top: 4px;
+    margin-bottom: 10px;
+    color: #0c4a6e;
+  }
+
+  h3 {
+    font-size: 14pt;
+    line-height: 1.35;
+    color: #0369a1;
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 8px;
+    text-align: justify;
+    text-justify: inter-cluster;
+  }
+
+  .page-section {
+    page-break-before: always;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .first-page {
+    page-break-before: avoid;
+  }
+
+  /* Header & Footer on each content page */
+  .page-top-bar {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-bottom: 12px;
+    font-family: 'Prompt', sans-serif;
+  }
+
+  .page-bottom-bar {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10pt;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 4px;
+    font-family: 'Prompt', sans-serif;
+  }
+
+  /* Cover Page */
+  .cover-container {
+    height: 1020px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 3px double #0369a1;
+    padding: 35px 30px;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 50%, #f0f9ff 100%);
+  }
+
+  .cover-header {
+    text-align: center;
+  }
+
+  .garuda-logo {
+    width: 85px;
+    height: auto;
+    margin: 0 auto 12px auto;
+    display: block;
+  }
+
+  .cover-badge {
+    display: inline-block;
+    background: #0284c7;
+    color: #ffffff;
+    font-family: 'Prompt', sans-serif;
+    font-size: 11.5pt;
+    font-weight: 600;
+    padding: 4px 18px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  .cover-title {
+    font-size: 25pt;
+    font-weight: 700;
+    color: #0c4a6e;
+    margin-bottom: 6px;
+    font-family: 'Prompt', sans-serif;
+  }
+
+  .cover-subtitle {
+    font-size: 16.5pt;
+    color: #0369a1;
+    font-weight: 500;
+    margin-bottom: 14px;
+    font-family: 'Prompt', sans-serif;
+  }
+
+  .cover-divider {
+    width: 140px;
+    height: 3.5px;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    margin: 10px auto;
+    border-radius: 2px;
+  }
+
+  .cover-description {
+    font-size: 13pt;
+    color: #475569;
+    max-width: 620px;
+    margin: 0 auto 20px auto;
+    line-height: 1.55;
+  }
+
+  .cover-features-box {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 0 auto 15px auto;
+    width: 92%;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  }
+
+  .feature-pill {
+    display: inline-block;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 10.5pt;
+    color: #334155;
+    margin: 3px 2px;
+    font-weight: 500;
+  }
+
+  .cover-footer {
+    border-top: 1px solid #cbd5e1;
+    padding-top: 15px;
+    font-size: 12.5pt;
+  }
+
+  .cover-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cover-table td {
+    padding: 5px 10px;
+    font-size: 12.5pt;
+  }
+
+  /* Content Elements */
+  .callout {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 8px 0;
+    font-size: 12.5pt;
+  }
+
+  .callout.warning {
+    background: #fffbeb;
+    border-left-color: #d97706;
+  }
+
+  .callout.info {
+    background: #f0f9ff;
+    border-left-color: #0284c7;
+  }
+
+  .callout-title {
+    font-family: 'Prompt', sans-serif;
+    font-weight: 600;
+    font-size: 12.5pt;
+    margin-bottom: 2px;
+    color: #0f172a;
+  }
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    font-size: 11.5pt;
+    line-height: 1.35;
+  }
+
+  table.data-table th, table.data-table td {
+    border: 1px solid #cbd5e1;
+    padding: 5.5px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  table.data-table th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-family: 'Prompt', sans-serif;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  table.data-table tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10pt;
+    font-weight: 600;
+    font-family: 'Prompt', sans-serif;
+  }
+
+  .tag-green { background: #dcfce7; color: #15803d; }
+  .tag-blue { background: #e0f2fe; color: #0369a1; }
+  .tag-amber { background: #fef3c7; color: #b45309; }
+
+  /* Official Memo Sample Box */
+  .memo-box {
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    padding: 16px 22px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    margin: 8px 0;
+    font-size: 12.5pt;
+    line-height: 1.4;
+  }
+
+  .memo-garuda {
+    width: 50px;
+    height: auto;
+    display: block;
+    margin: 0 auto 3px auto;
+  }
+
+  .memo-header {
+    text-align: center;
+    font-size: 17pt;
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-family: 'Sarabun', sans-serif;
+  }
+
+  /* Signature Box */
+  .sign-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+  }
+
+  .sign-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+    background: #f8fafc;
+    font-size: 12pt;
+  }
+
+  .sign-line {
+    border-bottom: 1px dotted #475569;
+    width: 75%;
+    margin: 35px auto 6px auto;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER PAGE -->
+<div class="cover-container first-page">
+  <div class="cover-header">
+    <svg class="garuda-logo" viewBox="0 0 100 100" fill="#a81c1c">
+      <path d="M50 5 C45 15, 30 20, 20 28 C25 35, 35 38, 40 42 C30 46, 15 50, 5 65 C18 68, 30 63, 38 58 C32 68, 25 78, 20 90 C32 86, 42 78, 48 70 C49 78, 50 88, 50 95 C50 88, 51 78, 52 70 C58 78, 68 86, 80 90 C75 78, 68 68, 62 58 C70 63, 82 68, 95 65 C85 50, 70 46, 60 42 C65 38, 75 35, 80 28 C70 20, 55 15, 50 5 Z M50 25 C54 25, 56 28, 55 33 C53 38, 47 38, 45 33 C44 28, 46 25, 50 25 Z"/>
+    </svg>
+    <div class="cover-badge">เอกสารข้อเสนอโครงการเพื่อขออนุมัติจัดทำและพัฒนาระบบ</div>
+    <div class="cover-title">ระบบ Hongson-SchoolPay</div>
+    <div class="cover-subtitle">แพลตฟอร์มติดตามการชำระและค้างชำระเงินบำรุงการศึกษาและเงินสมาคมผู้ปกครองและครู</div>
+    <div class="cover-divider"></div>
+    <div class="cover-description">
+      ระบบบริหารจัดการงานการเงินและเชื่อมโยงงานทะเบียนสถานศึกษา สำหรับโรงเรียนมัธยมศึกษารัฐบาล สังกัดสำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.) พร้อมระบบสร้างบันทึกข้อความราชการตามระเบียบงานสารบรรณใน ๑ คลิก
+    </div>
+  </div>
+
+  <div class="cover-features-box">
+    <div style="font-family: 'Prompt'; font-weight: 600; font-size: 12pt; margin-bottom: 6px; color: #0f172a; text-align: center;">
+      จุดเด่นเชิงนวัตกรรม ธรรมาภิบาล และความคุ้มค่า (Key Innovations)
+    </div>
+    <div style="text-align: center;">
+      <span class="feature-pill"> แยกใบเสร็จ สพฐ. & สมาคมฯ ๑๐๐%</span>
+      <span class="feature-pill"> ซิงค์ทะเบียน ตัดหนี้สูญเด็กย้าย/ลาออก</span>
+      <span class="feature-pill"> 1-Click บันทึกข้อความ สพฐ. ตราครุฑ</span>
+      <span class="feature-pill"> สอดคล้อง พ.ร.บ. PDPA และ วินัยการคลัง</span>
+      <span class="feature-pill"> Zero Server Compute บน Vercel ($0 Cost)</span>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <table class="cover-table">
+      <tr>
+        <td style="width: 25%; font-weight: 600; text-align: right; color: #475569;">เสนอต่อ:</td>
+        <td style="font-weight: 600; color: #0f172a;">ผู้อำนวยการโรงเรียน และ คณะกรรมการสถานศึกษาขั้นพื้นฐาน</td>
+      </tr>
+      <tr>
+        <td style="font-weight: 600; text-align: right; color: #475569;">จัดทำและเสนอโดย:</td>
+        <td>กลุ่มบริหารงบประมาณและแผนงาน / งานการเงินและบัญชีของสถานศึกษา</td>
+      </tr>
+      <tr>
+        <td style="font-weight: 600; text-align: right; color: #475569;">สถานะโครงการ:</td>
+        <td><strong style="color: #0284c7;">เสนอขออนุมัติหลักการและดำเนินการจัดทำระบบ (Phase ๑ - ๖)</strong></td>
+      </tr>
+      <tr>
+        <td style="font-weight: 600; text-align: right; color: #475569;">ปีงบประมาณ:</td>
+        <td>๒๕๖๙ (ภาคเรียนที่ ๑ - ๒)</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- PAGE 2: EXECUTIVE SUMMARY & PROBLEM STATEMENT -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๑: บทสรุปผู้บริหารและสภาพปัญหาเดิม</span>
+  </div>
+
+  <h2>๑. บทสรุปผู้บริหารและสภาพปัญหาเดิม (Executive Summary & Problem Statement)</h2>
+
+  <p>
+    สถานศึกษาในสังกัดสำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน (สพฐ.) มีภารกิจสำคัญในการบริหารจัดการเงินนอกงบประมาณประเภท <strong>"เงินบำรุงการศึกษา"</strong> และ <strong>"เงินสมาคมผู้ปกครองและครู"</strong> เพื่อสนับสนุนการจัดกระบวนการเรียนรู้และพัฒนาคุณภาพการศึกษา อย่างไรก็ดี จากการดำเนินงานที่ผ่านมา พบประเด็นปัญหาสำคัญ ๔ ประการที่ส่งผลกระทบต่อประสิทธิภาพการบริหารงานและความเสี่ยงทางวินัยการเงินการคลัง:
+  </p>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ ปัญหาหลักที่พบในการบริหารการเงินสถานศึกษาในปัจจุบัน:</div>
+    <ol style="margin-top: 4px; margin-bottom: 4px; padding-left: 18px; line-height: 1.35;">
+      <li><strong>ยอดหนี้ค้างลอยจากการย้ายห้องเรียนหรือลาออก:</strong> ข้อมูลระหว่าง "งานทะเบียนนักเรียน" และ "งานการเงิน" ขาดการเชื่อมโยงแบบทันท่วงที เมื่อนักเรียนย้ายสถานศึกษา ลาออก หรือย้ายห้องเรียน ยอดหนี้เดิมยังคงค้างอยู่ในบัญชีห้องเดิม ทำให้ยอดลูกหนี้รวมของโรงเรียนคลาดเคลื่อนจากความเป็นจริง</li>
+      <li><strong>ความเสี่ยงจากการปะปนประเภทเงินและใบเสร็จ:</strong> โรงเรียนมีเงิน ๒ แหล่งหลัก คือ เงินบำรุงการศึกษา (สพฐ.) ซึ่งเป็นเงินรายได้สถานศึกษา และเงินสมาคมผู้ปกครองและครู ซึ่งเป็นเงินของนิติบุคคลภายนอก หากบันทึกรับเงินรวมกันหรือออกใบเสร็จปะปนกัน จะขัดต่อ พ.ร.บ.วินัยการเงินการคลังของรัฐ พ.ศ. ๒๕๖๑</li>
+      <li><strong>ภาระงานเอกสารซ้ำซ้อนของคุณครูที่ปรึกษา:</strong> ครูที่ปรึกษาต้องจัดพิมพ์ "บันทึกข้อความรายงานการติดตามค่าเทอม" เสนอฝ่ายบริหารด้วยโปรแกรมประมวลผลคำ (Word) ทุกสิ้นเดือนหรือสิ้นภาคเรียน ทำให้เสียเวลาการจัดการเรียนการสอนและมีความผิดพลาดของข้อมูลตัวเลขสูง</li>
+      <li><strong>ข้อจำกัดด้านงบประมาณระบบสารสนเทศ:</strong> ระบบบริหารโรงเรียนเชิงพาณิชย์ในท้องตลาดมีค่าธรรมเนียมรายปีสูง (หลักหมื่นถึงหลักแสนบาท) และไม่ตรงกับระเบียบราชการของ สพฐ. อย่างแท้จริง</li>
+    </ol>
+  </div>
+
+  <h3>วัตถุประสงค์ของการพัฒนาระบบ Hongson-SchoolPay</h3>
+  <ul style="margin-top: 4px; margin-bottom: 4px; padding-left: 18px; line-height: 1.35;">
+    <li>พัฒนาระบบติดตามสถานะการชำระเงินและยอดค้างชำระแบบ Real-time แยกรายห้องเรียนและแยกตามประเภทเงินได้อย่างถูกต้อง ๑๐๐%</li>
+    <li>จัดทำระบบ <strong>"บันทึกข้อความราชการอัจฉริยะ (1-Click Official Memo Generator)"</strong> ตามแบบฟอร์ม สพฐ. ตราครุฑ เพื่อให้ครูที่ปรึกษาสั่งพิมพ์เสนอฝ่ายบริหารได้ทันทีในคลิกเดียว</li>
+    <li>เชื่อมโยงวงจรชีวิตนักเรียน (ย้ายห้อง, ลาออก, พักการเรียน) กับการปรับปรุงยอดหนี้ (Debt Recalculation & Void) อัตโนมัติ ป้องกันการเกิดหนี้ค้างลอย</li>
+    <li>ยกระดับความโปร่งใส ตรวจสอบได้ตามระเบียบราชการ และคุ้มครองข้อมูลส่วนบุคคลตาม พ.ร.บ. PDPA พ.ศ. ๒๕๖๒</li>
+    <li>รันระบบบนสถาปัตยกรรม Cloud แบบ <strong>Zero Server Compute</strong> ไม่ก่อให้เกิดภาระงบประมาณค่าเช่าเซิร์ฟเวอร์แก่โรงเรียนตลอดไป</li>
+  </ul>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๒</span>
+  </div>
+</div>
+
+<!-- PAGE 3: FEE STRUCTURE & CLASSIFICATION -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๒: โครงสร้างประเภทเงินและบัญชีรับชำระ</span>
+  </div>
+
+  <h2>๒. โครงสร้างประเภทเงินและบัญชีรับชำระ (Fee Structure & Classification)</h2>
+
+  <p>
+    ระบบได้รับการออกแบบโครงสร้างตามระเบียบกระทรวงศึกษาธิการและข้อกำหนดของโรงเรียน โดยแบ่งออกเป็น <strong>๒ กลุ่มใบเสร็จหลัก และ ๑๐ ประเภทย่อย</strong> อย่างเคร่งครัด เพื่อป้องกันความสับสนทางบัญชี:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 13%;">รหัส</th>
+        <th style="width: 25%;">กลุ่มใบเสร็จ</th>
+        <th style="width: 42%;">รายการค่าธรรมเนียม</th>
+        <th style="width: 20%;">กลุ่มเป้าหมาย</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SPT-111</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๑ เงินบำรุงการศึกษา (ค่าจ้างครู บุคลากรและครูต่างชาติ)</td>
+        <td>ทุกระดับชั้น (ม.๑ - ม.๖)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-112</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๒ เงินห้องเรียนวิทย์พิเศษ ม.ปลาย</td>
+        <td>ม.๔ - ม.๖ (วิทย์พิเศษ)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-113</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๓ เงินห้องเรียนวิทย์คอม ม.ปลาย</td>
+        <td>ม.๔ - ม.๖ (วิทย์คอมฯ)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-114</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๔ เงินห้องเรียนวิทย์สุขภาพ ม.ปลาย</td>
+        <td>ม.๔ - ม.๖ (วิทย์สุขภาพ)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-115</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๕ เงินห้องเรียนเตรียมวิทย์ ม.ต้น</td>
+        <td>ม.๑ - ม.๓ (เตรียมวิทย์)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-116</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๖ เงินห้องเรียนเตรียมวิทย์คอม ม.ต้น</td>
+        <td>ม.๑ - ม.๓ (เตรียมวิทย์คอม)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-117</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๗ เงินห้องเรียนเตรียมวิทย์ภาษา ม.ต้น</td>
+        <td>ม.๑ - ม.๓ (เตรียมภาษา)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-118</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๑.๘ เงินประกันอุบัติเหตุหมู่นักเรียน</td>
+        <td>ทุกระดับชั้น (ปีละ ๑ ครั้ง)</td>
+      </tr>
+      <tr>
+        <td><strong>SPT-120</strong></td>
+        <td>๑. ใบเสร็จ สพฐ.</td>
+        <td>๑.๒ เงินระดมทรัพยากรเพื่อการศึกษา</td>
+        <td>ตามมติกรรมการสถานศึกษา</td>
+      </tr>
+      <tr style="background-color: #f0fdf4;">
+        <td><strong>ASC-210</strong></td>
+        <td>๒. ใบเสร็จสมาคมฯ</td>
+        <td>๒.๑ เงินค่าสมัครสมาคมผู้ปกครองและครู</td>
+        <td>นักเรียนเข้าใหม่ (ม.๑, ม.๔)</td>
+      </tr>
+      <tr style="background-color: #f0fdf4;">
+        <td><strong>ASC-220</strong></td>
+        <td>๒. ใบเสร็จสมาคมฯ</td>
+        <td>๒.๒ เงินค่าบำรุงสมาคมผู้ปกครองและครูรายปี</td>
+        <td>ทุกระดับชั้น (ปีละ ๑ ครั้ง)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <div class="callout-title"> ระบบคำนวณและตั้งหนี้อัตโนมัติ (Dynamic Fee Assignment Engine):</div>
+    เจ้าหน้าที่การเงินกำหนดอัตราเงินในแต่ละภาคเรียนเพียงครั้งเดียว ระบบจะจับคู่ระดับชั้น (Grade) และแผนการเรียน (Program) ของนักเรียนแต่ละคนเพื่อสร้างใบแจ้งหนี้ (Invoice) ที่ถูกต้อง ๑๐๐% โดยไม่มีข้อผิดพลาดจากการคีย์มือ
+  </div>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๓</span>
+  </div>
+</div>
+
+<!-- PAGE 4: LEGAL & REGULATORY COMPLIANCE -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๓: ความสอดคล้องกับระเบียบและกฎหมายของรัฐ</span>
+  </div>
+
+  <h2>๓. ความสอดคล้องกับ พ.ร.บ. และระเบียบราชการที่เกี่ยวข้อง (Legal & Regulatory Compliance)</h2>
+
+  <p>
+    เนื่องจากโรงเรียนมีฐานะเป็นสถานศึกษาของรัฐ สังกัด สพฐ. กระทรวงศึกษาธิการ การนำระบบเทคโนโลยีสารสนเทศมาใช้ในกระบวนการรับเงินและจัดการข้อมูล จะต้องถูกต้องตามกฎหมาย ระเบียบวินัยการคลัง และมาตรฐานการคุ้มครองข้อมูลอย่างครบถ้วน:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 27%;">กฎหมาย / ระเบียบราชการ</th>
+        <th style="width: 33%;">ข้อกำหนดสำคัญ</th>
+        <th style="width: 40%;">ความสอดคล้องของ Hongson-SchoolPay</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>๑. พ.ร.บ. วินัยการเงินการคลังของรัฐ พ.ศ. ๒๕๖๑ (มาตรา ๖๑)</strong></td>
+        <td>การจัดเก็บเงินรายได้สถานศึกษา (เงินนอกงบประมาณ) ต้องโปร่งใส ตรวจสอบย้อนหลังได้ มีระบบบัญชีที่รัดกุม</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>มีระบบ Audit Trail บันทึกทุกธุรกรรมการเงิน, มีการรันเลขที่ใบเสร็จรับเงินอัตโนมัติที่แก้ไขย้อนหลังไม่ได้, แยกประเภทเงินชัดเจน</td>
+      </tr>
+      <tr>
+        <td><strong>๒. ระเบียบ ศธ. ว่าด้วยการเก็บเงินบำรุงการศึกษาฯ พ.ศ. ๒๕๕๔ และประกาศ สพฐ.</strong></td>
+        <td>เรียกเก็บได้เฉพาะรายการที่ได้รับความเห็นชอบจากคณะกรรมการสถานศึกษาฯ และ สพม. ห้ามเก็บเกินอัตรา</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>ระบบมี Term Fee Template ล็อกเพดานยอดเงินตามประกาศ ไม่อนุญาตให้เจ้าหน้าที่แก้ไขตัวเลขตามอำเภอใจ</td>
+      </tr>
+      <tr>
+        <td><strong>๓. พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล พ.ศ. ๒๕๖๒ (PDPA)</strong></td>
+        <td>การคุ้มครองข้อมูลนักเรียน (ผู้เยาว์) เลขบัตรประชาชน ๑๓ หลัก เบอร์โทร และหลักฐานสลิปการเงิน</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>จำกัดสิทธิ์ครูเห็นเฉพาะห้องที่ปรึกษาของตนเอง (Need-to-know basis), เข้ารหัสข้อมูล TLS/AES-256, ตัดข้อมูลพิกัด GPS ออกจากสลิป</td>
+      </tr>
+      <tr>
+        <td><strong>๔. พ.ร.บ. ว่าด้วยการกระทำความผิดเกี่ยวกับคอมพิวเตอร์ (ฉบับที่ ๒) พ.ศ. ๒๕๖๐</strong></td>
+        <td>ต้องเก็บรักษาข้อมูลการจราจรทางคอมพิวเตอร์ (Log files) ไม่น้อยกว่า ๙๐ วัน</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>บันทึก User Action, Timestamp, และรหัสผู้ดำเนินการในคอลเลกชัน <code>hsp_audit_logs</code> ตลอดอายุปีการศึกษา (มากกว่า ๑ ปี)</td>
+      </tr>
+      <tr>
+        <td><strong>๕. ระเบียบสำนักนายกรัฐมนตรี ว่าด้วยงานสารบรรณ (ฉบับที่ ๔ พ.ศ. ๒๕๖๔)</strong></td>
+        <td>แบบฟอร์มบันทึกข้อความ ตราครุฑ ๓ ซม. ฟอนต์สารบรรณ การเสนอเรื่องตามลำดับชั้น และสารบรรณอิเล็กทรอนิกส์</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>ระบบสร้างบันทึกข้อความราชการมาตรฐาน สพฐ. ตราครุฑ ๓ ซม. ฟอนต์ TH Sarabun PSK ๑๖pt สั่งพิมพ์เสนอ ผอ. หรือแนบ e-Saraban ได้ทันที</td>
+      </tr>
+      <tr>
+        <td><strong>๖. ประมวลกฎหมายแพ่งและพาณิชย์ (ว่าด้วยสมาคม)</strong></td>
+        <td>สมาคมผู้ปกครองและครูเป็น "นิติบุคคลเอกชน" แยกต่างหากจากโรงเรียน ห้ามนำเงินเข้าบัญชีโรงเรียนหรือปะปนใบเสร็จ</td>
+        <td><span class="tag tag-green">สอดคล้อง ๑๐๐%</span><br/>ระบบแยกสมุดบัญชีและแยกใบเสร็จ ๒ เล่มเด็ดขาด (เล่ม สพฐ. และ เล่ม สมาคมฯ) กระทบยอดตรงกับสมุดบัญชีธนาคารแต่ละนิติบุคคล</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๔</span>
+  </div>
+</div>
+
+<!-- PAGE 5: SYSTEM ARCHITECTURE & ZERO COMPUTE -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๔: สถาปัตยกรรมทางเทคนิคและกลยุทธ์ Zero Vercel Compute</span>
+  </div>
+
+  <h2>๔. สถาปัตยกรรมทางเทคนิคและกลยุทธ์ Zero Vercel Compute</h2>
+
+  <p>
+    ระบบ Hongson-SchoolPay เลือกใช้สถาปัตยกรรม <strong>Client-Side Heavy Single Page Application (SPA)</strong> ร่วมกับบริการ Cloud ชั้นนำของโลก เพื่อให้ระบบทำงานรวดเร็ว มีเสถียรภาพ และ **ไม่ก่อให้เกิดค่าใช้จ่ายส่วนเกิน (Zero-Cost / Free-Tier Safe)**:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">องค์ประกอบ</th>
+        <th style="width: 25%;">เทคโนโลยีที่เลือกใช้</th>
+        <th style="width: 50%;">หน้าที่และเหตุผลทางสถาปัตยกรรม</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Code Repository & CI/CD</strong></td>
+        <td>GitHub (Private Repository)</td>
+        <td>ควบคุม Source Code เวอร์ชันของระบบ มีระบบความปลอดภัยสากล และ Build Deployment อัตโนมัติ</td>
+      </tr>
+      <tr>
+        <td><strong>Frontend Static Hosting</strong></td>
+        <td>Vercel Global Edge CDN</td>
+        <td>ให้บริการกระจายไฟล์ Static (HTML, CSS, JS) รวดเร็วผ่าน Edge Servers ทั่วโลก <strong>โดยไม่มีการรัน Serverless Function แม้แต่ครั้งเดียว (0 Invocations)</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Frontend Application</strong></td>
+        <td>React ๑๘ + TypeScript + Vite</td>
+        <td>แอปพลิเคชัน SPA ที่มีความเร็วสูง เขียนด้วย TypeScript เพื่อลดข้อผิดพลาดในระดับโค้ด</td>
+      </tr>
+      <tr>
+        <td><strong>Authentication</strong></td>
+        <td>Firebase Authentication</td>
+        <td>เชื่อมต่อระบบยืนยันตัวตนเดิมของโรงเรียน (เช่น Google Workspace โดเมนโรงเรียน) ปลอดภัยและได้มาตรฐาน</td>
+      </tr>
+      <tr>
+        <td><strong>Database & Security</strong></td>
+        <td>Cloud Firestore (NoSQL)</td>
+        <td>ฐานข้อมูล Real-time มีระบบป้องกันการเข้าถึงผ่าน Firestore Security Rules ระดับ Document-Level ไม่ต้องมี API Server คั่นกลาง</td>
+      </tr>
+      <tr>
+        <td><strong>File Storage</strong></td>
+        <td>Firebase Cloud Storage</td>
+        <td>จัดเก็บรูปภาพสลิปโอนเงิน โดยมีระบบบีบอัดภาพหน้าบ้านก่อนอัปโหลดเพื่อประหยัดพื้นที่คลาวด์</td>
+      </tr>
+      <tr>
+        <td><strong>In-Browser Processing</strong></td>
+        <td>SheetJS (XLSX) & pdfmake</td>
+        <td>ประมวลผลไฟล์ Excel งานทะเบียนและแปลงเอกสาร PDF บันทึกข้อความราชการในเบราว์เซอร์ผู้ใช้โดยตรง ๑๐๐%</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout info">
+    <div class="callout-title"> ทำไมระบบจึงไม่มีค่าบริการเซิร์ฟเวอร์บน Vercel (Zero Server Compute):</div>
+    โดยทั่วไป การรันระบบผ่านคลาวด์มักมีค่าบริการจากจำนวน Request หรือเวลาที่เซิร์ฟเวอร์ประมวลผล แต่ Hongson-SchoolPay ถูกออกแบบให้ Vercel ทำหน้าที่เป็นเพียง "ตู้เก็บเอกสารสถิต (Static File Host)" ส่งโค้ดมาทำงานในเบราว์เซอร์ของครูและเจ้าหน้าที่ ส่วนการบันทึกข้อมูลจะติดต่อกับ Google Firebase โดยตรง ทำให้โควตา Serverless Compute บน Vercel มีค่าเป็น <strong>๐ ครั้งตลอดไป</strong>
+  </div>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๕</span>
+  </div>
+</div>
+
+<!-- PAGE 6: OFFICIAL MEMO SPECIFICATION -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๕: ระบบบันทึกข้อความราชการอัจฉริยะ (1-Click Official Memo)</span>
+  </div>
+
+  <h2>๕. ระบบบันทึกข้อความราชการอัจฉริยะ (1-Click Official Memo Generator)</h2>
+
+  <p>
+    เพื่อลดภาระงานเอกสารของคุณครูที่ปรึกษาตามข้อเรียกร้องของผู้บริหารและครู ระบบได้ติดตั้งเครื่องมือสร้างบันทึกข้อความราชการที่ถูกต้องตามระเบียบงานสารบรรณสำนักนายกรัฐมนตรี ๑๐๐%:
+  </p>
+
+  <div class="memo-box">
+    <svg class="memo-garuda" viewBox="0 0 100 100" fill="#a81c1c">
+      <path d="M50 5 C45 15, 30 20, 20 28 C25 35, 35 38, 40 42 C30 46, 15 50, 5 65 C18 68, 30 63, 38 58 C32 68, 25 78, 20 90 C32 86, 42 78, 48 70 C49 78, 50 88, 50 95 C50 88, 51 78, 52 70 C58 78, 68 86, 80 90 C75 78, 68 68, 62 58 C70 63, 82 68, 95 65 C85 50, 70 46, 60 42 C65 38, 75 35, 80 28 C70 20, 55 15, 50 5 Z"/>
+    </svg>
+    <div class="memo-header">บันทึกข้อความ</div>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 6px; font-size: 12pt;">
+      <tr>
+        <td colspan="2"><strong>ส่วนราชการ:</strong> โรงเรียน...........................................................................................................</td>
+      </tr>
+      <tr>
+        <td style="width: 50%;"><strong>ที่:</strong> ศธ ๐๔xxx/..............</td>
+        <td style="width: 50%;"><strong>วันที่:</strong> ... เดือน .................... พ.ศ. ๒๕๖๙</td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>เรื่อง:</strong> รายงานผลการติดตามการชำระเงินบำรุงการศึกษาและเงินสมาคมผู้ปกครองและครู ภาคเรียนที่ .../๒๕๖๙</td>
+      </tr>
+      <tr>
+        <td colspan="2"><strong>เรียน:</strong> ผู้อำนวยการโรงเรียน..................................................................................................</td>
+      </tr>
+    </table>
+
+    <p style="text-indent: 2cm; margin-bottom: 4px; font-size: 12pt;">
+      ตามที่โรงเรียนได้เปิดภาคเรียนที่ .../๒๕๖๙ และมีกำหนดการรับชำระเงินบำรุงการศึกษาและเงินสมาคมผู้ปกครองและครู นั้น ข้าพเจ้า..................................................... ครูที่ปรึกษาชั้นมัธยมศึกษาปีที่ ...../..... ขอรายงานผลการติดตาม ดังนี้:
+    </p>
+    <p style="text-indent: 1.2cm; margin-bottom: 4px; font-size: 12pt;">
+      ๑. จำนวนนักเรียนในห้องเรียนทั้งสิ้น ..... คน ชำระเงินครบแล้ว ..... คน คงเหลือนักเรียนที่ค้างชำระเงิน จำนวน ..... คน คิดเป็นยอดเงินรวมทั้งสิ้น ................ บาท
+    </p>
+    <p style="text-indent: 1.2cm; margin-bottom: 4px; font-size: 12pt;">
+      ๒. รายละเอียดการค้างชำระเงินแยกตามรายประเภทเงิน: <em>(ระบบดึงข้อมูลอัตโนมัติ)</em>
+    </p>
+    
+    <table style="width: 100%; border-collapse: collapse; margin: 4px 0; font-size: 11pt;" border="1">
+      <tr style="background: #f1f5f9; text-align: center;">
+        <th>ที่</th><th>รหัสนักเรียน</th><th>ชื่อ - นามสกุล</th><th>สพฐ. (บาท)</th><th>สมาคมฯ (บาท)</th><th>รวมค้าง (บาท)</th>
+      </tr>
+      <tr>
+        <td style="text-align: center;">๑</td><td style="text-align: center;">๖๙๑๐๑</td><td>เด็กชายภานุพงศ์ ศรีวิชัย</td><td style="text-align: right;">๑,๕๐๐</td><td style="text-align: right;">๓๐๐</td><td style="text-align: right;"><strong>๑,๘๐๐</strong></td>
+      </tr>
+      <tr>
+        <td style="text-align: center;">๒</td><td style="text-align: center;">๖๙๑๐๕</td><td>เด็กหญิงวิมลมาศ บรรจง</td><td style="text-align: right;">๒,๐๐๐</td><td style="text-align: right;">-</td><td style="text-align: right;"><strong>๒,๐๐๐</strong></td>
+      </tr>
+    </table>
+
+    <p style="text-indent: 2cm; margin-top: 6px; margin-bottom: 4px; font-size: 12pt;">จึงเรียนมาเพื่อโปรดทราบและพิจารณา</p>
+    <div style="text-align: right; margin-top: 10px; margin-right: 30px; font-size: 12pt;">
+      (ลงชื่อ)..........................................................<br/>
+      (..........................................................)<br/>
+      ครูที่ปรึกษาชั้นมัธยมศึกษาปีที่ ...../.....
+    </div>
+  </div>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๖</span>
+  </div>
+</div>
+
+<!-- PAGE 7: FUTURE COST ANALYSIS & FEASIBILITY -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๖: การวิเคราะห์ต้นทุน ความคุ้มค่า และค่าใช้จ่ายในอนาคต</span>
+  </div>
+
+  <h2>๖. การวิเคราะห์ต้นทุน ความคุ้มค่า และค่าใช้จ่ายในอนาคต (Future Cost Analysis)</h2>
+
+  <p>
+    หนึ่งในข้อพิจารณาสำคัญของฝ่ายบริหารคือความคุ้มค่าและภาระผูกพันทางการเงินในอนาคต ตารางด้านล่างแสดงการเปรียบเทียบโควตาบริการฟรี (Free Tier) กับการใช้งานจริงของโรงเรียนขนาด ๑,๕๐๐ - ๒,๕๐๐ คน:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>บริการ Cloud</th>
+        <th>โควตาฟรี (Free Tier)</th>
+        <th>ปริมาณใช้งานจริงของโรงเรียน</th>
+        <th>สถานะค่าใช้จ่าย</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Vercel Bandwidth</strong></td>
+        <td>100 GB ต่อเดือน</td>
+        <td>ประมาณ 5 - 10 GB ต่อเดือน</td>
+        <td><span class="tag tag-green">ฟรี ($0)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Vercel Function Compute</strong></td>
+        <td>100,000 executions</td>
+        <td><strong>0 ครั้ง (ไม่มีเซิร์ฟเวอร์บน Vercel)</strong></td>
+        <td><span class="tag tag-green">ฟรี ($0)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Firebase Firestore Reads</strong></td>
+        <td>50,000 reads ต่อวัน</td>
+        <td>ประมาณ 8,000 - 15,000 reads ต่อวัน</td>
+        <td><span class="tag tag-green">ฟรี ($0)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Firebase Firestore Writes</strong></td>
+        <td>20,000 writes ต่อวัน</td>
+        <td>ประมาณ 500 - 1,500 writes ต่อวัน</td>
+        <td><span class="tag tag-green">ฟรี ($0)</span></td>
+      </tr>
+      <tr>
+        <td><strong>Firebase Storage</strong></td>
+        <td>5,000 MB (5 GB รวม)</td>
+        <td>ปีละ ~1,000 MB (บีบอัดรูปเหลือ 100KB)</td>
+        <td><span class="tag tag-green">ฟรี ($0) นาน 4-5 ปี</span></td>
+      </tr>
+      <tr>
+        <td><strong>Firebase Authentication</strong></td>
+        <td>ไม่จำกัดจำนวนบัญชี</td>
+        <td>ครูและบุคลากร 100 - 200 บัญชี</td>
+        <td><span class="tag tag-green">ฟรี ($0)</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>การวิเคราะห์ค่าใช้จ่ายที่อาจเกิดขึ้นในอนาคตและแนวทางป้องกัน (Worst-case Scenarios)</h3>
+  <div class="callout warning">
+    <div class="callout-title"> ปัจจัยเสี่ยงที่อาจทำให้เกิดค่าใช้จ่ายในอนาคต (Potential Future Cost Drivers):</div>
+    <ol style="margin-top: 4px; margin-bottom: 4px; padding-left: 18px; line-height: 1.35;">
+      <li>
+        <strong>กรณีรูปภาพสลิปสะสมเกิน ๕ GB ใน Firebase Cloud Storage (หลังจากใช้งานไป ๔-๕ ปี):</strong>
+        <ul>
+          <li><strong>แนวทางป้องกันที่ ๑ (ค่าใช้จ่าย ๐ บาท):</strong> เมื่อสิ้นสุดแต่ละปีการศึกษาและผ่านการตรวจสอบบัญชีจาก สตง. แล้ว ฝ่ายการเงินสามารถกดปุ่ม "Export & Archive ข้อมูลเก่า" บันทึกลง External Harddisk ของโรงเรียน และทำการลบรูปสลิปเก่าที่มีอายุเกิน ๒ ปีออกจากระบบ ทำให้พื้นที่ไม่เคยเต็ม</li>
+          <li><strong>แนวทางป้องกันที่ ๒ (กรณีต้องการเก็บบน Cloud ต่อไป):</strong> ค่าบริการ Cloud Storage ส่วนเกินคิดที่ 0.026 USD ต่อ GB ต่อเดือน (หรือประมาณ <strong>๙ - ๑๐ บาทต่อ ๑ GB ต่อเดือน</strong>) คิดเป็นค่าใช้จ่ายไม่เกิน ๑๐๐ - ๑๕๐ บาทต่อปี ซึ่งอยู่ในวิสัยที่สถานศึกษาบริหารจัดการได้</li>
+        </ul>
+      </li>
+      <li>
+        <strong>ค่าโดเมนเนมของโรงเรียน (Domain Name):</strong>
+        <ul>
+          <li>โรงเรียนสังกัด สพฐ. มีโดเมนทางการ <code>.ac.th</code> อยู่แล้ว สามารถสร้าง Subdomain เช่น <code>schoolpay.school.ac.th</code> ชี้มายัง Vercel ได้โดยตรง <strong>ไม่มีค่าใช้จ่ายเพิ่มแม้แต่บาทเดียว</strong></li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๗</span>
+  </div>
+</div>
+
+<!-- PAGE 8: ROADMAP & APPROVAL SIGN-OFF -->
+<div class="page-section">
+  <div class="page-top-bar">
+    <span>โครงการพัฒนาระบบ Hongson-SchoolPay</span>
+    <span>ส่วนที่ ๗ - ๘: แผนงานส่งมอบและส่วนลงนามขออนุมัติ</span>
+  </div>
+
+  <h2>๗. แผนงานการพัฒนาและส่งมอบ ๖ เฟส (Implementation Roadmap)</h2>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 15%;">เฟส (Phase)</th>
+        <th style="width: 45%;">ขอบเขตงานสำคัญ</th>
+        <th style="width: 25%;">ผลลัพธ์ที่ส่งมอบ</th>
+        <th style="width: 15%;">การเชื่อมต่อ Auth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Phase ๑</strong></td>
+        <td>วางรากฐานระบบ, UI Shell, Dev Role Switcher จำลอง ๕ สิทธิ์</td>
+        <td>เว็บแอปต้นแบบทดสอบได้ ๕ สิทธิ์</td>
+        <td><span class="tag tag-amber">Mock Switcher</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase ๒</strong></td>
+        <td>จัดการประเภทเงิน สพฐ. ๑๐ รายการ + สมาคมฯ ๒ รายการ และ Matrix ค่าเทอม</td>
+        <td>ระบบคำนวณและตั้งหนี้รายบุคคล</td>
+        <td><span class="tag tag-amber">Mock Switcher</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase ๓</strong></td>
+        <td>ซิงค์ทะเบียนนักเรียน Excel (DMC/SGS), ย้ายห้องเรียน, ตัดหนี้สูญเมื่อลาออก</td>
+        <td>ระบบทะเบียนแก้หนี้ค้างลอย</td>
+        <td><span class="tag tag-amber">Mock Switcher</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase ๔</strong></td>
+        <td>พอร์ทัลครูที่ปรึกษา, รับชำระเงิน, ออกใบเสร็จ ๒ เล่ม, พิมพ์หนังสือเตือน</td>
+        <td>ระบบการเงินและใบเสร็จ ๒ เล่ม</td>
+        <td><span class="tag tag-amber">Mock Switcher</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase ๕</strong></td>
+        <td>ระบบสร้างบันทึกข้อความ สพฐ. ตราครุฑ ๑ คลิก & แดชบอร์ดผู้บริหาร</td>
+        <td>บันทึกข้อความราชการมาตรฐาน A4</td>
+        <td><span class="tag tag-amber">Mock Switcher</span></td>
+      </tr>
+      <tr>
+        <td><strong>Phase ๖ (Final)</strong></td>
+        <td>เชื่อมต่อ Firebase Auth เดิม, ตั้งค่า Superadmin, Security Rules, Deploy Vercel</td>
+        <td>ระบบเปิดใช้งานจริงบน Production</td>
+        <td><span class="tag tag-green">Live Auth Bridge</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2 style="margin-top: 14px;">๘. ส่วนลงนามเพื่อพิจารณาและอนุมัติโครงการ (Executive Approval & Sign-off)</h2>
+
+  <div class="sign-grid">
+    <div class="sign-box">
+      <strong>ผู้เสนอโครงการ</strong><br/>
+      <div class="sign-line"></div>
+      (....................................................................)<br/>
+      ตำแหน่ง ครูการเงิน / เจ้าหน้าที่การเงินสถานศึกษา<br/>
+      วันที่ ...... เดือน ........................ พ.ศ. ๒๕๖๙
+    </div>
+
+    <div class="sign-box">
+      <strong>ผู้เห็นชอบโครงการ</strong><br/>
+      <div class="sign-line"></div>
+      (....................................................................)<br/>
+      ตำแหน่ง รองผู้อำนวยการกลุ่มบริหารงบประมาณและแผนงาน<br/>
+      วันที่ ...... เดือน ........................ พ.ศ. ๒๕๖๙
+    </div>
+  </div>
+
+  <div style="margin-top: 15px; border: 2px solid #0284c7; border-radius: 8px; padding: 14px; text-align: center; background: #f0f9ff;">
+    <strong style="font-size: 14pt; color: #0c4a6e;">คำสั่งการ / การอนุมัติของผู้อำนวยการสถานศึกษา</strong><br/>
+    <div style="margin: 8px 0; font-size: 12.5pt;">
+      [ &nbsp; ] อนุมัติให้ดำเนินการจัดทำและพัฒนาระบบตามข้อเสนอโครงการ<br/>
+      [ &nbsp; ] อื่นๆ ................................................................................................................................
+    </div>
+    <div style="width: 50%; border-bottom: 1px dotted #0369a1; margin: 30px auto 8px auto;"></div>
+    (............................................................................................)<br/>
+    ผู้อำนวยการโรงเรียน...................................................................<br/>
+    วันที่ ...... เดือน ........................ พ.ศ. ๒๕๖๙
+  </div>
+
+  <div class="page-bottom-bar">
+    <span>Hongson-SchoolPay: Executive Proposal</span>
+    <span>หน้า ๘</span>
+  </div>
+</div>
+
+</body>
+</html>
+`;
+
+const htmlPath = path.join(__dirname, 'proposal_template.html');
+const pdfPath = path.join(__dirname, 'Hongson-SchoolPay-Executive-Proposal.pdf');
+
+fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+console.log('Refined HTML template written to:', htmlPath);
+
+const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
+const cmd = '"' + edgePath + '" --headless=new --disable-gpu --run-all-compositor-stages-before-draw --print-to-pdf-no-header --print-to-pdf="' + pdfPath + '" "' + htmlPath + '"';
+
+console.log('Executing Edge headless command with --print-to-pdf-no-header...');
+try {
+  execSync(cmd, { stdio: 'inherit' });
+  console.log('PDF successfully refined and generated at:', pdfPath);
+} catch (err) {
+  console.error('Error generating PDF with Edge:', err);
+  process.exit(1);
+}
