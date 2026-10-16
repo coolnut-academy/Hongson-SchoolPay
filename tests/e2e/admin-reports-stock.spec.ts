@@ -1,0 +1,92 @@
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+
+test("stock cursor reaches the last received book and prior movements", async ({ page, browserName }) => {
+  await page.goto("/app/receipts/movements");
+  await page.getByRole("button", { name: "รับเข้าสต็อก", exact: true }).click();
+  await page.getByLabel("เลขเล่ม หนึ่งเลขต่อบรรทัด").fill(Array.from({ length: 25 }, (_, i) => `DEMO-CURSOR-${i + 1}`).join("\n"));
+  await page.getByLabel("จำนวนที่ตรวจนับ").fill("25");
+  await page.getByRole("button", { name: "ตรวจสอบรับสต็อก", exact: true }).click();
+  await page.getByRole("button", { name: "ยืนยันรับสต็อก", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "รับสต็อกเพิ่มแล้ว" })).toBeVisible();
+  await page.getByRole("navigation", { name: "แบ่งหน้าทะเบียนเล่ม" }).getByRole("button", { name: "ถัดไป", exact: true }).click();
+  await page.getByRole("button", { name: "เปิดใช้ DEMO-CURSOR-25", exact: true }).filter({ visible: true }).click();
+  await page.getByLabel("ผู้ถือเล่มที่รับมอบ").fill("ผู้ถือสาธิต");
+  await page.getByRole("button", { name: "ยืนยันเปิดใช้เล่ม", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "เปิดใช้เล่มแล้ว" })).toBeVisible();
+  await page.getByRole("navigation", { name: "แบ่งหน้าการเคลื่อนไหว" }).getByRole("button", { name: "ถัดไป", exact: true }).click();
+  await expect(page.getByRole("region", { name: "รายการเคลื่อนไหวเล่ม", exact: true }).locator("tbody tr")).toHaveCount(1);
+  await page.getByRole("navigation", { name: "แบ่งหน้าการเคลื่อนไหว" }).getByRole("button", { name: "ก่อนหน้า", exact: true }).click();
+  await expect(page.getByRole("region", { name: "รายการเคลื่อนไหวเล่ม", exact: true }).locator("tbody tr")).toHaveCount(25);
+  const colors = await page.locator(".shell-logout").evaluate(element => ({ text: getComputedStyle(element).color, background: getComputedStyle(element).backgroundColor }));
+  const luminance = (color: string) => color.match(/[\d.]+/g)!.slice(0, 3).map(Number).map(value => value / 255).map(value => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
+  const pair = [luminance(colors.text), luminance(colors.background)].sort((a, b) => b - a);
+  expect((pair[0] + 0.05) / (pair[1] + 0.05)).toBeGreaterThanOrEqual(4.5);
+  await page.screenshot({ path: `artifacts/screenshots/${browserName}-stock-cursor-1440.png`, fullPage: true });
+});
+
+test("admin diff/reason, last-admin rejection and assigned-room revocation", async ({ page }) => {
+  await page.goto("/app/admin/users");
+  await page.getByRole("button", { name: "จัดการสิทธิ์ นางสาวปิยาภรณ์ สุขใจ" }).filter({ visible: true }).click();
+  await page.getByLabel("เปิดใช้งานบุคลากร").uncheck();
+  await page.getByLabel("เหตุผลการเปลี่ยนสิทธิ์").fill("ทดสอบป้องกันผู้ดูแลคนสุดท้าย");
+  await page.getByRole("button", { name: "ตรวจสอบการเปลี่ยนสิทธิ์", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(1);
+  await expect(page.getByRole("dialog").last()).toContainText("ใช้งาน → ระงับ");
+  await page.getByRole("button", { name: "ยืนยันเปลี่ยนสิทธิ์", exact: true }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "ผู้ดูแลระบบคนสุดท้าย" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "ทิ้งการแก้ไข", exact: true }).click();
+  await page.getByRole("button", { name: "จัดการสิทธิ์ นางสาวศิริพร แสงทอง" }).filter({ visible: true }).click();
+  await page.getByLabel("ม.2/1", { exact: true }).uncheck();
+  await page.getByLabel("เหตุผลการเปลี่ยนสิทธิ์").fill("สิ้นสุดการมอบหมายห้องสาธิต");
+  await page.getByRole("button", { name: "ตรวจสอบการเปลี่ยนสิทธิ์", exact: true }).click();
+  await page.getByRole("button", { name: "ยืนยันเปลี่ยนสิทธิ์", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "ผู้ใช้งานและสิทธิ์", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.getByRole("link", { name: "ประวัติการดำเนินงาน", exact: true }).click();
+  await expect(page.locator("main")).toContainText("เปลี่ยนสิทธิ์บุคลากร");
+  await page.getByRole("button", { name: "สาธิต", exact: true }).click();
+  await page.getByLabel("บทบาทจำลอง").selectOption("homeroom_teacher");
+  await expect(page.getByRole("heading", { name: "ประวัติการดำเนินงาน", exact: true })).toBeVisible();
+  if (await page.locator('.dev-toggle[aria-expanded="true"]').count()) await page.getByRole("button", { name: "สาธิต", exact: true }).click();
+  await page.getByRole("link", { name: "ห้องที่รับผิดชอบ", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "ยังไม่ได้รับมอบหมายห้อง", exact: true })).toBeVisible();
+});
+test("report validation blocks missing templates, draft bypass and broken USED links", async ({ page }) => {
+  await page.goto("/app/reports?kind=receipt_ledger&year=2570");
+  await page.getByRole("button", { name: "ตรวจสอบข้อมูล", exact: true }).click();
+  await expect(page.getByRole("alert")).toContainText("G04");
+  await page.getByLabel("ตัวอย่างฉบับร่าง · ข้อมูลยังไม่ครบ").check();
+  await expect(page.getByRole("button", { name: "XLSX ไม่พร้อมใช้งาน", exact: true })).toBeDisabled();
+  await page.getByRole("button", { name: "สาธิต", exact: true }).click();
+  await page.getByLabel("สถานการณ์จำลอง").selectOption("report-invalid");
+  await page.getByRole("button", { name: "สาธิต", exact: true }).click();
+  await expect(page.getByRole("list", { name: "ผลการตรวจสอบ" })).toContainText("USED ไม่มีรายการเชื่อมโยง");
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect((await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa"]).analyze()).violations).toEqual([]);
+    await page.screenshot({ path: `artifacts/screenshots/reports-${width}.png`, fullPage: true });
+  }
+});
+test("stock receives explicit identifiers, issues a holder and blocks a partial return", async ({ page }) => {
+  await page.goto("/app/receipts/movements");
+  await page.getByRole("button", { name: "รับเข้าสต็อก", exact: true }).click();
+  await page.getByLabel("เลขเล่ม หนึ่งเลขต่อบรรทัด").fill("DEMO-STOCK-BROWSER");
+  await page.getByRole("button", { name: "ตรวจสอบรับสต็อก", exact: true }).click();
+  await page.getByRole("button", { name: "ยืนยันรับสต็อก", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "รับสต็อกเพิ่มแล้ว" })).toBeVisible();
+  await page.getByRole("button", { name: "เปิดใช้ DEMO-STOCK-BROWSER", exact: true }).filter({ visible: true }).click();
+  await page.getByLabel("ผู้ถือเล่มที่รับมอบ").fill("ผู้ถือเล่มสาธิต");
+  await page.getByRole("button", { name: "ยืนยันเปิดใช้เล่ม", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "เปิดใช้เล่มแล้ว" })).toBeVisible();
+  await page.getByRole("button", { name: "ตรวจนับคืน DEMO-STOCK-BROWSER", exact: true }).filter({ visible: true }).click();
+  await page.getByLabel("ผู้รับคืน", { exact: false }).fill("ผู้รับคืนสาธิต");
+  await page.getByLabel("ตรวจนับหน้าใช้แล้ว", { exact: true }).fill("0");
+  await page.getByLabel("ตรวจนับหน้ายกเลิก", { exact: true }).fill("0");
+  await page.getByLabel("ตรวจนับหน้าว่าง", { exact: true }).fill("49");
+  await page.getByRole("button", { name: "ตรวจสอบการกระทบยอด", exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText("จำนวนตรวจนับไม่ครบ 50 หน้า");
+  await expect(page.getByRole("button", { name: "ยืนยันรับคืนครบเล่ม", exact: true })).toBeDisabled();
+});

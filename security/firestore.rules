@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Quarantine baseline only. G01/G07/G08/G11 and the live command proof are
+    // unresolved. No role, including superadmin, can activate financial writes.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

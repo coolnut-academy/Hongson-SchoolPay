@@ -1,0 +1,3 @@
+Sanitized local emulator result; verbose host/environment diagnostics omitted.
+Emulator quarantine baseline passed: 27 direct REST denials across unauthenticated access and five role fixtures; rejected multi-document commits leave the seed unchanged. No live RBAC or positive financial-write proof is claimed.
++  Script exited successfully (code 0) 
