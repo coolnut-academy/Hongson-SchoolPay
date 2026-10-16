@@ -1,12 +1,12 @@
 # Hongson-SchoolPay — Design system
 
-Revision: 2026-10-16 · UI baseline v1 · Thai-first · White / Green / Silver.
+Revision: 2026-10-16 · UI refresh v2 · Thai-first · Paper / Charcoal / Muted green.
 
 Read [ARCHITECTURE_RISKS.md](ARCHITECTURE_RISKS.md) first. Confirmed audited rules outrank visual decisions. This document fixes visual choices for implementation; it does not authorize live integration or changes to school policy.
 
 ## 1. Visual direction
 
-An academic finance office: white working surfaces, forest-green navigation and primary actions, cool silver structure, generous but purposeful spacing. Financial figures lead; decoration stays quiet. The only dark surface is the staff sidebar and the student outstanding-balance panel. Use crisp borders, restrained corner radii and flat charts. No stock photography, glass effects, gradient backgrounds, decorative currency icons, oversized hero area or invented school crest. Until an approved crest is supplied, use a 32px square `HS` typographic monogram and the exact product wordmark `Hongson-SchoolPay`.
+An academic finance office: warm paper canvas, white working surfaces and navigation, charcoal text, and muted green reserved for primary actions and selection. Neutral information notices avoid competing with warning and error states. Financial figures lead; decoration stays quiet. The student outstanding-balance panel retains a dark surface. Use crisp borders, restrained corner radii and flat charts. No stock photography, glass effects, gradient backgrounds, decorative currency icons or invented school crest. Until an approved crest is supplied, use a 32px square `HS` typographic monogram and the exact product wordmark `Hongson-SchoolPay`. The entry page pairs its introduction with the student lookup, followed by a separate staff section.
 
 Staff screens prioritize scanning, number alignment and keyboard flow. Student screens prioritize one clear balance, readable line items and private read-only access. Share tokens, components, terminology and financial states across roles. Do not use a different dashboard theme for each role.
 
@@ -16,53 +16,38 @@ Define these once in `src/styles/tokens.css`; component styles reference variabl
 
 ```css
 :root {
-  --canvas: #F4F6F5;
-  --surface: #FFFFFF;
-  --surface-subtle: #EEF2F0;
-  --silver: #D7DEDA;
-  --border: #D7DEDA;
-  --control-border: #76877E;
-  --text: #182C23;
-  --text-secondary: #52645B;
-  --text-muted: #617268;
-  --brand: #14633F;
-  --brand-hover: #104F32;
-  --brand-pressed: #0C3E27;
-  --brand-subtle: #E8F3EC;
-  --sidebar: #103E2B;
-  --sidebar-active: #21573F;
-  --on-dark: #FFFFFF;
-  --on-dark-muted: #C5D9CE;
-  --success: #14633F;
-  --success-bg: #E8F3EC;
-  --warning: #805400;
-  --warning-bg: #FFF4D6;
-  --danger: #A52A32;
-  --danger-bg: #FDECEF;
-  --info: #245A78;
-  --info-bg: #EAF2F8;
-  --focus: #245A78;
-  --overlay: rgb(16 38 27 / 40%);
-  --shadow-card: 0 1px 2px rgb(16 38 27 / 4%);
-  --shadow-overlay: 0 16px 48px rgb(16 38 27 / 16%);
+  --canvas: #f7f7f4;
+  --surface: #ffffff;
+  --surface-subtle: #f1f2ee;
+  --silver: #d5d8d1;
+  --border: #dedfd8;
+  --control-border: #858b81;
+  --text: #252a24;
+  --text-secondary: #555d52;
+  --text-muted: #697064;
+  --brand: #3e5340;
+  --brand-hover: #304332;
+  --brand-pressed: #253627;
+  --brand-subtle: #edf0e8;
+  --sidebar: #28362c;
+  --sidebar-active: #e9ede4;
+  --on-dark: #ffffff;
+  --on-dark-muted: #d0d8cd;
+  --success: #3e5b43;
+  --success-bg: #edf2e9;
+  --warning: #795b26;
+  --warning-bg: #f8f2e6;
+  --danger: #a13e38;
+  --danger-bg: #fbefec;
+  --info: #555d52;
+  --info-bg: #f1f2ee;
+  --focus: #3e5340;
+  --overlay: rgb(20 24 21 / 48%);
+  --shadow-card: 0 2px 4px rgb(27 33 26 / 2%);
+  --shadow-overlay: 0 24px 80px -16px rgb(20 24 21 / 28%), 0 4px 16px rgb(20 24 21 / 8%);
   --radius-control: 8px;
   --radius-card: 12px;
-  --radius-dialog: 16px;
-  --radius-pill: 999px;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
-  --z-sticky: 10;
-  --z-nav: 20;
-  --z-overlay: 40;
-  --z-dialog: 50;
-  --z-toast: 60;
+  --radius-dialog: 14px;
 }
 ```
 
@@ -108,7 +93,7 @@ Finance split: available width ≥1056px yields `minmax(0, 1fr) 344px` with 24px
 | Element | Locked specification |
 |---|---|
 | Primary button | Brand fill, white text, 44px minimum height, 16px horizontal padding, 8px radius; one per task region |
-| Secondary button | White fill, control-border outline, text color; same geometry |
+| Secondary button | White fill, subtle border, text color; same geometry |
 | Tertiary/link action | Brand text, underline for inline links; 44px hit area for standalone actions |
 | Destructive button | Danger fill only inside explicit reason/confirmation flow |
 | Input/select | 44px minimum height; 16px input text; 12px horizontal padding; label above; helper/error below |
@@ -117,14 +102,17 @@ Finance split: available width ≥1056px yields `minmax(0, 1fr) 344px` with 24px
 | Badge | 28px minimum visual height, 8px horizontal padding, icon 14px + text; not a button |
 | Icon | Shared 20px outline icons, 1.75–2px stroke; use one icon library/system; decorative icons aria-hidden |
 | Table | 44px header, minimum 56px rows, 16px horizontal cells; amount columns aligned; full names wrap |
-| Detail drawer | 480px desktop, max 100vw; full-screen mobile; heading, close button, scroll body; no nested drawer |
-| Confirm dialog | 520px desktop max, `calc(100vw - 32px)` mobile; bounded height and scrolling body |
+| Detail drawer | 540px desktop, max 100vw; full-screen mobile; fixed header and scrolling body; no nested drawer |
+| Confirm dialog | 560px desktop max, `calc(100vw - 32px)` mobile; header/footer do not shrink; body scrolls independently |
+| Document preview | 800px desktop max; same viewport bounds; metric columns respond to the content container width |
 | Toast | Bottom right desktop, above bottom navigation mobile; never the only record of a financial result |
 | Skeleton | Match final geometry; no fake numeric data while loading |
 
 Buttons have hover/pressed/focus/disabled/submitting states. Disabled controls expose a nearby reason, not just low opacity. Focus uses 3px `--focus` outline plus 2px white offset; on dark surfaces use white ring. Do not remove outlines. A submitting button says `กำลังบันทึก…`; its accessible name retains the action meaning. Click target remains stable while spinner appears.
 
 Opening a drawer moves focus to its heading; Tab stays inside while modal; Escape closes unless an explicit irreversible request is currently unresolved, in which case offer “return to workspace” without claiming cancellation. Closing restores focus to the trigger. For confirmation dialogs focus the title/summary, not the destructive button. Dirty form exit presents `อยู่หน้านี้` / `ละทิ้งการแก้ไข`; default is stay. No hidden keyboard shortcuts that submit money. Enter submits search/forms only when appropriate; Enter in notes inserts a newline.
+
+Dialog descriptions appear only when supplied by the caller and are linked with `aria-describedby`. Header titles wrap, close controls retain a 44px target, and the body contains overscroll. Mobile action buttons wrap without pushing the footer out of the viewport. Enter animations are short opacity/position transitions and are disabled for reduced motion.
 
 ## 6. Shared state language
 

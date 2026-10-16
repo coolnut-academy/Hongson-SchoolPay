@@ -186,7 +186,7 @@ These prove mock behavior and domain rules only. They do not replace future dire
 | BUILD01 | `npm ci`, lint, typecheck, unit/component tests, e2e and `npm run build` pass once after final changes |
 | BUILD02 | Output `dist` only static HTML/JS/CSS/font/assets; no `/api`, middleware, SSR/runtime function outputs, service-account keys or Firebase connections |
 | BUILD03 | Preview direct entry and reload on every canonical route under static SPA fallback; missing assets return asset errors rather than index HTML; document hosting rewrite requirement |
-| BUILD04 | Initial JS≤250KiB gzip, CSS≤40KiB, initial font≤200KiB; per-route lazy loading; report libraries absent until template spike; no external requests in mock except local assets |
+| BUILD04 | Initial JS≤250KiB gzip, CSS≤44KiB raw and ≤10KiB gzip (UI v2 entry/dialog layout allowance; previously 40KiB raw), initial font≤200KiB; per-route lazy loading; report libraries absent until template spike; no external requests in mock except local assets |
 | BUILD05 | Non-dev builds contain no dev route/persona/scenario privilege tooling; live mode fails unavailable; no mock fallback; source/profile/financial data absent from localStorage/IndexedDB and telemetry |
 
 ## 6. Future production tasks — intentionally not implemented now

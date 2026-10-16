@@ -129,7 +129,7 @@ function MonthlyContent({ data, role, editable, listOnly }: { data: MonthlyWorks
         { label: "เพิ่มในรายชื่อค้างชำระ", value: debtorRows(data.live).filter(row => !rows.some(s => s.id === row.id)).map(s => s.name).join(", ") || "ไม่มี" },
       ]} /><p className="mt-4">เก็บข้อความของนักเรียนที่ตรงกันและเก็บเวอร์ชันเดิมแบบอ่านอย่างเดียว</p>{error && <Alert tone="danger">{error}</Alert>}
     </Overlay>
-    <Overlay open={!!preview} onClose={() => setPreview(null)} title="ตัวอย่างข้อมูล · ยังไม่ใช่เอกสารพร้อมส่ง" drawer>
+    <Overlay open={!!preview} onClose={() => setPreview(null)} title="ตัวอย่างข้อมูล · ยังไม่ใช่เอกสารพร้อมส่ง" size="wide">
       {preview && <><DetailList items={[{ label: "เดือน", value: preview.snapshot.month }, { label: "ห้อง", value: preview.snapshot.room }, { label: "ครูที่ปรึกษา", value: preview.teacher }, { label: "ภาคเรียน / ปีการศึกษา", value: `${preview.snapshot.term}/${preview.snapshot.academicYear}` }, { label: "แหล่งข้อมูล", value: `${preview.id} · v${preview.revision} · ${preview.snapshot.asOf}` }]} /><div className="mt-6"><RoomMetrics data={preview.snapshot} /></div><h3>ภาคผนวกการติดตาม</h3>{debtorRows(preview.snapshot).map(s => <article key={s.id} className="py-4 border-b border-border"><h4>{s.name} · {s.code}</h4><Money value={s.outstanding} /><p>สาเหตุ: {s.reason || "ยังไม่บันทึก"}</p><p>แนวทางแก้ไข: {s.solution || "ยังไม่บันทึก"}</p><p>เพิ่มเติม: {s.note || "ยังไม่บันทึก"}</p></article>)}<Alert>G04 ยังไม่มีแม่แบบ DOCX จริง การแสดงตัวอย่างไม่ใช่การสร้างไฟล์หรืออนุมัติเอกสาร</Alert></>}
     </Overlay>
   </>;

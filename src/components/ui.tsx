@@ -318,6 +318,7 @@ export function Overlay({
   children,
   footer,
   drawer = false,
+  size = "standard",
   busy = false,
 }: {
   open: boolean;
@@ -327,6 +328,7 @@ export function Overlay({
   children: ReactNode;
   footer?: ReactNode;
   drawer?: boolean;
+  size?: "standard" | "wide";
   busy?: boolean;
 }) {
   const heading = useRef<HTMLHeadingElement>(null),
@@ -348,7 +350,10 @@ export function Overlay({
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
         <Dialog.Content
-          className={drawer ? "drawer-content" : "dialog-content"}
+          className={
+            drawer ? "drawer-content" : `dialog-content${size === "wide" ? " dialog-wide" : ""}`
+          }
+          aria-describedby={description ? `${id}-description` : undefined}
           onOpenAutoFocus={(e) => {
             e.preventDefault();
             heading.current?.focus();
@@ -367,9 +372,11 @@ export function Overlay({
               <Dialog.Title ref={heading} tabIndex={-1}>
                 {title}
               </Dialog.Title>
-              <Dialog.Description>
-                {description ?? "ข้อมูลสาธิตสำหรับตรวจสอบรายการ"}
-              </Dialog.Description>
+              {description && (
+                <Dialog.Description id={`${id}-description`}>
+                  {description}
+                </Dialog.Description>
+              )}
             </div>
             <Dialog.Close asChild>
               <button
@@ -381,7 +388,9 @@ export function Overlay({
               </button>
             </Dialog.Close>
           </header>
-          <div className="overlay-body">{children}</div>
+          <div className="overlay-body" role="region" aria-label={`เนื้อหา ${title}`} tabIndex={0}>
+            {children}
+          </div>
           {footer && <footer className="overlay-footer">{footer}</footer>}
         </Dialog.Content>
       </Dialog.Portal>

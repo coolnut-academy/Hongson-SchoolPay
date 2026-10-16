@@ -87,7 +87,10 @@ assert(!combined.includes("แกลเลอรีส่วนประกอ�
 const cssGzip = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + gzipSync(readFileSync(path)).length, 0);
 const cssBytes = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + statSync(path).size, 0);
 const fontBytes = assets.filter(p => p.endsWith(".woff2")).reduce((sum, path) => sum + statSync(path).size, 0);
-assert(cssBytes <= 40 * 1024, "CSS raw-byte budget exceeded.");
+// UI v2 includes entry composition and responsive dialog layouts; retain a
+// bounded 44 KiB raw budget and a separate 10 KiB transfer budget.
+assert(cssBytes <= 44 * 1024, "CSS raw-byte budget exceeded.");
+assert(cssGzip <= 10 * 1024, "CSS gzip budget exceeded.");
 assert(fontBytes <= 200 * 1024, "Font budget exceeded.");
 for (const feature of ["StudentPage", "FinancePage", "LedgerPage", "FeesPage", "HomeroomPage", "MonthlyPage", "DashboardPage", "RoomPage", "OtherMoneyPage", "AdminPage", "AuditPage", "ReportsPage", "StockPage"])
   assert(
