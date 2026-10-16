@@ -1,39 +1,40 @@
+import { CURRENT_MONTH } from "../domain/model";
 import { useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScopedQuery as useQuery } from "../app/AppProvider";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { useApp } from "../app/AppProvider";
-import { Alert, Badge, Button, DetailList, EmptyState, Field, LoadingState, Money, Overlay, PageHeader, Panel, QueryError } from "../components/ui";
+import { Alert, Badge, Button, DetailList, EmptyState, Field, LoadingState, Money, Overlay, PageHeader, PageState, Panel, QueryError } from "../components/ui";
 import { ResponsiveRows, RoomMetrics } from "../components/WorkspaceUI";
 import { UnsavedChangesGuard } from "../components/UnsavedChangesGuard";
-import { dateLabel, followupErrors, missingFollowup, type CollectionStudent, type DemoRole, type FollowupNote } from "../domain/model";
+import { dateLabel, followupErrors, missingFollowup, type CollectionStudent, type StaffRole, type FollowupNote } from "../domain/model";
 import { debtorRows, financialKey, PAPER_STAGES, type MonthlyDraft, type MonthlyWorkspace } from "../domain/workspace";
 
 export default function MonthlyPage() {
   const { adapter, role } = useApp();
   const [params, setParams] = useSearchParams();
   const { pathname } = useLocation();
-  const room = params.get("room") ?? "ม.2/1", month = params.get("month") ?? "2026-10";
   const access = useQuery({ queryKey: ["homeroom-access", role], queryFn: ({ signal }) => adapter.homeroomAccess(role, signal) });
+  const room = params.get("room") ?? access.data?.rooms[0] ?? "", month = params.get("month") ?? CURRENT_MONTH;
   const allowed = access.data?.rooms.includes(room);
   const query = useQuery({ queryKey: ["monthly-workspace", role, room, month], queryFn: ({ signal }) => adapter.monthlyWorkspace(room, month, role, signal), enabled: !!allowed });
   const title = pathname.endsWith("memos") ? "บันทึกข้อความรายเดือน" : "ติดตามการชำระรายเดือน";
   if (access.isPending) return <LoadingState />;
   if (access.isError) return <QueryError onRetry={() => void access.refetch()} />;
-  if (!allowed) return <EmptyState title={access.data.rooms.length ? "ไม่มีสิทธิ์ดูข้อมูลห้องนี้" : "ยังไม่ได้รับมอบหมายห้อง"} description="กรุณาติดต่อผู้ดูแลระบบหรือเลือกห้องที่ได้รับมอบหมาย" />;
+  if (!allowed) return <PageState eyebrow={pathname.endsWith("memos") ? "OFFICIAL MEMORANDUM" : "MONTHLY FOLLOW-UP"} pageTitle={title} description={pathname.endsWith("memos") ? "จัดเตรียมและตรวจสอบบันทึกข้อความจากข้อมูลการติดตามรายเดือน" : "ติดตามยอดค้างชำระและบันทึกผลการประสานงานกับผู้ปกครอง"} title={access.data.rooms.length ? "ไม่มีสิทธิ์ดูข้อมูลห้องนี้" : "ยังไม่ได้รับมอบหมายห้อง"} message="กรุณาติดต่อผู้ดูแลระบบหรือเลือกห้องที่ได้รับมอบหมาย ข้อมูลจะแสดงตามขอบเขตสิทธิ์ของคุณ" />;
   return <>
     <PageHeader eyebrow="MONTHLY FOLLOW-UP" title={title} description={`${room} · ${access.data.teacher}`} />
     <Panel className="mb-6"><div className="homeroom-filters">
       <Field id="monthly-room" label="ห้องที่รับผิดชอบ"><select id="monthly-room" value={room} onChange={e => setParams({ room: e.target.value, month })}>{access.data.rooms.map(r => <option key={r}>{r}</option>)}</select></Field>
       <Field id="monthly-month" label="เดือน"><input id="monthly-month" type="month" value={month} onChange={e => e.target.value && e.target.value !== month && setParams({ room, month: e.target.value })} /></Field>
-      <p>ภาคเรียน 1 / ปีการศึกษา 2569</p>
+      <p>ข้อมูลตามเดือนที่เลือก</p>
       <Link className="text-link" to={`/app/homeroom/collections?room=${encodeURIComponent(room)}&month=${month}`}>ดูบัญชีปัจจุบัน</Link>
     </div></Panel>
-    {query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : !query.data ? <EmptyState title="ไม่มีข้อมูลเดือนที่เลือก" description="ชุดข้อมูลสาธิตมีเฉพาะตุลาคม 2569" /> : <MonthlyContent key={`${role}-${room}-${month}-${pathname}`} data={query.data} role={role} editable={access.data.editable} listOnly={pathname.endsWith("memos")} />}
+    {query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : !query.data ? <EmptyState title="ไม่มีข้อมูลเดือนที่เลือก" description="ยังไม่มีข้อมูลจากต้นทางสำหรับเดือนที่เลือก" /> : <MonthlyContent key={`${role}-${room}-${month}-${pathname}`} data={query.data} role={role} editable={access.data.editable} listOnly={pathname.endsWith("memos")} />}
   </>;
 }
 
-function MonthlyContent({ data, role, editable, listOnly }: { data: MonthlyWorkspace; role: DemoRole; editable: boolean; listOnly: boolean }) {
+function MonthlyContent({ data, role, editable, listOnly }: { data: MonthlyWorkspace; role: StaffRole; editable: boolean; listOnly: boolean }) {
   const { adapter } = useApp();
   const client = useQueryClient();
   const [preview, setPreview] = useState<MonthlyDraft | null>(null);

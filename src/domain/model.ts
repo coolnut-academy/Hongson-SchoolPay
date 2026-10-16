@@ -12,7 +12,11 @@ export function parseMoney(value: string): Satang {
 }
 export const money = (value: number, currency = true) =>
   `${currency ? "฿" : ""}${(value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-export const TODAY = "2026-10-16";
+export const TODAY = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Bangkok", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+export const CURRENT_MONTH = TODAY.slice(0, 7);
+// Calendar defaults for input controls; academic periods must come from the school.
+export const CALENDAR_YEAR = Number(TODAY.slice(0, 4)) + 543;
+export const FISCAL_YEAR = CALENDAR_YEAR + (Number(TODAY.slice(5, 7)) >= 10 ? 1 : 0);
 export const dateLabel = (value: string) =>
   new Intl.DateTimeFormat("th-TH-u-nu-latn", {
     timeZone: "Asia/Bangkok",
@@ -20,25 +24,10 @@ export const dateLabel = (value: string) =>
     month: "short",
     year: "numeric",
   }).format(new Date(value));
-export const AS_OF = "16 ต.ค. 2569 · 09:25 น.";
 export const RECEIPT_NOTICE =
   "ข้อมูลอ้างอิงใบเสร็จจริงแบบเขียนมือ ไม่มีการพิมพ์ใบเสร็จจากระบบ";
 export type PageStatus = "available" | "used" | "void";
-export type Scenario =
-  | "baseline"
-  | "offline"
-  | "page-conflict"
-  | "unknown-outcome"
-  | "read-error"
-  | "no-assigned-rooms"
-  | "report-invalid"
-  | "loading"
-  | "empty-valid"
-  | "balance-changed"
-  | "permission-revoked"
-  | "delegated-finance"
-  | "stale";
-export type DemoRole =
+export type StaffRole =
   | "finance_officer"
   | "superadmin"
   | "executive"
@@ -116,7 +105,7 @@ export type StudentAccount = {
   obligations: Obligation[];
   transactions: Transaction[];
 };
-export type VisitorAccount = { student: StudentAccount; previousHistory: Transaction[] };
+export type VisitorAccount = { student: StudentAccount | null; previousHistory: Transaction[]; asOf?: string; periodLabel?: string; documents?: { id: string; title: string; url: string; publishedAt: string }[] };
 export type FeeItem = {
   id: string;
   code: string;
@@ -151,7 +140,7 @@ export type AuditEvent = {
   timestamp?: string;
 };
 export type Snapshot = {
-  student: StudentAccount;
+  student: StudentAccount | null;
   books: ReceiptBook[];
   fees: FeeItem[];
   assignments: Assignment[];
@@ -210,9 +199,9 @@ export function assertLedger(books: ReceiptBook[]) {
   const transactions = books.flatMap(b => b.pages.flatMap(p => p.transaction ? [p.transaction.id] : []));
   if (new Set(books.map(b => b.id)).size !== books.length || new Set(books.map(b => b.bookNo)).size !== books.length || new Set(transactions).size !== transactions.length) throw new DomainError("RECONCILIATION", "เลขเล่มหรือรายการเชื่อมโยงซ้ำในทะเบียน");
 }
-export function canReceive(role: DemoRole) {
+export function canReceive(role: StaffRole) {
   return ["superadmin", "finance_officer", "finance_teacher"].includes(role);
 }
-export function canEditFees(role: DemoRole) {
+export function canEditFees(role: StaffRole) {
   return ["superadmin", "finance_officer"].includes(role);
 }

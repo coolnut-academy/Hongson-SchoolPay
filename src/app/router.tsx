@@ -1,5 +1,4 @@
 import { lazy, Suspense, Component, type ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
   createBrowserRouter,
   Navigate,
@@ -8,9 +7,9 @@ import {
   Link,
   useLocation,
 } from "react-router-dom";
-import { StaffShell, StudentShell } from "../components/Shell";
-import { EmptyState, LoadingState } from "../components/ui";
-import { useApp } from "./AppProvider";
+import { Brand, StaffShell, StudentShell } from "../components/Shell";
+import { EmptyState, LoadingState, PageState } from "../components/ui";
+import { useApp, useCurrentStaff } from "./AppProvider";
 const Entry = lazy(() => import("../features/EntryPage"));
 const Student = lazy(() => import("../features/StudentPage"));
 const Finance = lazy(() => import("../features/FinancePage"));
@@ -25,10 +24,9 @@ const Admin = lazy(() => import("../features/AdminPage"));
 const Audit = lazy(() => import("../features/AuditPage"));
 const Reports = lazy(() => import("../features/ReportsPage"));
 const Stock = lazy(() => import("../features/StockPage"));
-const Development = import.meta.env.DEV
-  ? lazy(() => import("../development/Tools"))
-  : null;
-const Gallery = import.meta.env.DEV ? lazy(() => import("../development/ComponentGallery")) : null;
+function RouteStatus({ title, description, action }: { title: string; description: string; action: ReactNode }) {
+  return <div className="route-status"><header><Brand /></header><main><PageState eyebrow="HONGSON SCHOOLPAY" pageTitle={title} description="พื้นที่ทำงานการเงินโรงเรียน" title={title} message={description} action={action} /></main></div>;
+}
 class ErrorBoundary extends Component<
   { children: ReactNode },
   { failed: boolean }
@@ -41,7 +39,7 @@ class ErrorBoundary extends Component<
     return this.state.failed ? (
       <EmptyState
         title="ไม่สามารถแสดงหน้านี้ได้"
-        description="กรุณาโหลดหน้าใหม่ ข้อมูลสาธิตที่ยังไม่บันทึกจะเริ่มใหม่"
+        description="กรุณาโหลดหน้าใหม่ ตรวจสอบการเชื่อมต่อและลองอีกครั้ง"
         action={
           <button
             className="btn btn-secondary"
@@ -69,11 +67,6 @@ function Root() {
       >
         <Outlet />
       </Suspense>
-      {Development && (
-        <Suspense fallback={null}>
-          <Development />
-        </Suspense>
-      )}
     </ErrorBoundary>
   );
 }
@@ -85,9 +78,10 @@ function VisitorGuard() {
   return visitor ? <StudentShell /> : <Navigate key={location.key} to="/" replace />;
 }
 function StaffGuard() {
-  const { role, adapter } = useApp();
+  const { role, staffAuthenticated } = useApp();
   const location = useLocation();
-  const actor = useQuery({ queryKey: ["staff-identity", role], queryFn: ({ signal }) => adapter.currentStaff(role, signal) });
+  const actor = useCurrentStaff();
+  if (!staffAuthenticated) return <Navigate to="/" replace />;
   if (actor.isPending) return <LoadingState />;
   if (actor.isError || !actor.data?.active || actor.data.role !== role) return <Navigate to="/access-pending" replace />;
   return role === "homeroom_teacher" && !["/app/homeroom/collections", "/app/homeroom", "/app/dashboard", "/app/monthly-followup", "/app/memos", "/app/reports", "/app/audit", "/app"].includes(location.pathname) ? (
@@ -112,9 +106,8 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       { path: "/", element: <Entry /> },
-      ...(Gallery ? [{ path: "/dev/components", element: <Gallery /> }] : []),
-      { path: "/access-pending", element: <EmptyState title="รอยืนยันสิทธิ์บุคลากร" description="ยังไม่มีบทบาทที่ใช้งานได้หรือสิทธิ์เปลี่ยนแปลง กรุณาติดต่อผู้ดูแลระบบ ไม่มีการให้สิทธิ์จากอีเมลหรือสร้างผู้ดูแลระบบในเบราว์เซอร์" action={<Link className="btn btn-secondary" to="/">กลับหน้าสาธิต</Link>} /> },
-      { path: "/forbidden", element: <EmptyState title="ไม่มีสิทธิ์เข้าถึง" description="เลือกพื้นที่ที่ได้รับอนุญาต" action={<Link className="btn btn-secondary" to="/app/dashboard">กลับภาพรวม</Link>} /> },
+      { path: "/access-pending", element: <RouteStatus title="รอยืนยันสิทธิ์บุคลากร" description="ยังไม่มีบทบาทที่ใช้งานได้หรือสิทธิ์เปลี่ยนแปลง กรุณาติดต่อผู้ดูแลระบบ ไม่มีการให้สิทธิ์จากอีเมลหรือสร้างผู้ดูแลระบบในเบราว์เซอร์" action={<Link className="btn btn-secondary" to="/">กลับหน้าแรก</Link>} /> },
+      { path: "/forbidden", element: <RouteStatus title="ไม่มีสิทธิ์เข้าถึง" description="เลือกพื้นที่ที่ได้รับอนุญาต" action={<Link className="btn btn-secondary" to="/app/dashboard">กลับภาพรวม</Link>} /> },
       {
         element: <VisitorGuard />,
         children: [
@@ -150,9 +143,9 @@ const router = createBrowserRouter([
       {
         path: "*",
         element: (
-          <EmptyState
+          <RouteStatus
             title="ไม่พบหน้านี้"
-            description="เลือกหนึ่งในพื้นที่ทำงานสาธิตที่พร้อมใช้งาน"
+            description="กลับหน้าแรกเพื่อเลือกพื้นที่ทำงาน"
             action={
               <Link to="/" className="btn btn-primary">
                 กลับหน้าแรก

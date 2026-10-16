@@ -53,7 +53,7 @@ export default function FeesPage() {
             ? "จัดชุดภาระให้ตรงกับห้องและแผนการเรียน ตรวจสอบอัตราก่อนเผยแพร่"
             : "จัดการรายการภาระนักเรียนและหมวดรับเงินอื่นอย่างเป็นระบบ"
         }
-        action={<Badge tone="info">ข้อมูลและอัตราสาธิต</Badge>}
+        action={<Badge tone="info">ข้อมูลและอัตราเรียกเก็บ</Badge>}
       />
       <div className="tab-row">
         <NavLink to="/app/fees">รายการเงิน</NavLink>
@@ -135,7 +135,7 @@ function FeeMaster({ fees }: { fees: FeeItem[] }) {
         },
         role,
       );
-      setSaved(`บันทึกรายการ ${editor.name} แล้ว (สาธิต)`);
+      setSaved(`บันทึกรายการ ${editor.name} แล้ว`);
       setEditor(null);
       await refresh();
     } catch (e) {
@@ -166,8 +166,8 @@ function FeeMaster({ fees }: { fees: FeeItem[] }) {
           icon={<CheckCircle2 size={18} />}
         />
         <Metric
-          label="ปีการศึกษา"
-          value="2569"
+          label="การกำหนดอัตรา"
+          value="รายห้อง"
           caption="จัดการอัตราแยกตามปี / ภาคเรียน"
         />
       </div>
@@ -329,8 +329,8 @@ function FeeMaster({ fees }: { fees: FeeItem[] }) {
           </>
         ) : (
           <EmptyState
-            title="ไม่พบรายการที่ตรงกับตัวกรอง"
-            description="ลองค้นหาด้วยชื่อหรือรหัสอื่น หรือแสดงรายการทุกสถานะ"
+            title={fees.length ? "ไม่พบรายการที่ตรงกับตัวกรอง" : "ยังไม่มีรายการเงิน"}
+            description={fees.length ? "ลองค้นหาด้วยชื่อหรือรหัสอื่น หรือแสดงรายการทุกสถานะ" : "รายการและอัตราเรียกเก็บจะแสดงเมื่อได้รับข้อมูลจากโรงเรียน"}
             action={
               <Button
                 variant="secondary"
@@ -383,7 +383,7 @@ function FeeMaster({ fees }: { fees: FeeItem[] }) {
               </Button>
               {writable && (
                 <Button type="submit" form="fee-editor" busy={busy}>
-                  บันทึกรายการ (สาธิต)
+                  บันทึกรายการ
                 </Button>
               )}
             </>
@@ -503,12 +503,14 @@ function Assignments({
   fees: FeeItem[];
 }) {
   const [selectedId, setSelectedId] = useState(assignments[0]?.id ?? ""),
-    [year, setYear] = useState("2569"),
+    [year, setYear] = useState("all"),
+    [term, setTerm] = useState("all"),
     [roomFilter, setRoomFilter] = useState("all"),
     [draftDirty, setDraftDirty] = useState(false);
   const filtered = assignments.filter(
     (a) =>
-      String(a.academicYear) === year &&
+      (year === "all" || String(a.academicYear) === year) &&
+      (term === "all" || String(a.term) === term) &&
       (roomFilter === "all" || a.room === roomFilter),
   );
   const selected = filtered.find((a) => a.id === selectedId) ?? filtered[0];
@@ -522,6 +524,7 @@ function Assignments({
             value={year}
             onChange={(e) => setYear(e.target.value)}
           >
+            <option value="all">ทุกปีการศึกษา</option>
             {Array.from(new Set(assignments.map((a) => a.academicYear)))
               .sort()
               .map((y) => (
@@ -530,14 +533,7 @@ function Assignments({
           </select>
         </Field>
         <Field id="assignment-term" label="ภาคเรียน">
-          <select id="assignment-term" defaultValue="1">
-            <option value="1">ภาคเรียนที่ 1</option>
-          </select>
-        </Field>
-        <Field id="assignment-grade" label="ระดับชั้น">
-          <select id="assignment-grade" defaultValue="m2">
-            <option value="m2">มัธยมศึกษาปีที่ 2</option>
-          </select>
+          <select id="assignment-term" value={term} disabled={draftDirty} onChange={e => setTerm(e.target.value)}><option value="all">ทุกภาคเรียน</option>{[...new Set(assignments.map(a => a.term))].sort().map(t => <option key={t} value={t}>ภาคเรียนที่ {t}</option>)}</select>
         </Field>
         <Field id="assignment-room" label="ห้องเรียน">
           <select
@@ -546,9 +542,8 @@ function Assignments({
             value={roomFilter}
             onChange={(e) => setRoomFilter(e.target.value)}
           >
-            <option value="all">ทุกห้องในชุดสาธิต</option>
-            <option>ม.2/1</option>
-            <option>ม.2/2</option>
+            <option value="all">ทุกห้องจากระบบโรงเรียน</option>
+            {[...new Set(assignments.map(a => a.room))].map(room => <option key={room}>{room}</option>)}
           </select>
         </Field>
       </div>
@@ -582,7 +577,7 @@ function Assignments({
           </div>
           <div className="mt-5">
             <Alert>
-              ตัวเลขทั้งหมดเป็นอัตราสาธิต ต้องยืนยันอัตราจริงก่อนใช้งาน
+              ตรวจสอบอัตราก่อนเผยแพร่รายการเรียกเก็บ
             </Alert>
           </div>
         </aside>
@@ -601,7 +596,7 @@ function Assignments({
           <Panel>
             <EmptyState
               title="ยังไม่มีชุดภาระในช่วงที่เลือก"
-              description="เปลี่ยนตัวกรองเพื่อเลือกชุดภาระที่มีในข้อมูลสาธิต"
+              description="เปลี่ยนตัวกรองเพื่อเลือกชุดภาระที่มีในข้อมูลต้นทาง"
             />
           </Panel>
         )}
@@ -620,7 +615,7 @@ function AssignmentEditor({
   onCopy: (year: number) => void;
   onDirty: (dirty: boolean) => void;
 }) {
-  const { role, adapter, scenario } = useApp(),
+  const { role, adapter } = useApp(),
     refresh = useRefresh();
   const [amounts, setAmounts] = useState<Record<string, string>>(
       Object.fromEntries(
@@ -672,7 +667,7 @@ function AssignmentEditor({
         role,
       );
       setDirty(false);
-      setMessage("บันทึกอัตราฉบับร่างแล้ว (สาธิต)");
+      setMessage("บันทึกอัตราฉบับร่างแล้ว");
       await refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "บันทึกไม่สำเร็จ");
@@ -713,7 +708,7 @@ function AssignmentEditor({
     try {
       const result = await adapter.generate(assignment.id, role);
       setMessage(
-        `ข้าม ${result.skipped} รายการที่มีอยู่แล้ว · ไม่สร้างภาระซ้ำ (สาธิต)`,
+        `ข้าม ${result.skipped} รายการที่มีอยู่แล้ว · ไม่สร้างภาระซ้ำ`,
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "ตรวจสอบไม่สำเร็จ");
@@ -846,7 +841,7 @@ function AssignmentEditor({
           </div>
         </div>
         <p className="text-xs text-muted mt-3">
-          รายชื่อและอัตราจำลอง · ค่าประมาณไม่ใช่ยอดที่เรียกเก็บจริง
+          รายชื่อและอัตราจากต้นทาง · ค่าประมาณไม่ใช่ยอดที่เรียกเก็บจริง
         </p>
         <div className="flex flex-wrap justify-end gap-3 pt-6 mt-6 border-t border-border">
           {writable && (
@@ -890,7 +885,7 @@ function AssignmentEditor({
                 บันทึกฉบับร่าง
               </Button>
               <Button
-                disabled={dirty || scenario === "stale" || busy}
+                disabled={dirty || busy}
                 onClick={() => setReview(true)}
               >
                 ตรวจสอบก่อนเผยแพร่
@@ -915,7 +910,7 @@ function AssignmentEditor({
           <>
             <Alert tone="success">
               ชุดภาระนี้สร้างไว้แล้วสำหรับนักเรียน {assignment.studentCount}{" "}
-              คนในข้อมูลสาธิต
+              คนในข้อมูลต้นทาง
             </Alert>
             {writable && (
               <Button
@@ -941,7 +936,7 @@ function AssignmentEditor({
         open={review}
         onClose={() => setReview(false)}
         title="ตรวจสอบก่อนเผยแพร่"
-        description="ตรวจสอบขอบเขตและอัตราสาธิต การเผยแพร่ยังไม่สร้างภาระนักเรียน"
+        description="ตรวจสอบขอบเขตและอัตราเรียกเก็บ การเผยแพร่ยังไม่สร้างภาระนักเรียน"
         busy={busy}
         footer={
           <>
@@ -953,7 +948,7 @@ function AssignmentEditor({
               กลับไปแก้ไข
             </Button>
             <Button busy={busy} onClick={publish}>
-              เผยแพร่เวอร์ชัน (สาธิต)
+              เผยแพร่เวอร์ชัน
             </Button>
           </>
         }

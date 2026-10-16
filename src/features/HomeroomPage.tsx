@@ -1,10 +1,11 @@
+import { CURRENT_MONTH } from "../domain/model";
 import { useRef, useState, type FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScopedQuery as useQuery } from "../app/AppProvider";
 import { useSearchParams } from "react-router-dom";
 import { useApp } from "../app/AppProvider";
 import { UnsavedChangesGuard } from "../components/UnsavedChangesGuard";
-import { Alert, Badge, Button, EmptyState, Field, LoadingState, Metric, Money, Overlay, PageHeader, Panel, QueryError, SectionTitle } from "../components/ui";
+import { Alert, Badge, Button, EmptyState, Field, LoadingState, Metric, Money, Overlay, PageHeader, PageState, Panel, QueryError, SectionTitle } from "../components/ui";
 import { dateLabel, DomainError, followupErrors, missingFollowup, type CollectionStudent, type FollowupNote, type HomeroomAccess, type MonthlyCollection } from "../domain/model";
 
 export default function HomeroomPage() {
@@ -12,7 +13,7 @@ export default function HomeroomPage() {
   const [params, setParams] = useSearchParams();
   const access = useQuery({ queryKey: ["homeroom-access", role], queryFn: ({ signal }) => adapter.homeroomAccess(role, signal) });
   const room = params.get("room") ?? access.data?.rooms[0] ?? "";
-  const month = params.get("month") ?? "2026-10";
+  const month = params.get("month") ?? CURRENT_MONTH;
   const allowed = !!access.data?.rooms.includes(room);
   const collection = useQuery({
     queryKey: ["monthly-collections", role, room, month],
@@ -27,7 +28,7 @@ export default function HomeroomPage() {
   };
   if (access.isPending) return <LoadingState />;
   if (access.isError) return <QueryError onRetry={() => void access.refetch()} />;
-  if (!access.data.rooms.length) return <EmptyState title="ยังไม่ได้รับมอบหมายห้อง" description="กรุณาติดต่อผู้ดูแลระบบของโรงเรียนเพื่อกำหนดห้องที่รับผิดชอบ" />;
+  if (!access.data.rooms.length) return <PageState kind="people" eyebrow="HOMEROOM COLLECTIONS" pageTitle="ยอดจัดเก็บรายห้อง" description="ตรวจสอบยอดชำระและติดตามนักเรียนในห้องที่รับผิดชอบ" title="ยังไม่ได้รับมอบหมายห้อง" message="กรุณาติดต่อผู้ดูแลระบบของโรงเรียนเพื่อกำหนดห้องที่รับผิดชอบ" />;
   if (!allowed) return <EmptyState title="ไม่มีสิทธิ์ดูข้อมูลห้องนี้" description="เลือกเฉพาะห้องที่ได้รับมอบหมาย" action={<Button onClick={() => changeFilter("room", access.data.rooms[0])}>กลับห้องที่รับผิดชอบ</Button>} />;
   return <>
     <PageHeader eyebrow="HOMEROOM COLLECTIONS" title="ติดตามการชำระรายเดือน" description={`${room} · ${access.data.teacher}`} />
@@ -35,10 +36,10 @@ export default function HomeroomPage() {
       <div className="homeroom-filters">
         <Field id="collection-room" label="ห้องที่รับผิดชอบ"><select id="collection-room" value={room} onChange={e => changeFilter("room", e.target.value)}>{access.data.rooms.map(r => <option key={r}>{r}</option>)}</select></Field>
         <Field id="collection-month" label="เดือน"><input id="collection-month" type="month" value={month} onChange={e => { if (e.target.value) changeFilter("month", e.target.value); }} /></Field>
-        <p className="text-sm text-secondary">ภาคเรียน 1 / ปีการศึกษา 2569<br />ข้อมูลสาธิตเฉพาะตุลาคม 2569</p>
+        <p className="text-sm text-secondary">เลือกเดือนที่ต้องการตรวจสอบ</p>
       </div>
     </Panel>
-    {collection.isPending ? <LoadingState /> : collection.isError ? <QueryError onRetry={() => void collection.refetch()} /> : !collection.data ? <EmptyState title="ไม่มีข้อมูลเดือนที่เลือก" description="ไม่มีรายละเอียดในชุดข้อมูลสาธิต เลือกตุลาคม 2569 เพื่อดูข้อมูลที่เตรียมไว้" /> : <Collections key={`${role}-${room}-${month}`} data={collection.data} access={access.data} />}
+    {collection.isPending ? <LoadingState /> : collection.isError ? <QueryError onRetry={() => void collection.refetch()} /> : !collection.data ? <EmptyState title="ไม่มีข้อมูลเดือนที่เลือก" description="ยังไม่มีข้อมูลจากต้นทางสำหรับเดือนที่เลือก" /> : <Collections key={`${role}-${room}-${month}`} data={collection.data} access={access.data} />}
   </>;
 }
 

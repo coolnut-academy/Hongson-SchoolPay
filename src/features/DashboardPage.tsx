@@ -1,72 +1,70 @@
-import { useState } from "react";
-import { useScopedQuery as useQuery } from "../app/AppProvider";
-import { Link, useSearchParams } from "react-router-dom";
-import { useApp, useCapability, useSnapshot } from "../app/AppProvider";
-import { Alert, Button, EmptyState, Field, LoadingState, Metric, Money, Overlay, PageHeader, Panel, QueryError } from "../components/ui";
-import { ResponsiveRows, RoomMetrics } from "../components/WorkspaceUI";
-import { money } from "../domain/model";
-import type { GradeSummary } from "../domain/workspace";
+﻿import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowDownLeft, ArrowUpRight, BookOpen, ChartColumnIncreasing, ChevronRight, FileText, GraduationCap, Layers3, ShieldCheck, Wallet, CircleDollarSign, Percent } from "lucide-react";
+import { useApp, useCurrentStaff, useScopedQuery } from "../app/AppProvider";
+import { Alert, Badge, EmptyArtwork, EmptyState, LoadingState, Money, PageHeader, Panel, QueryError } from "../components/ui";
+import { ResponsiveRows } from "../components/WorkspaceUI";
+import { ROLE_LABELS } from "../domain/workspace";
 
 export default function DashboardPage() {
-  const { role } = useApp();
-  if (role === "homeroom_teacher") return <RoomDashboard />;
-  if (role === "superadmin") return <AdminDashboard />;
-  if (role === "finance_officer" || role === "finance_teacher") return <FinanceDashboard />;
-  return <ExecutiveDashboard />;
-}
-function RoomDashboard() {
-  const { adapter, role } = useApp();
-  const access = useQuery({ queryKey: ["homeroom-access", role], queryFn: ({ signal }) => adapter.homeroomAccess(role, signal) });
-  const query = useQuery({ queryKey: ["monthly-collections", role, "ม.2/1", "2026-10"], queryFn: ({ signal }) => adapter.monthlyCollections("ม.2/1", "2026-10", role, signal), enabled: !!access.data?.rooms.includes("ม.2/1") });
-  if (access.isPending) return <LoadingState />;
-  if (access.isError) return <QueryError onRetry={() => void access.refetch()} />;
-  if (!access.data.rooms.length) return <EmptyState title="ยังไม่ได้รับมอบหมายห้อง" description="ติดต่อผู้ดูแลระบบโรงเรียน" />;
-  return <><PageHeader eyebrow="HOMEROOM" title="ภาพรวมห้องที่รับผิดชอบ" description="เฉพาะห้องที่ได้รับมอบหมาย" />{query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : query.data ? <><RoomMetrics data={query.data} /><Link className="btn btn-primary" to="/app/monthly-followup?room=ม.2/1&month=2026-10">ติดตามรายเดือน</Link></> : <EmptyState title="ยังไม่ได้รับมอบหมายห้อง" description="ติดต่อผู้ดูแลระบบโรงเรียน" />}</>;
-}
-function AdminDashboard() {
-  const query = useSnapshot();
-  const { adapter, role } = useApp();
-  const staff = useQuery({ queryKey: ["staff-access", role], queryFn: ({ signal }) => adapter.staffAccess(role, signal) });
-  if (query.isPending || staff.isPending) return <LoadingState />;
-  if (query.isError || staff.isError) return <QueryError onRetry={() => { void query.refetch(); void staff.refetch(); }} />;
-  return <><PageHeader eyebrow="ADMINISTRATION" title="ความพร้อมของระบบ" description="รายการรอข้อมูลยืนยัน ไม่ใช่การรับรองความพร้อมใช้งานจริง" />
-    <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-6"><Metric label="บุคลากร" value={`${staff.data.length} คน`} /><Metric label="บทบาทที่ใช้งาน" value={`${new Set(staff.data.filter(s => s.active).map(s => s.role)).size} บทบาท`} /><Metric label="เล่มเปิดใช้" value={`${query.data.books.filter(b => b.status === "active").length} เล่ม`} /><Metric label="รายการต้องตรวจสอบ" value="4 รายการ" /></div>
-    <Panel><h2>รายการรอข้อมูลยืนยัน</h2><div className="space-y-4 mt-4">{[
-      ["G10 · กระทบยอดสต็อกตั้งต้น 6 + 80 = 86", "/app/receipts/books"], ["G04 · แม่แบบ XLSX/DOCX จริง", "/app/reports"], ["G08 · การเชื่อมโยงตัวตนจากระบบต้นทาง", "/app/admin/users"], ["G05 · อัตราเงินและนโยบายการสร้างภาระ", "/app/assignments"],
-    ].map(([label, to]) => <div key={to}><Link className="text-link" to={to}>{label}</Link><p className="text-sm text-secondary">รอข้อมูลยืนยัน</p></div>)}</div></Panel>
-    <div className="flex flex-wrap gap-3 mt-6"><Link className="btn btn-secondary" to="/app/admin/users">ผู้ใช้งานและสิทธิ์</Link><Link className="btn btn-secondary" to="/app/audit">ประวัติการดำเนินงาน</Link></div>
-  </>;
-}
-function FinanceDashboard() {
-  const query = useSnapshot();
   const { role, adapter } = useApp();
-  const canOther = useCapability("other.receive");
-  const pending = useQuery({ queryKey: ["pending-references", role], queryFn: ({ signal }) => adapter.pendingReferences(role, signal) });
-  return <><PageHeader eyebrow="FINANCE" title="ภาพรวมงานการเงิน" description="สรุปเฉพาะรายละเอียดที่มีในชุดสาธิต ไม่ใช่ยอดทั้งโรงเรียน" />
-    <div className="flex flex-wrap gap-3 mb-6"><Link className="btn btn-primary" to="/app/finance/payments">รับชำระนักเรียน</Link>{canOther && <Link className="btn btn-secondary" to="/app/finance/other">รับเงินประเภทอื่น</Link>}<Link className="btn btn-secondary" to="/app/finance/pending">รายการรอผูกอ้างอิง {pending.data?.length ?? "—"}</Link></div>
-    {query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : <><Panel className="mb-6"><h2>เล่มเปิดใช้</h2>{query.data.books.map(b => <p className="my-3" key={b.id}><Link className="text-link" to={`/app/receipts/books/${b.id}`}>{b.bookNo} · {b.holder}</Link></p>)}</Panel><ResponsiveRows label="รายการล่าสุดในชุดสาธิต" rows={query.data.books.flatMap(b => b.pages.filter(p => p.transaction).map(p => p.transaction!)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10)} rowKey={t => t.id} columns={[{ label: "รายการ", value: t => t.description }, { label: "ผู้ชำระ", value: t => t.payer }, { label: "จำนวนเงิน", value: t => <Money value={t.amount} /> }, { label: "อ้างอิง", value: t => `${t.bookNo} / ${t.pageNo}` }]} /></>}
-  </>;
-}
-function ExecutiveDashboard() {
-  const { adapter, role } = useApp();
-  const [params, setParams] = useSearchParams();
-  const [grade, setGrade] = useState(params.get("grade") ?? "all"), [year, setYear] = useState(params.get("year") ?? "2569"), [detail, setDetail] = useState("");
-  const query = useQuery({ queryKey: ["dashboard", role], queryFn: ({ signal }) => adapter.dashboard(role, signal) });
-  const selectedGrade = params.get("grade") ?? "all", selectedYear = params.get("year") ?? "2569";
-  const rows = query.data?.grades.filter(g => selectedGrade === "all" || g.grade === selectedGrade) ?? [];
-  const total = rows.reduce((sum, g) => ({ students: sum.students + g.students, settled: sum.settled + g.settled, adjusted: sum.adjusted + g.adjusted, paid: sum.paid + g.paid, outstanding: sum.outstanding + g.outstanding }), { students: 0, settled: 0, adjusted: 0, paid: 0, outstanding: 0 });
-  const columns = [ { label: "ระดับชั้น", value: (g: GradeSummary) => g.grade }, { label: "นักเรียน", value: (g: GradeSummary) => `${g.students} คน` }, { label: "ภาระเรียกเก็บ", value: (g: GradeSummary) => <Money value={g.adjusted} /> }, { label: "ชำระแล้ว", value: (g: GradeSummary) => <Money value={g.paid} /> }, { label: "คงค้าง", value: (g: GradeSummary) => <Money value={g.outstanding} /> }, { label: "อัตราจัดเก็บ", value: (g: GradeSummary) => g.adjusted ? `${(g.paid / g.adjusted * 100).toFixed(1)}%` : "—" }, { label: "รายละเอียด", value: (g: GradeSummary) => <Button variant="ghost" onClick={() => setDetail(g.grade)}>ดู {g.grade}</Button> } ];
-  return <>
-    <PageHeader eyebrow="EXECUTIVE OVERVIEW" title="ภาพรวมการจัดเก็บ" description="ปีการศึกษา 2569 · ภาคเรียนที่ 1" action={<Link className="btn btn-secondary" to={`/app/reports?year=${selectedYear}&grade=${encodeURIComponent(selectedGrade)}&kind=student_collections`}>ดูรายงาน</Link>} />
-    <Panel className="mb-6"><form className="homeroom-filters" onSubmit={e => { e.preventDefault(); setParams({ year, grade }); }}><Field id="summary-year" label="ปีการศึกษา"><select id="summary-year" value={year} onChange={e => setYear(e.target.value)}><option>2569</option><option>2568</option></select></Field><Field id="summary-grade" label="ระดับชั้น"><select id="summary-grade" value={grade} onChange={e => setGrade(e.target.value)}><option value="all">ทุกระดับชั้น</option>{query.data?.grades.map(g => <option key={g.grade}>{g.grade}</option>)}</select></Field><Button type="submit">แสดงข้อมูล</Button></form></Panel>
-    {query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : (selectedYear !== "2569" || !rows.length) ? <EmptyState title="ไม่มีข้อมูลในชุดสาธิต" description="ไม่มีรายละเอียดปีการศึกษาที่เลือก อัตราจัดเก็บ —" /> : <>
-      {query.data.stale && <Alert tone="warning">ข้อมูลต้นทางล้าสมัย · ข้อมูล ณ {query.data.asOf}</Alert>}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"><Metric label="ภาระเรียกเก็บ" value={<Money value={total.adjusted} />} /><Metric label="ชำระแล้ว" value={<Money value={total.paid} />} /><Metric label="คงค้าง" value={<Money value={total.outstanding} />} /><Metric label="อัตราจัดเก็บ" value={total.adjusted ? `${(total.paid / total.adjusted * 100).toFixed(1)}%` : "—"} caption="ยอดชำระนักเรียน ÷ ภาระหลังปรับปรุง" /></div>
-      <div className="homeroom-grid mb-6"><Panel><h2>ยอดค้างตามระดับชั้น</h2><div className="space-y-4 mt-5" aria-label="ยอดค้างสูงสุด 160,000 บาท">{query.data.grades.map(g => <button key={g.grade} className="w-full text-left min-h-11" onClick={() => { setGrade(g.grade); setParams({ year: selectedYear, grade: g.grade }); }} aria-label={`${g.grade} ยอดค้าง ${money(g.outstanding)}`}><span className="flex justify-between gap-3"><span>{g.grade}</span><Money value={g.outstanding} /></span><span className="block rounded bg-border h-3 mt-1"><span className="block rounded bg-primary h-3" style={{ width: `${g.outstanding / 16000000 * 100}%` }} /></span></button>)}</div><a className="text-link mt-4" href="#grade-table">ดูตารางข้อมูล</a></Panel><Panel><h2>สถานะการติดตาม</h2><p className="mt-4">นักเรียนทั้งหมด {total.students.toLocaleString()} คน</p><p>ชำระครบ {total.settled.toLocaleString()} คน</p><p>ค้างชำระ {total.students - total.settled} คน</p><hr className="my-4" /><p>บันทึกข้อความรายเดือน ส่งแล้ว 24 / 30 ห้อง</p><p>ฉบับร่าง 6 ห้อง</p><Link className="text-link mt-3" to="/app/memos">ดูสถานะบันทึกข้อความ</Link><p className="text-xs text-secondary mt-3">ตัวเลขภาพรวมเป็นชุดข้อมูลแยก รายละเอียดมีเฉพาะ ม.2/1</p></Panel></div>
-      <div id="grade-table"><ResponsiveRows label="ผลการจัดเก็บรายระดับชั้น" rows={rows} rowKey={g => g.grade} columns={columns} /></div>
-      <Panel className="mt-6"><h2>เงินรับประเภทอื่น · ปีงบประมาณ 2570</h2><p className="text-xl my-4"><Money value={query.data.other.reduce((sum, x) => sum + x.amount, 0)} /></p>{query.data.other.map(x => <p key={x.id} className="flex flex-wrap justify-between gap-3 my-3">{x.name}<Money value={x.amount} /></p>)}<Alert>ไม่นำมารวมอัตราจัดเก็บเงินนักเรียน</Alert></Panel>
-      <Panel className="mt-6"><h2>สต็อกตามต้นทาง 6 + 80 = 86 เล่ม</h2><Alert tone="warning">G10 ยังไม่ยืนยันเลขเล่มยกมาหกเล่ม ตัวเลขรวมไม่ใช่ผลกระทบยอดรายเล่ม</Alert></Panel>
+  const identity = useCurrentStaff();
+  const [chartMode, setChartMode] = useState<"paid" | "outstanding">("paid");
+  const query = useScopedQuery({ queryKey: ["dashboard", role], queryFn: ({ signal }) => adapter.dashboard(role, signal) });
+  const teacher = role === "homeroom_teacher", admin = role === "superadmin";
+  const title = admin ? "ภาพรวมผู้ดูแลระบบ" : teacher ? "ภาพรวมครูที่ปรึกษา" : role === "executive" ? "ภาพรวมการจัดเก็บ" : "ภาพรวมงานการเงิน";
+  const data = query.data, available = !!data && data.available !== false;
+  const grades = available ? data.grades : [];
+  const total = grades.reduce((sum, g) => ({ adjusted: sum.adjusted + g.adjusted, paid: sum.paid + g.paid, outstanding: sum.outstanding + g.outstanding, students: sum.students + g.students }), { adjusted: 0, paid: 0, outstanding: 0, students: 0 });
+  const percentage = total.adjusted > 0 ? Math.min(100, Math.max(0, total.paid / total.adjusted * 100)) : 0;
+  const max = Math.max(...grades.map(g => g[chartMode]), 1);
+  const links = admin ? [["/app/admin/users", "ผู้ใช้งานและสิทธิ์", "จัดการบทบาทและขอบเขตห้องเรียน"], ["/app/audit", "ประวัติการดำเนินงาน", "ตรวจสอบรายการเปลี่ยนแปลง"], ["/app/fees", "รายการเงิน", "ตรวจสอบรายการและอัตราเรียกเก็บ"]] : teacher ? [["/app/homeroom", "ห้องที่รับผิดชอบ", "ตรวจสอบข้อมูลนักเรียนในห้อง"], ["/app/monthly-followup", "ติดตามรายเดือน", "บันทึกผลการติดตามยอดชำระ"], ["/app/memos", "บันทึกข้อความ", "ตรวจสอบข้อมูลประกอบรายงาน"]] : role === "executive" ? [["/app/reports", "รายงานการจัดเก็บ", "ตรวจสอบภาพรวมและผลการจัดเก็บ"], ["/app/receipts/books", "ทะเบียนคุมใบเสร็จ", "ตรวจสอบสถานะเล่มและหน้า"], ["/app/audit", "ประวัติการดำเนินงาน", "ตรวจสอบรายการเปลี่ยนแปลง"]] : [["/app/finance/payments", "รับชำระนักเรียน", "ตรวจสอบยอดและบันทึกการรับเงิน"], ["/app/receipts/books", "ทะเบียนคุมใบเสร็จ", "ตรวจสอบสถานะเล่มและหน้า"], ["/app/reports", "รายงาน", "ตรวจสอบผลการจัดเก็บ"]];
+  const quickIcons = [Wallet, BookOpen, FileText];
+  return <div data-testid="staff-dashboard" className="dashboard-page">
+    <PageHeader eyebrow="YOUR SCHOOL, AT A GLANCE" title={title} description={`ยินดีต้อนรับ · ${identity.data?.name ?? ROLE_LABELS[role]}`} action={<span className="period-chip"><span className="sidebar-dot" />{data?.periodLabel || "พื้นที่ทำงานโรงเรียน"}</span>} />
+    {query.isPending ? <LoadingState /> : query.isError ? <QueryError onRetry={() => void query.refetch()} /> : <>
+      {data?.stale && <div className="mb-6"><Alert tone="warning">ข้อมูลต้นทางยังไม่เป็นปัจจุบัน กรุณาตรวจสอบก่อนดำเนินการ</Alert></div>}
+      <section className="finance-summary" aria-label="สรุปการเงิน"><div className="finance-summary-heading"><span><Wallet size={17} aria-hidden /> สรุปบัญชีโรงเรียน</span><span>THB · บาท</span></div><div className="overview-grid">
+        <Panel className="overview-card">
+          <div className="dashboard-card-heading"><h2>ภาระชำระทั้งหมด</h2><span className="overview-icon neutral"><CircleDollarSign size={18} aria-hidden /></span></div>
+          <div className="overview-value">{available ? <Money value={total.adjusted} /> : "—"}</div>
+          <p className="card-caption">เงินบำรุงการศึกษาและเงินสมาคมฯ</p>
+        </Panel>
+        <Panel className="overview-card overview-paid">
+          <div className="dashboard-card-heading"><h2>ยอดชำระแล้ว</h2><span className="overview-icon"><ArrowDownLeft size={18} aria-hidden /></span></div>
+          <div className="overview-value">{available ? <Money value={total.paid} /> : "—"}</div>
+          <p className="card-caption">ยอดรับชำระในขอบเขตของคุณ</p>
+        </Panel>
+        <Panel className="overview-card overview-outstanding">
+          <div className="dashboard-card-heading"><h2>ยอดคงค้าง</h2><span className="overview-icon"><ArrowUpRight size={18} aria-hidden /></span></div>
+          <div className="overview-value">{available ? <Money value={total.outstanding} /> : "—"}</div>
+          <p className="card-caption">อยู่ระหว่างติดตามการชำระ</p>
+        </Panel>
+        <Panel className="overview-card">
+          <div className="dashboard-card-heading"><h2>สัดส่วนการจัดเก็บ</h2><span className="overview-icon neutral"><Percent size={18} aria-hidden /></span></div>
+          <div className="overview-value">{available && total.adjusted > 0 ? `${percentage.toFixed(1)}%` : "—"}</div>
+          <div className="progress-track" aria-hidden><span style={{ width: `${percentage}%` }} /></div>
+          <p className="card-caption">เทียบกับภาระชำระทั้งหมด</p>
+        </Panel>
+      </div></section>
+      <div className="dashboard-scope"><span><GraduationCap size={16} aria-hidden />นักเรียนในขอบเขต <strong>{available ? total.students.toLocaleString("th-TH") : "—"}</strong> คน</span><span><Layers3 size={16} aria-hidden />ระดับชั้นที่มีข้อมูล <strong>{available ? grades.length : "—"}</strong></span><Badge tone={available ? "success" : "neutral"}>{available ? "ข้อมูลจากระบบโรงเรียน" : "รอข้อมูลจากโรงเรียน"}</Badge></div>
+      <div className="dashboard-grid">
+        <div className="dashboard-primary">
+          <Panel className="collection-chart">
+            <div className="dashboard-card-heading"><div><h2>สรุปยอดการจัดเก็บ</h2><p className="card-caption">เปรียบเทียบยอดเงินตามระดับชั้น</p></div><ChartColumnIncreasing size={21} className="text-muted" aria-hidden /></div>
+            <div className="chart-toolbar"><div className="chart-tabs" role="group" aria-label="ยอดที่แสดงในกราฟ"><button aria-pressed={chartMode === "paid"} onClick={() => setChartMode("paid")}>ชำระแล้ว</button><button aria-pressed={chartMode === "outstanding"} onClick={() => setChartMode("outstanding")}>คงค้าง</button></div><span className="chart-unit">หน่วย: บาท</span></div>
+            {grades.length ? <div className="grade-chart" role="list" aria-label={chartMode === "paid" ? "ยอดชำระแล้วตามระดับชั้น" : "ยอดคงค้างตามระดับชั้น"}>{grades.map(g => <div className="grade-column" role="listitem" key={g.grade}><span className="grade-value"><Money value={g[chartMode]} /></span><div className="grade-bar-space"><div className={`grade-bar ${chartMode}`} style={{ height: `${Math.max(0, g[chartMode]) / max * 100}%` }} /></div><span className="grade-name">{g.grade}</span></div>)}</div> : <div className="chart-empty"><div className="chart-gridlines" aria-hidden><i /><i /><i /><i /></div><EmptyArtwork kind="chart" /><strong>ภาพรวมจะเริ่มต้นที่นี่</strong><p>กราฟจะแสดงเมื่อมีข้อมูลการจัดเก็บจากโรงเรียน</p></div>}
+            <div className="chart-footer"><span className="legend-dot paid" />{chartMode === "paid" ? "ยอดชำระแล้ว" : "ยอดคงค้าง"}<span>{data?.periodLabel || "รอข้อมูลรอบการจัดเก็บ"}</span></div>
+          </Panel>
+          <Panel className="grade-table-panel"><div className="dashboard-card-heading"><h2>{teacher ? "ห้องเรียนและผลการจัดเก็บ" : "ผลการจัดเก็บตามระดับชั้น"}</h2><span className="table-label">{available ? `${grades.length} ระดับชั้น` : "รอข้อมูล"}</span></div>{grades.length ? <ResponsiveRows label="ผลการจัดเก็บ" rows={grades} rowKey={g => g.grade} columns={[{ label: "ระดับชั้น", value: g => g.grade }, { label: "นักเรียน", value: g => g.students }, { label: "ชำระแล้ว", value: g => <Money value={g.paid} /> }, { label: "คงค้าง", value: g => <Money value={g.outstanding} /> }]} /> : <EmptyState title={teacher ? "ยังไม่มีข้อมูลห้องที่รับผิดชอบ" : "ยังไม่มีข้อมูลการจัดเก็บ"} description="ข้อมูลจะแสดงเมื่อเชื่อมต่อระบบโรงเรียนและได้รับสิทธิ์ที่เหมาะสม" />}</Panel>
+        </div>
+        <aside className="dashboard-aside" aria-label="ทางลัดและข้อมูลการทำงาน">
+          <Panel className="quick-work"><div className="dashboard-card-heading"><h2>พื้นที่ทำงานของคุณ</h2><ArrowUpRight size={20} aria-hidden /></div><p className="card-caption">เข้าถึงงานที่ใช้เป็นประจำ</p><div className="quick-links">{links.map(([to, label, description], index) => { const Icon = quickIcons[index]; return <Link key={to} to={to} className="quick-work-link"><span className="icon-tile"><Icon size={21} aria-hidden /></span><div><strong>{label}</strong><p>{description}</p></div><ChevronRight size={17} aria-hidden /></Link>; })}</div><div className="workspace-access"><ShieldCheck size={16} aria-hidden /><span>แสดงเครื่องมือตามสิทธิ์ของคุณ</span></div></Panel>
+          <Link to="/app/audit" className="dashboard-note"><ShieldCheck size={23} aria-hidden /><div><h2>ตรวจสอบที่มาของรายการ</h2><p>เปิดประวัติการดำเนินงานตามสิทธิ์ของคุณ</p></div><ArrowUpRight size={19} aria-hidden /></Link>
+        </aside>
+      </div>
+      {available && data?.other.length ? <Panel className="mt-6"><h2>เงินรับประเภทอื่น</h2>{data.other.map(item => <p className="history-row" key={item.id}>{item.name}<Money value={item.amount} /></p>)}</Panel> : null}
+      {data?.asOf && <p className="source-caption mt-4">ข้อมูล ณ {data.asOf}</p>}
     </>}
-    <Overlay open={!!detail} onClose={() => setDetail("")} title={`รายละเอียด ${detail}`} drawer>{detail === "ม.2" ? <><p>รายละเอียดเฉพาะห้องที่มีในชุดข้อมูลสาธิต ไม่ใช่ทั้งระดับชั้น</p><Link className="btn btn-secondary mt-4" to="/app/homeroom?room=ม.2/1">ดู ม.2/1</Link></> : <EmptyState title="ไม่มีรายละเอียดในชุดข้อมูลสาธิต" description="ไม่มีการสร้างรายชื่อนักเรียนเพิ่มเติมจากยอดภาพรวม" />}</Overlay>
-  </>;
+  </div>;
 }

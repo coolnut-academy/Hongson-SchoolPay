@@ -9,6 +9,10 @@ import {
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   AlertCircle,
+  FileText,
+  UsersRound,
+  LockKeyhole,
+  ChartColumnIncreasing,
   ArrowRight,
   Check,
   CheckCircle2,
@@ -244,25 +248,35 @@ export function Alert({
     </div>
   );
 }
+type EmptyKind = "document" | "people" | "access" | "chart";
+export function EmptyArtwork({ kind = "document" }: { kind?: EmptyKind }) {
+  const Icon = { document: FileText, people: UsersRound, access: LockKeyhole, chart: ChartColumnIncreasing }[kind];
+  return <div className={`empty-artwork empty-${kind}`} aria-hidden><span className="empty-sheet sheet-back" /><span className="empty-sheet sheet-front"><Icon size={28} strokeWidth={1.4} /><i /><i /></span><span className="empty-seal"><Minus size={13} strokeWidth={2} /></span></div>;
+}
 export function EmptyState({
   title,
   description,
   action,
+  kind,
 }: {
   title: string;
   description: string;
   action?: ReactNode;
+  kind?: EmptyKind;
 }) {
   return (
     <div className="empty-state">
-      <div className="empty-icon">
-        <Info size={24} aria-hidden />
-      </div>
+      <EmptyArtwork kind={kind} />
       <h3>{title}</h3>
       <p>{description}</p>
       {action}
     </div>
   );
+}
+export function PageState({ eyebrow, pageTitle, description, title, message, action, kind }: {
+  eyebrow: string; pageTitle: string; description: string; title: string; message: string; action?: ReactNode; kind?: EmptyKind;
+}) {
+  return <div className="page-state"><PageHeader eyebrow={eyebrow} title={pageTitle} description={description} /><Panel><EmptyState title={title} description={message} action={action} kind={kind} /></Panel></div>;
 }
 export function LoadingState() {
   return (

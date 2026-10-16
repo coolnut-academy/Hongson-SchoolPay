@@ -1,3 +1,5 @@
+> Historical Stage B document. Current runtime, test IDs and validation commands: [production-handoff.md](production-handoff.md). The seeded mock runtime has been removed.
+
 # Auth Bridge readiness and external input register
 
 2026-10-16. The user authorizes integration work, but not invented project settings, identity mappings or financial policy. The frontend T15 handoff milestone is still subject to the task inventory and final acceptance run in IMPLEMENTATION_PROGRESS.md.

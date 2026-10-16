@@ -41,7 +41,7 @@ export default function LedgerPage() {
     params = useParams(),
     location = useLocation(),
     navigate = useNavigate();
-  const [selectedId, setSelectedId] = useState("book-379"),
+  const [selectedId, setSelectedId] = useState(""),
     [holder, setHolder] = useState("all"),
     [status, setStatus] = useState("all"),
     [tab, setTab] = useState("pages"),
@@ -54,20 +54,21 @@ export default function LedgerPage() {
     [ambiguous, setAmbiguous] = useState(false),
     [reconcile, setReconcile] = useState(false),
     [physical, setPhysical] = useState({
-      used: "11",
-      void: "1",
-      available: "38",
+      used: "",
+      void: "",
+      available: "",
     }),
     [issues, setIssues] = useState<string[] | null>(null);
   const canVoid = useCapability("receipt.voidAvailable");
   if (query.isPending) return <LoadingState />;
   if (query.isError) return <QueryError onRetry={() => void query.refetch()} />;
+  if (!query.data.books.length) return <><PageHeader eyebrow="PHYSICAL RECEIPT CONTROL" title={location.pathname.endsWith("/pages") ? "ตรวจสอบใบเสร็จรายหน้า" : params.bookId ? "รายละเอียดเล่มใบเสร็จ" : "ทะเบียนคุมใบเสร็จ"} description="ตรวจสอบเล่มและหน้าของใบเสร็จจากทะเบียนโรงเรียน" /><EmptyState title="ยังไม่มีเล่มใบเสร็จ" description="ข้อมูลจะแสดงหลังเชื่อมต่อทะเบียนเล่มใบเสร็จของโรงเรียน" /></>;
   if (params.bookId && !query.data.books.some((b) => b.id === params.bookId))
     return (
       <Panel>
         <EmptyState
           title="ไม่พบเล่มใบเสร็จนี้"
-          description="รหัสเล่มไม่อยู่ในข้อมูลสาธิต กรุณากลับไปเลือกเล่มที่มี"
+          description="รหัสเล่มไม่อยู่ในข้อมูลต้นทาง กรุณากลับไปเลือกเล่มที่มี"
           action={
             <Button onClick={() => navigate("/app/receipts/books")}>
               เลือกเล่มใบเสร็จ
@@ -145,29 +146,29 @@ export default function LedgerPage() {
         eyebrow="PHYSICAL RECEIPT CONTROL"
         title={pageSearch ? "ตรวจสอบรายหน้า" : "ทะเบียนคุมใบเสร็จ"}
         description="ติดตามเล่มและหน้าของใบเสร็จจริงแบบเขียนมือ ตรวจสอบย้อนหลังได้ทุกขั้นตอน"
-        action={<Badge tone="info">ปีงบประมาณ 2570</Badge>}
+        action={<Badge tone="info">ทะเบียนจากต้นทาง</Badge>}
       />
       <div className="metrics">
         <Metric
           label="ยอดยกมาที่ได้รับยืนยัน"
-          value="6"
-          caption="ปีงบประมาณ 2569"
+          value="—"
+          caption="รอข้อมูลยกมาจากต้นทาง"
           icon={<Archive size={18} />}
         />
         <Metric
           label="รับเพิ่มในปีงบประมาณ"
-          value="80"
-          caption="30ก58379–30ก58458"
+          value="—"
+          caption="ดูรายการรับเข้าสต็อก"
           icon={<BookOpen size={18} />}
         />
         <Metric
           label="รวมตามข้อมูลต้นทาง"
-          value="86"
-          caption="ยังไม่ใช่ยอดตรวจนับเสร็จสิ้น"
+          value={books.length}
+          caption="จำนวนเล่มในขอบเขตที่แสดง"
           icon={<ClipboardCheck size={18} />}
         />
         <Metric
-          label="เล่มเปิดใช้ในชุดสาธิต"
+          label="เล่มเปิดใช้จากระบบโรงเรียน"
           value={books.filter(b => b.status === "active").length}
           caption="เปิดใช้พร้อมกันได้หลายเล่ม"
           icon={<Circle size={18} />}
@@ -175,15 +176,12 @@ export default function LedgerPage() {
       </div>
       <div className="mb-6">
         <Alert tone="warning" title="รายการยกมาอยู่ระหว่างตรวจสอบ">
-          ช่วงเล่ม 28ก83122–28ก83128 · คงจำนวนที่ยืนยันไว้ 6
-          เล่มจนกว่าจะตรวจสอบทะเบียนจริง ไม่คำนวณจำนวนจากช่วงเลขที่
+          ตรวจสอบยอดยกมากับทะเบียนจริงก่อนยืนยันข้อมูล
         </Alert>
       </div>
       <div className="filter-row">
         <Field id="ledger-year" label="ปีงบประมาณ">
-          <select id="ledger-year" defaultValue="2570">
-            <option value="2570">ปีงบประมาณ 2570</option>
-          </select>
+          <select id="ledger-year" disabled><option>ตามขอบเขตทะเบียน</option></select>
         </Field>
         <Field id="ledger-holder" label="ผู้ถือครอง">
           <select
@@ -261,7 +259,7 @@ export default function LedgerPage() {
           <Tabs id="ledger-view" label="มุมมองเล่มใบเสร็จ" tabs={[{ id: "pages", label: "สถานะรายหน้า" }, { id: "history", label: "ประวัติการเคลื่อนไหว" }]} value={tab} onChange={setTab}>
           {tab === "history" ? (
             <>
-              <h3>เหตุการณ์ในชุดข้อมูลสาธิต</h3>
+              <h3>เหตุการณ์จากระบบโรงเรียน</h3>
               <div className="timeline">
                 {audit
                   .filter((a) => a.detail.includes(book.bookNo))
@@ -394,7 +392,7 @@ export default function LedgerPage() {
               <div>
                 <strong className="text-2xl money">50 / 50</strong>
                 <p className="text-xs text-secondary">
-                  หน้าที่อยู่ในทะเบียนสาธิต
+                  หน้าที่อยู่ในทะเบียน
                 </p>
               </div>
             </div>
@@ -446,7 +444,7 @@ export default function LedgerPage() {
         open={!!page}
         onClose={() => setPage(null)}
         title={`เล่ม ${book.bookNo} / หน้า ${page?.pageNo ?? ""}`}
-        description="ทะเบียนอ้างอิงใบเสร็จจริง · ข้อมูลสาธิต"
+        description="ทะเบียนอ้างอิงใบเสร็จจริง · ข้อมูลต้นทาง"
         drawer
         busy={busy}
       >
@@ -501,7 +499,7 @@ export default function LedgerPage() {
                   onClick={voidPage}
                   className="mt-4"
                 >
-                  ยืนยันยกเลิกหน้าว่าง (สาธิต)
+                  ยืนยันยกเลิกหน้าว่าง
                 </Button>
               </div>
             )}
@@ -528,7 +526,7 @@ export default function LedgerPage() {
         <DetailList
           items={[
             { label: "ผู้ถือครอง", value: book.holder },
-            { label: "ปีงบประมาณ", value: "2570" },
+            { label: "ปีงบประมาณ", value: String(book.fiscalYear) },
           ]}
         />
         <div className="grid grid-cols-3 gap-3 mb-5">

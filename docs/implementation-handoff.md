@@ -1,3 +1,5 @@
+> Historical Stage B document. Current runtime, test IDs and validation commands: [production-handoff.md](production-handoff.md). The seeded mock runtime has been removed.
+
 # Implementation handoff
 
 Prepared 2026-10-16. This is a reviewable implementation package, not approval to deploy, activate school authentication, read real student data, or enable financial writes. T14 manual acceptance remains open; T15's independent deliverables are packaged, but its formal dependency on T14 is not waived. All six LIVE tasks remain blocked.

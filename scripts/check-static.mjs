@@ -70,6 +70,7 @@ assert(
   !combined.includes("เครื่องมือทดสอบ UI เท่านั้น"),
   "Dev-only tools leaked into production bundle.",
 );
+assert(!/TEST-(?:ADMIN|STUDENT|TEACHER|FINANCE)|MockAdapter|69024/.test(combined), "Review IDs or seeded records leaked into production.");
 const html = readFileSync("dist/index.html", "utf8");
 const entryPaths = [...html.matchAll(/(?:src|href)="(\/assets\/[^\"]+\.js)"/g)].map(match => join("dist", match[1].slice(1)));
 assert(entryPaths.length, "Initial module graph is missing.");
@@ -87,10 +88,10 @@ assert(!combined.includes("แกลเลอรีส่วนประกอ�
 const cssGzip = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + gzipSync(readFileSync(path)).length, 0);
 const cssBytes = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + statSync(path).size, 0);
 const fontBytes = assets.filter(p => p.endsWith(".woff2")).reduce((sum, path) => sum + statSync(path).size, 0);
-// UI v2 includes entry composition and responsive dialog layouts; retain a
-// bounded 44 KiB raw budget and a separate 10 KiB transfer budget.
-assert(cssBytes <= 44 * 1024, "CSS raw-byte budget exceeded.");
-assert(cssGzip <= 10 * 1024, "CSS gzip budget exceeded.");
+// UI v3 adds the reference dashboard, grade charts, portal and shared responsive
+// visual layer. Measured at 59.5 KiB raw / 12.4 KiB gzip; keep bounded headroom.
+assert(cssBytes <= 64 * 1024, "CSS raw-byte budget exceeded.");
+assert(cssGzip <= 14 * 1024, "CSS gzip budget exceeded.");
 assert(fontBytes <= 200 * 1024, "Font budget exceeded.");
 for (const feature of ["StudentPage", "FinancePage", "LedgerPage", "FeesPage", "HomeroomPage", "MonthlyPage", "DashboardPage", "RoomPage", "OtherMoneyPage", "AdminPage", "AuditPage", "ReportsPage", "StockPage"])
   assert(
@@ -98,5 +99,5 @@ for (const feature of ["StudentPage", "FinancePage", "LedgerPage", "FeesPage", "
     `Missing lazy chunk: ${feature}`,
   );
 console.log(
-  `Static/boundary checks passed. Initial JS ${(initialGzip / 1024).toFixed(1)} KiB gzip; all JS ${(totalGzip / 1024).toFixed(1)} KiB gzip; CSS ${(cssBytes / 1024).toFixed(1)} KiB raw / ${(cssGzip / 1024).toFixed(1)} KiB gzip; fonts ${(fontBytes / 1024).toFixed(1)} KiB. No live adapter, server runtime, persistent PII store, or receipt exporter.`,
+  `Static/boundary checks passed. Initial JS ${(initialGzip / 1024).toFixed(1)} KiB gzip; all JS ${(totalGzip / 1024).toFixed(1)} KiB gzip; CSS ${(cssBytes / 1024).toFixed(1)} KiB raw / ${(cssGzip / 1024).toFixed(1)} KiB gzip; fonts ${(fontBytes / 1024).toFixed(1)} KiB. No server runtime, persistent PII store, or receipt exporter.`,
 );

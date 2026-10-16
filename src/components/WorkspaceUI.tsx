@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Button, Metric, Money, Panel } from "./ui";
+import { Button, EmptyState, Metric, Money, Panel } from "./ui";
 import type { MonthlyCollection } from "../domain/model";
 
 export function CursorPagination({ label, canPrevious, nextCursor, onPrevious, onNext }: {
@@ -20,6 +20,7 @@ export function ResponsiveRows<T>({ label, rows, rowKey, columns }: {
   label: string; rows: T[]; rowKey: (row: T) => string;
   columns: { label: string; value: (row: T) => ReactNode }[];
 }) {
+  if (!rows.length) return <Panel><EmptyState title={`ยังไม่มีข้อมูล${label}`} description="ข้อมูลจะแสดงเมื่อมีรายการจากระบบโรงเรียนในขอบเขตที่คุณมีสิทธิ์" /></Panel>;
   return <>
     <div className="desktop-only data-table-wrap" role="region" aria-label={label} tabIndex={0}>
       <table className="data-table"><caption className="sr-only">{label}</caption><thead><tr>{columns.map(c => <th scope="col" key={c.label}>{c.label}</th>)}</tr></thead>

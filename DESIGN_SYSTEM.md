@@ -1,12 +1,12 @@
-# Hongson-SchoolPay — Design system
+﻿# Hongson-SchoolPay — Design system
 
-Revision: 2026-10-16 · UI refresh v2 · Thai-first · Paper / Charcoal / Muted green.
+Revision: 2026-10-16 · UI refresh v3 · Thai-first · White / Forest green · User reference dashboard.
 
 Read [ARCHITECTURE_RISKS.md](ARCHITECTURE_RISKS.md) first. Confirmed audited rules outrank visual decisions. This document fixes visual choices for implementation; it does not authorize live integration or changes to school policy.
 
 ## 1. Visual direction
 
-An academic finance office: warm paper canvas, white working surfaces and navigation, charcoal text, and muted green reserved for primary actions and selection. Neutral information notices avoid competing with warning and error states. Financial figures lead; decoration stays quiet. The student outstanding-balance panel retains a dark surface. Use crisp borders, restrained corner radii and flat charts. No stock photography, glass effects, gradient backgrounds, decorative currency icons or invented school crest. Until an approved crest is supplied, use a 32px square `HS` typographic monogram and the exact product wordmark `Hongson-SchoolPay`. The entry page pairs its introduction with the student lookup, followed by a separate staff section.
+The Figma executive reference (MhOCb1uTqbFo9156LT5aCu, node 2:2) informs the visual direction: navy navigation, cool gray canvas, white surfaces with fine borders, and emerald primary actions. Retain the HS monogram and Hongson-SchoolPay wordmark. Four compact financial cards show total obligations, paid, outstanding and collection percentage, using the existing calculations. Scope counts remain visible below the cards. Analytical content and role-specific shortcuts share a responsive workspace. The entry page pairs a navy introduction with student lookup and a separate staff workspace. Every route uses the tokens and shared visual layer in src/styles/refresh.css. Unavailable values remain em dashes with explicit empty states. No financial fixtures or decorative chart values are introduced. Existing role restrictions and integration boundaries remain unchanged.
 
 Staff screens prioritize scanning, number alignment and keyboard flow. Student screens prioritize one clear balance, readable line items and private read-only access. Share tokens, components, terminology and financial states across roles. Do not use a different dashboard theme for each role.
 
@@ -16,38 +16,50 @@ Define these once in `src/styles/tokens.css`; component styles reference variabl
 
 ```css
 :root {
-  --canvas: #f7f7f4;
+  --canvas: #f5f7fa;
   --surface: #ffffff;
-  --surface-subtle: #f1f2ee;
-  --silver: #d5d8d1;
-  --border: #dedfd8;
-  --control-border: #858b81;
-  --text: #252a24;
-  --text-secondary: #555d52;
-  --text-muted: #697064;
-  --brand: #3e5340;
-  --brand-hover: #304332;
-  --brand-pressed: #253627;
-  --brand-subtle: #edf0e8;
-  --sidebar: #28362c;
-  --sidebar-active: #e9ede4;
+  --surface-subtle: #eef2f6;
+  --silver: #c9d3df;
+  --border: #dfe5ed;
+  --control-border: #8796a9;
+  --text: #16283e;
+  --text-secondary: #4f6177;
+  --text-muted: #617187;
+  --brand: #087b5b;
+  --brand-hover: #066449;
+  --brand-pressed: #05523c;
+  --brand-subtle: #e9f5ef;
+  --sidebar: #10243a;
+  --sidebar-active: #213d52;
   --on-dark: #ffffff;
-  --on-dark-muted: #d0d8cd;
-  --success: #3e5b43;
-  --success-bg: #edf2e9;
+  --on-dark-muted: #bccddd;
+  --success: #176342;
+  --success-bg: #eaf6ee;
   --warning: #795b26;
   --warning-bg: #f8f2e6;
   --danger: #a13e38;
   --danger-bg: #fbefec;
-  --info: #555d52;
-  --info-bg: #f1f2ee;
-  --focus: #3e5340;
-  --overlay: rgb(20 24 21 / 48%);
-  --shadow-card: 0 2px 4px rgb(27 33 26 / 2%);
-  --shadow-overlay: 0 24px 80px -16px rgb(20 24 21 / 28%), 0 4px 16px rgb(20 24 21 / 8%);
+  --info: #37577a;
+  --info-bg: #edf3fa;
+  --focus: #087b5b;
+  --overlay: rgb(10 26 44 / 48%);
+  --shadow-card: 0 2px 5px rgb(16 36 58 / 2%);
+  --shadow-overlay: 0 24px 80px -16px rgb(16 36 58 / 28%);
   --radius-control: 8px;
   --radius-card: 12px;
-  --radius-dialog: 14px;
+  --radius-dialog: 16px;
+  --brand-gradient: linear-gradient(135deg, #10243a, #1b4651);
+  --chart-fill: #a8d9c6;
+  --frame: #e8edf3;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --sidebar-width: 248px;
+  --header-height: 68px;
 }
 ```
 
@@ -55,7 +67,7 @@ The decorative silver border is not sufficient alone to identify a form field: c
 
 ## 3. Typography and number formatting
 
-Web font: self-host Noto Sans Thai, weights 400/500/600/700, with license included; fallback `Tahoma, system-ui, sans-serif`. Use the same family for Thai/Latin text to avoid mixed baselines. Preserve Thai marks with generous line-height; no uppercase transformation of Thai labels. Official document fonts/layout are owned by the future real template, not this web typography.
+Web font: self-host IBM Plex Sans Thai (Thai/Latin WOFF2 only), weights 400/500/600/700, with license included; fallback `Tahoma, system-ui, sans-serif`. Use the same family for Thai/Latin text to avoid mixed baselines. Preserve Thai marks with generous line-height; no uppercase transformation of Thai labels. Official document fonts/layout are owned by the future real template, not this web typography.
 
 | Token | Size / line height / weight | Use |
 |---|---|---|
@@ -78,13 +90,13 @@ Store money as integer satang in the domain. Store instants as UTC ISO strings; 
 
 | Width | Staff shell | Student shell | Content |
 |---|---|---|---|
-| 320–767px | 56px topbar, labelled menu button, modal navigation drawer | 56px wordmark header; 64px bottom navigation plus safe area | 16px side padding, single column, 16px vertical gaps |
-| 768–1199px | 72px rail with labelled tooltips and accessible full names; 64px topbar | Centered content max 720px, top navigation | 24px padding; finance blocks stack; filters wrap |
-| ≥1200px | Fixed 240px sidebar; 72px topbar; content beside sidebar | Centered content max 960px, top navigation | 32px padding, max 1440px working width; 24px gaps |
+| 320–767px | 68px topbar, labelled menu button, modal navigation drawer | 72px wordmark header; bottom navigation plus safe area | 16px side padding, single column, 16px vertical gaps |
+| 768–1199px | 76px rail with labelled tooltips and accessible full names; 68px topbar | Centered content, top navigation | 24px padding; finance blocks stack; filters wrap |
+| ≥1200px | Fixed 248px navy sidebar; 68px topbar; content beside sidebar | Centered content max 960px, top navigation | 28px horizontal padding; 16?20px dashboard gaps |
 
-At 1440px staff viewport: sidebar x=0..239; main x=240..1439; inner content x=272..1407 (1136px). At 1600px and above retain maximum content width; do not stretch form controls indefinitely. Staff sidebar has 72px brand block, role badge, nav groups, and bottom staff identity/sign-out. Topbar contains breadcrumb on left, current period/context and account control on right. Never put a global student search into unrelated roles.
+At 1440px: sidebar x=0..247, content begins at x=276. Content is capped at 1504px on wider screens without a decorative outer frame. The sidebar has an 80px brand block, role-filtered menu search, independently scrolling menu and pinned account controls. Mobile uses a focus-trapped navigation drawer with 44px links. The topbar provides breadcrumbs, help and staff identity.
 
-Desktop staff KPI strip: four equal columns, 16px gaps, minimum height 112px, 20px padding. Three metrics use three equal columns. Below 1200px two columns; below 480px one column unless a screen explicitly specifies a compact two-metric pair. Form panels use 24px padding desktop, 16px mobile. Card title precedes content by 16px. Section spacing 24px desktop / 16px mobile.
+Dashboard KPIs use four columns with 16px gaps and 18px padding on desktop; two columns on tablet and mobile (10px gaps on mobile), one below 360px. General metrics use 18?20px padding; panels use 20px desktop / 18px mobile. Thai headings use at least 1.5?1.65 line height. Never clip numeric values; allow large amounts to wrap within their card.
 
 Finance split: available width ≥1056px yields `minmax(0, 1fr) 344px` with 24px gap; otherwise one column, summary after fields. No horizontal page scrolling at 320px. Wide audit/report tables may scroll inside a labelled region with visible scroll affordance; student data and payment forms must reflow.
 
@@ -92,7 +104,7 @@ Finance split: available width ≥1056px yields `minmax(0, 1fr) 344px` with 24px
 
 | Element | Locked specification |
 |---|---|
-| Primary button | Brand fill, white text, 44px minimum height, 16px horizontal padding, 8px radius; one per task region |
+| Primary button | Solid emerald, white text, 44px minimum height, 16px horizontal padding, 8px radius; one per task region |
 | Secondary button | White fill, subtle border, text color; same geometry |
 | Tertiary/link action | Brand text, underline for inline links; 44px hit area for standalone actions |
 | Destructive button | Danger fill only inside explicit reason/confirmation flow |
@@ -154,8 +166,12 @@ Receipt detail footer: `ข้อมูลอ้างอิงใบเสร�
 
 Source label shown to ordinary users: `ข้อมูลจากทะเบียนนักเรียน · อัปเดต 16 ต.ค. 2569 09:00 น.` Staff source tooltip may name Hongson T-Academy/T-Folio. Keep Firebase, SDK, collection names and implementation jargon out of normal product flows.
 
-Demo banner on every mock page: `ข้อมูลสาธิต · ไม่ใช่รายการเงินจริง`. Never put synthetic records in a live-looking success screen without this banner.
+The development review runtime contains no business records. It displays `โหมดตรวจหน้าจอ · ยังไม่เชื่อมข้อมูลโรงเรียน · ไม่สามารถบันทึกรายการ`. Production has no review IDs. Never add synthetic financial records to fill a visual design.
 
 ## 9. Visual QA contract
 
-Golden viewport baselines and content are fixed in [SCREEN_SPEC.md](SCREEN_SPEC.md). Capture at 390×844 and 1440×1000 with the mock clock frozen, fonts loaded and animations off. Add 320px, 768px, 1024px and 200% zoom checks. Validate normal, loading, empty, error, denied, stale and conflict states. Compare geometry, typography, exact amounts and copy; do not accept a “similar” redesign. Screens may grow vertically for translated/long text; specified heights are minimums except shell dimensions.
+The user reference and v3 rules above supersede the previous visual geometry in [SCREEN_SPEC.md](SCREEN_SPEC.md); its business workflows remain applicable. Capture with fonts loaded. Verify 320px, 390px, 768px, 1024px, 1440px and 1824px widths. Screens may grow vertically for Thai and long text. Reference captures are in `artifacts/review/green-entry-desktop.png` and `artifacts/review/green-dashboard-{390,1440,1824}.png`.
+
+Validation for this refresh: all 16 staff navigation routes fit all six widths without document-level horizontal overflow; dashboard passes automated WCAG A/AA checks at 390px, 1440px and 1824px. Search, chart tabs, help dialog and mobile drawer were exercised. Existing integration, permissions, unit and browser checks remain required. Live-data behavior still depends on the school integration.
+
+The additional dashboard and shared responsive styling uses 59.5 KiB raw / 12.3 KiB gzip CSS. V3 has bounded budgets of 64 KiB raw and 14 KiB gzip in `scripts/check-static.mjs`; JavaScript and font budgets remain unchanged.

@@ -59,13 +59,14 @@ export default function FinancePage() {
 }
 function Workspace() {
   const identity = useCurrentStaff();
-  const query = useSnapshot(),
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const query = useSnapshot(appliedSearch),
     refresh = useRefresh(),
-    { adapter, role, scenario } = useApp();
-  const [search, setSearch] = useState("69024"),
-    [searchBusy, setSearchBusy] = useState(false),
+    { adapter, role } = useApp();
+  const [search, setSearch] = useState(""),
+
     [searchError, setSearchError] = useState(""),
-    [selected, setSelected] = useState(true),
+    [selected, setSelected] = useState(false),
     [allocated, setAllocated] = useState(true);
   const [bookId, setBookId] = useState(""),
     [pageId, setPageId] = useState(""),
@@ -102,8 +103,16 @@ function Workspace() {
     window.addEventListener("beforeunload", protect);
     return () => window.removeEventListener("beforeunload", protect);
   }, [bookId, note, result]);
+  function findStudent(e: FormEvent) {
+    e.preventDefault();
+    if (!search.trim()) { setSearchError("กรุณากรอกรหัสนักเรียน"); return; }
+    setSearchError(""); setAppliedSearch(search.trim()); setSelected(true);
+    setBookId(""); setPageId(""); setResult(null);
+    if (search.trim() === appliedSearch) void query.refetch();
+  }
   if (query.isPending) return <LoadingState />;
   if (query.isError) return <QueryError onRetry={() => void query.refetch()} />;
+  if (!query.data.student) return <><PageHeader eyebrow="FINANCE" title="รับชำระนักเรียน" description="ค้นหาข้อมูลนักเรียนจากทะเบียนโรงเรียน" /><Panel className="payment-lookup"><SectionTitle number={1} title="ค้นหานักเรียน" subtitle="ตรวจสอบข้อมูลนักเรียนก่อนเริ่มรับชำระ" /><form onSubmit={findStudent} className="lookup-form"><Field id="payment-search" label="รหัสนักเรียน" error={searchError}><div className="search-input"><Search size={18} aria-hidden /><input id="payment-search" value={search} onChange={e => setSearch(e.target.value)} placeholder="กรอกรหัสนักเรียน" aria-invalid={!!searchError} aria-describedby={searchError ? "payment-search-error" : undefined} /></div></Field><Button type="submit">ค้นหา<ArrowRight size={16} aria-hidden /></Button></form><div className="lookup-result"><EmptyState kind="people" title="ยังไม่มีข้อมูลนักเรียน" description="รอเชื่อมต่อทะเบียนและข้อมูลการเงินก่อนบันทึกรับชำระ" /></div></Panel></>;
   const { student, books } = query.data,
     obligation = student.obligations.find((o) => o.adjusted > o.paid),
     amount =
@@ -113,24 +122,7 @@ function Workspace() {
   const book = books.find((b) => b.id === bookId),
     page = book?.pages.find((p) => p.id === pageId),
     receiver = identity.data?.name.replace(/^(?:นางสาว|นาง|นาย)/, "") ?? "ยังไม่มีข้อมูลบุคลากร";
-  const blocked = !online || scenario === "offline" || scenario === "stale";
-  async function findStudent(e: FormEvent) {
-    e.preventDefault();
-    setSearchBusy(true);
-    setSearchError("");
-    try {
-      if (await adapter.lookup(search)) {
-        setSelected(true);
-      } else {
-        setSelected(false);
-        setSearchError("ไม่พบข้อมูลที่แสดงได้ กรุณาตรวจสอบรหัสหรือชื่อ");
-      }
-    } catch {
-      setSearchError("ค้นหาไม่สำเร็จ กรุณาลองใหม่");
-    } finally {
-      setSearchBusy(false);
-    }
-  }
+  const blocked = !online;
   function resetForm() {
     setSelected(false);
     setSearch("");
@@ -228,14 +220,12 @@ function Workspace() {
         eyebrow="FINANCE WORKSPACE"
         title="รับชำระนักเรียน"
         description="ตรวจสอบภาระ รับเงิน และบันทึกเล่ม / หน้าใบเสร็จจริง"
-        action={<Badge tone="info">ภาคเรียนที่ 1 / 2569</Badge>}
+        action={<Badge tone="info">ข้อมูลตามทะเบียน</Badge>}
       />
       {blocked && (
         <div className="mb-5">
           <Alert tone="warning">
-            {scenario === "stale"
-              ? "ข้อมูลต้นทางยังไม่เป็นปัจจุบัน การบันทึกถูกระงับจนกว่าจะตรวจสอบข้อมูลใหม่"
-              : "ออฟไลน์ · เก็บแบบร่างไว้ในหน้านี้ ไม่มีการส่งรายการอัตโนมัติ"}
+            ออฟไลน์ · เก็บแบบร่างไว้ในหน้านี้ ไม่มีการส่งรายการอัตโนมัติ
           </Alert>
         </div>
       )}
@@ -271,7 +261,7 @@ function Workspace() {
                   id="payment-search"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="รหัสนักเรียน เช่น 69024"
+                  placeholder="กรอกรหัสนักเรียน"
                   disabled={!!result || unknown}
                   maxLength={32}
                   aria-invalid={!!searchError}
@@ -281,7 +271,7 @@ function Workspace() {
             <Button
               className="mt-[29px]"
               type="submit"
-              busy={searchBusy}
+              busy={query.isFetching}
               disabled={!!result || unknown}
             >
               <Search size={17} />
@@ -299,7 +289,7 @@ function Workspace() {
                   {student.code} · {student.room} · {student.program}
                 </p>
                 <p className="text-[11px] text-muted mt-1">
-                  ทะเบียนนักเรียน · อัปเดต 16 ต.ค. 2569 09:00 น.
+                  ข้อมูลจากทะเบียนนักเรียน
                 </p>
               </div>
               <CircleCheck className="text-primary ml-auto" size={18} />
@@ -462,7 +452,7 @@ function Workspace() {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <Field id="payment-date" label="วันที่รับเงิน">
-                  <input id="payment-date" value="16 ต.ค. 2569" readOnly />
+                  <input id="payment-date" value={TODAY} readOnly />
                 </Field>
                 <Field id="payment-receiver" label="ผู้รับเงิน">
                   <input id="payment-receiver" value={receiver} readOnly />
@@ -578,7 +568,7 @@ function Workspace() {
                 <div className="text-primary mb-3">
                   <CheckCircle2 size={30} />
                 </div>
-                <h2>บันทึกรับชำระแล้ว (สาธิต)</h2>
+                <h2>บันทึกรับชำระแล้ว</h2>
                 <p className="text-sm text-secondary mt-2">
                   บันทึกในหน่วยความจำของหน้านี้เท่านั้น
                 </p>
@@ -650,7 +640,7 @@ function Workspace() {
                         other: "อื่น ๆ",
                       }[method],
                     },
-                    { label: "วันที่รับเงิน", value: "16 ต.ค. 2569" },
+                    { label: "วันที่รับเงิน", value: TODAY },
                     {
                       label: "เล่ม / หน้า",
                       value:
@@ -702,7 +692,7 @@ function Workspace() {
         open={review}
         onClose={() => setReview(false)}
         title="ยืนยันบันทึกรับชำระ"
-        description="ตรวจสอบให้ตรงกับใบเสร็จจริงที่เขียนแล้ว · รายการสาธิต"
+        description="ตรวจสอบให้ตรงกับใบเสร็จจริงที่เขียนแล้ว · รายการรับชำระ"
         busy={busy}
         footer={
           <>
@@ -741,7 +731,7 @@ function Workspace() {
           ]}
         />
         <Alert>
-          การบันทึกนี้เป็นข้อมูลจำลอง ไม่ใช่รายการเงินจริง และไม่สร้างใบเสร็จ
+          ตรวจสอบข้อมูลให้ตรงกับใบเสร็จจริงก่อนบันทึก
         </Alert>
       </Overlay>
       <Overlay

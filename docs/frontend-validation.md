@@ -1,3 +1,5 @@
+> Historical Stage B document. Current runtime, test IDs and validation commands: [production-handoff.md](production-handoff.md). The seeded mock runtime has been removed.
+
 ﻿# Frontend validation and integration preparation
 
 Verified locally on2026-10-16. Results cover fictional in-memory workflows and independent Auth Bridge/security preparation. No real Firebase source, identity login, directory or financial-write adapter is connected. No deployment or official receipt output was created.
