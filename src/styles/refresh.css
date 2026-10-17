@@ -236,9 +236,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
 .deck-nav-btn:hover:not(:disabled) { background: #087b5b; color: #fff; }
 .deck-nav-btn:disabled { display: none; }
 .deck-nav-btn.prev { left: -18px; } .deck-nav-btn.next { right: -18px; }
-.deck-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 6px 2px 14px; }
+.deck-track { position: relative; display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 6px 2px 14px; }
 .deck-track::-webkit-scrollbar { display: none; }
-.login-card { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative; background: #fff; border-radius: 22px; border: 1px solid #d7e5dc; padding: 26px 24px 22px; transition: all .3s ease; }
+.login-card { flex: 0 0 100%; scroll-snap-align: start; scroll-snap-stop: always; position: relative; background: #fff; border-radius: 22px; border: 1px solid #d7e5dc; padding: 26px 24px 22px; transition: all .3s ease; }
 .login-card.is-active { box-shadow: 0 20px 48px -12px #087b5b20, 0 2px 8px #132e390a; }
 .login-card.is-inactive { opacity: .55; transform: scale(.97); cursor: pointer; }
 .login-card-accent { position: absolute; top: 0; left: 24px; right: 24px; height: 4px; border-radius: 0 0 4px 4px; background: #087b5b; }

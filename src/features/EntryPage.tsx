@@ -46,7 +46,10 @@ export default function EntryPage() {
     if (!trackRef.current) return;
     const cards = trackRef.current.querySelectorAll<HTMLElement>(".login-card");
     if (cards[index]) {
-      cards[index].scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      trackRef.current.scrollTo({
+        left: cards[index].offsetLeft,
+        behavior: "smooth",
+      });
     }
   }
 
