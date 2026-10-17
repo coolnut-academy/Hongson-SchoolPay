@@ -1,4 +1,4 @@
-﻿/* SchoolPay — financial workspace. Shared primitives live in global.css.
+/* SchoolPay — financial workspace. Shared primitives live in global.css.
    Desktop >=1200; tablet 768–1199; mobile <768. */
 body { font-size: 14px; line-height: 1.7; }
 h1, h2, h3 { letter-spacing: 0; }
@@ -101,8 +101,8 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
 .data-table td .btn { min-height: 36px; padding-block: 6px; font-size: 12px; }
 .table-sub { font-size: 11px; }
 .empty-state { padding: 40px 24px; }
-.empty-state h3 { font-size: 18px; font-weight: 500; margin: 18px 0 7px; }
-.empty-state p { font-size: 13px; max-width: 440px; margin: 0 auto 18px; line-height: 1.85; }
+.empty-state h3 { font-size: 18px; font-weight: 500; margin: 18px 0 7px; color: var(--text); }
+.empty-state p { font-size: 13px; max-width: 440px; margin: 0 auto 18px; line-height: 1.85; color: var(--text-secondary); }
 .empty-state p:last-child { margin-bottom: 0; }
 .empty-artwork { position: relative; width: 100px; height: 100px; margin: auto; border-radius: 50%; background: radial-gradient(circle, #e9f2ed, #f6f8f5 68%, transparent 69%); }
 .empty-sheet { position: absolute; width: 47px; height: 61px; border: 1px solid #c5d5cc; border-radius: 7px; background: #fff; left: 27px; top: 19px; }
@@ -220,44 +220,74 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
 .dashboard-note p { font-size: 11px; color: #526c5c; margin-top: 5px; }
 .dashboard-note > svg:last-child { margin-left: auto; width: 15px; }
 /* A welcoming portal with a distinctive, code-native open-book motif. */
-.entry-page { min-height: 100dvh; background: #f5f7f4; }
-.entry-header { padding: 24px max(28px, calc((100vw - 1160px) / 2)); background: transparent; border-bottom: 1px solid var(--border); }
-.entry-header-right { display: flex; align-items: center; gap: 24px; }
-.entry-header-right .text-link { font-size: 12px; }
-.entry-main { max-width: 1160px; padding: 56px 28px 32px; gap: 40px 72px; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
-.entry-intro { position: relative; align-self: stretch; display: flex; flex-direction: column; justify-content: center; padding-block: 20px; }
-.entry-intro .eyebrow { color: var(--brand); display: flex; align-items: center; gap: 8px; font-size: 9px; letter-spacing: .1em; margin-bottom: 24px; }
-.entry-intro h1 { font-size: clamp(32px, 3.5vw, 46px); font-weight: 500; line-height: 1.55; letter-spacing: -.02em; }
-.entry-intro h1 .text-primary { color: var(--brand); }
-.entry-intro > p:not(.eyebrow) { color: var(--text-secondary); font-size: 14px; line-height: 1.95; }
-.entry-benefits { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 22px; }
-.entry-benefits > span { display: flex; align-items: center; gap: 5px; color: var(--text-secondary); font-size: 11px; }
-.entry-benefits svg { color: var(--brand); }
-.entry-service-card { display: flex; align-items: center; gap: 20px; margin-top: 20px; padding-top: 8px; }
-.school-artwork { width: 180px; height: 135px; flex-shrink: 0; }
-.entry-service-card .eyebrow { font-size: 8px; margin-bottom: 5px; }
-.entry-service-card strong { display: block; font-size: 13px; font-weight: 500; }
-.entry-service-card p { margin-top: 5px; color: var(--text-muted); font-size: 11px; }
-.entry-service-card > svg { margin-left: auto; color: var(--brand); }
-.entry-student { position: relative; padding: 36px; align-self: stretch; border-radius: 18px; background: #fff; box-shadow: 0 18px 48px -28px #173f3540, 0 1px 2px #173f3508; border-color: #d9e3db; border-top: 3px solid var(--brand); }
-.student-lookup-heading { margin-bottom: 24px; }
-.student-lookup-heading .icon-tile { width: 46px; height: 46px; margin-bottom: 24px; background: var(--surface-strong); color: #b8e7cf; }
-.student-lookup-heading .eyebrow { font-size: 9px; color: var(--text-muted); }
-.student-lookup-heading h2 { font-size: 24px; margin-bottom: 5px; font-weight: 500; }
-.student-lookup-heading > p:last-child { font-size: 13px; }
-.entry-student input, .entry-student .btn { min-height: 50px; }
-.entry-student .alert .text-sm { font-size: 12px; }
-.entry-staff { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
-.entry-staff-header { margin-bottom: 20px; }
-.entry-staff-header h2 { font-size: 20px; font-weight: 500; }
-.entry-staff form > .field { max-width: 480px; }
-.entry-staff .entry-options { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-.entry-option { border-radius: 9px; padding: 14px; background: #f8faf8; }
-.entry-option strong { font-size: 12px; }
-.entry-option p { font-size: 10px; }
-.entry-option:hover { border-color: #99bda9; background: var(--brand-subtle); }
-.entry-footer { max-width: 1160px; margin: auto; padding: 12px 28px 28px; display: flex; justify-content: space-between; gap: 14px; color: var(--text-muted); font-size: 11px; }
-.entry-footer > span:last-child { display: flex; gap: 6px; align-items: center; }
+/* Animated Login-First Entry Portal - Hongson SchoolPay */
+.login-page { min-height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; position: relative; background: #f5f9f6; padding: 16px 20px 20px; overflow-x: hidden; }
+.login-bg-mesh { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(circle at 50% 0%, #9ae6bd40, transparent 65%), #f5f9f6; }
+.login-main { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 480px; margin: auto; padding-block: 14px; }
+.role-selector-bar { display: flex; gap: 6px; background: #eaf2ed; border: 1px solid #cce2d6; border-radius: 14px; padding: 4px; margin-bottom: 14px; width: 100%; }
+.role-tab, .deck-dot { display: inline-flex; align-items: center; justify-content: center; border: 0; cursor: pointer; transition: all .2s; line-height: 1.6; }
+.role-tab { flex: 1; gap: 7px; padding: 8px 10px; min-height: 42px; border-radius: 10px; background: transparent; color: #4b635b; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.role-tab:hover { color: #132e39; }
+.role-tab.active, .deck-dot.active { background: #fff; color: #087b5b; font-weight: 600; box-shadow: 0 2px 6px #087b5b18; }
+.role-tag { font-size: 9px; font-weight: 700; letter-spacing: .06em; padding: 2px 6px; border-radius: 5px; background: #dbebe2; color: #23654f; }
+.role-tab.active .role-tag { background: #087b5b; color: #fff; }
+.deck-viewport { position: relative; width: 100%; max-width: 480px; }
+.deck-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 36px; height: 36px; border-radius: 50%; border: 1px solid #c2ded0; background: #ffffffe6; color: #087b5b; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px #087b5b20; cursor: pointer; transition: all .2s; }
+.deck-nav-btn:hover:not(:disabled) { background: #087b5b; color: #fff; }
+.deck-nav-btn:disabled { display: none; }
+.deck-nav-btn.prev { left: -18px; } .deck-nav-btn.next { right: -18px; }
+.deck-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 6px 2px 14px; }
+.deck-track::-webkit-scrollbar { display: none; }
+.login-card { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; position: relative; background: #fff; border-radius: 22px; border: 1px solid #d7e5dc; padding: 26px 24px 22px; transition: all .3s ease; }
+.login-card.is-active { box-shadow: 0 20px 48px -12px #087b5b20, 0 2px 8px #132e390a; }
+.login-card.is-inactive { opacity: .55; transform: scale(.97); cursor: pointer; }
+.login-card-accent { position: absolute; top: 0; left: 24px; right: 24px; height: 4px; border-radius: 0 0 4px 4px; background: #087b5b; }
+.staff-accent { background: #1e5ba8; }
+.card-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; line-height: 1.6; border: 1px solid; }
+.student-badge { background: #e2f4eb; color: #087b5b; border-color: #bce4cf; }
+.staff-badge { background: #e9f0fa; color: #1e5ba8; border-color: #cbe0f8; }
+.card-title { font-size: 18px; font-weight: 600; color: #132e39; line-height: 1.6; margin: 0; }
+.card-desc { font-size: 12px; color: #516a61; margin: 2px 0 14px; line-height: 1.6; }
+.login-header { text-align: center; margin-bottom: 16px; }
+.school-emblem { display: inline-flex; width: 60px; height: 60px; margin-bottom: 8px; }
+.emblem-svg { width: 100%; height: 100%; }
+.login-title { font-size: 24px; font-weight: 600; color: #132e39; line-height: 1.6; margin: 0; }
+.login-subtitle { font-size: 13px; color: #4a615a; margin: 4px 0 0; line-height: 1.5; }
+.input-with-icon { position: relative; display: flex; align-items: center; }
+.input-icon-left { position: absolute; left: 14px; color: #5c736b; pointer-events: none; display: flex; align-items: center; }
+.login-input { width: 100%; min-height: 48px; padding: 12px 14px 12px 42px; border-radius: 12px; border: 1.5px solid #d2ded6; background: #fafcfb; font-size: 14px; color: #132e39; transition: all .18s; }
+.login-input:hover, .login-input:focus { background: #fff; }
+.login-input:hover { border-color: #a0c2af; }
+.login-input:focus { outline: none; border-color: #087b5b; box-shadow: 0 0 0 3px #087b5b24; }
+.login-input::placeholder { color: #687f76; }
+.btn-login-primary, .btn-staff-login { min-height: 48px; border-radius: 12px; font-weight: 500; display: inline-flex; align-items: center; justify-content: center; gap: 8px; line-height: 1.6; transition: all .2s; }
+.btn-login-primary { background: #087b5b; color: #fff; font-size: 15px; box-shadow: 0 4px 14px #087b5b38; }
+.btn-login-primary:hover:not(:disabled) { background: #066449; }
+.btn-staff-login { background: #f1f7f3; border: 1.5px solid #c9ded2; color: #076249; font-size: 14px; }
+.btn-staff-login:hover:not(:disabled) { background: #e4f2ea; border-color: #98c6ad; color: #044d37; }
+.review-accounts-box { margin-top: 14px; padding: 12px; background: #f7faf8; border: 1px dashed #c0d8cb; border-radius: 12px; }
+.review-accounts-caption { font-size: 11px; font-weight: 500; color: #3b564c; margin-bottom: 8px; }
+.entry-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.entry-options > :last-child { grid-column: 1 / -1; }
+.entry-option { border-radius: 8px; padding: 9px 12px; background: #fff; border: 1px solid #d8e5dd; display: flex; align-items: center; justify-content: space-between; transition: all .15s; }
+.entry-option strong { font-size: 11px; color: #132e39; display: block; }
+.entry-option p { font-size: 10px; color: #506560; margin: 1px 0 0; }
+.entry-option:hover { border-color: #087b5b; background: var(--brand-subtle); }
+.system-info-card { margin-top: 18px; background: #f3f9f5; border: 1.5px solid #c8e3d4; border-radius: 14px; padding: 10px 14px; }
+.system-info-header, .system-info-row { display: flex; justify-content: space-between; align-items: center; }
+.system-info-header { margin-bottom: 5px; padding-bottom: 4px; border-bottom: 1px solid #d5eadc; }
+.system-info-team { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; color: #087b5b; }
+.system-info-dev { font-size: 10px; font-weight: 500; color: #4b635a; background: #e2f0e7; padding: 1px 7px; border-radius: 6px; }
+.system-info-body { display: flex; flex-direction: column; gap: 3px; }
+.system-info-row { font-size: 11px; line-height: 1.5; }
+.system-info-row .info-label { color: #516a61; }
+.system-info-row .info-value { color: #132e39; font-weight: 500; }
+.deck-pagination { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+.deck-dot { gap: 6px; padding: 5px 12px; border-radius: 20px; background: #e4eee7; font-size: 11px; font-weight: 500; color: #516a61; }
+.deck-dot span { width: 7px; height: 7px; border-radius: 50%; background: #95b3a4; }
+.deck-dot em { font-style: normal; }
+.deck-dot.active span { background: #087b5b; }
+.login-footer { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 480px; padding-top: 8px; font-size: 11px; color: #566c64; }
 .student-topbar { height: 80px; background: #fff; color: var(--text); border-bottom: 1px solid var(--border); }
 .student-topbar .brand small { color: var(--text-muted); }
 .student-topbar .text-link { color: var(--brand); }
@@ -288,9 +318,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
   .drawer-content .nav-group > p, .drawer-content .nav-item > span, .drawer-content .nav-arrow { display: block; }
   .drawer-content .nav-group { padding: 12px 0 0; }
   .staff-content { padding: 28px; }
-  .entry-main { gap: 28px; }
-  .entry-student { padding: 28px; }
-  .entry-staff .entry-options { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
 }
 @media (min-width: 768px) and (max-width: 999px) {
   .dashboard-grid { grid-template-columns: minmax(0, 1fr); }
@@ -355,27 +383,16 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
   .staff-dock { display: flex; position: fixed; inset: auto 0 0; z-index: 35; border-top: 1px solid #dde6e0; background: #fffffff2; backdrop-filter: blur(16px); padding: 8px 12px max(8px, env(safe-area-inset-bottom)); box-shadow: 0 -4px 20px #132e3905; }
   .staff-dock > a, .staff-dock > button { flex: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; min-height: 52px; font-size: 10px; color: var(--text-secondary); border-radius: 10px; }
   .staff-dock > a.active { color: #075b43; background: #e6f2eb; font-weight: 600; }
-  .entry-header { padding: 18px 20px; }
-  .entry-header .brand strong { font-size: 21px; }
-  .entry-header-right .text-link { font-size: 11px; gap: 4px; }
-  .entry-header-right .badge { display: none; }
-  .entry-main { padding: 28px 16px; grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .entry-intro { padding: 8px 8px 4px; }
-  .entry-intro .eyebrow { font-size: 8px; letter-spacing: .08em; margin-bottom: 16px; }
-  .entry-intro h1 { font-size: 33px; }
-  .entry-intro > p:not(.eyebrow) { font-size: 13px; }
-  .entry-benefits { gap: 10px; margin-top: 16px; }
-  .entry-benefits > span { font-size: 10px; }
-  .entry-service-card { display: none; }
-  .entry-student, .entry-staff { padding: 24px; }
-  .student-lookup-heading h2 { font-size: 23px; }
-  .student-lookup-heading .icon-tile { margin-bottom: 18px; }
-  .entry-staff-header { flex-direction: row; }
-  .entry-staff-header > .icon-tile { display: none; }
-  .entry-staff .entry-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .entry-option { padding: 12px; }
-  .entry-staff .entry-options > :last-child { grid-column: 1 / -1; }
-  .entry-footer { padding-inline: 20px; flex-wrap: wrap; font-size: 10px; }
+
+  .login-page { padding: 12px 12px 16px; }
+  .deck-nav-btn { display: none; }
+  .login-card { padding: 22px 16px 18px; border-radius: 18px; }
+  .login-card-accent { left: 16px; right: 16px; }
+  .login-title { font-size: 21px; line-height: 1.6; }
+  .login-subtitle { font-size: 12px; }
+  .system-info-row { flex-direction: column; align-items: flex-start; }
+  .system-info-row .info-value { text-align: left; }
+  .login-footer { flex-direction: column; text-align: center; gap: 4px; font-size: 10px; }
   .student-topbar { height: 72px; padding-inline: 16px; }
   .student-topbar .brand strong { font-size: 21px; }
   .student-topbar .text-link { font-size: 11px; }
@@ -387,16 +404,10 @@ input:focus, select:focus, textarea:focus { border-color: var(--brand); box-shad
   .app-footer { padding-inline: 16px; flex-wrap: wrap; }
 }
 @media (max-width: 359px) {
-  .entry-header-right { display: none; }
-  .entry-intro h1 { font-size: 29px; }
-  .entry-student, .entry-staff { padding: 20px; }
   .overview-card { padding-inline: 16px; }
   .overview-icon { display: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .staff-content > :not(.skip-link), .student-content > div, .entry-student { animation: surface-in 260ms ease-out both; }
-  @keyframes surface-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-}
-@media (prefers-reduced-motion: reduce) {
-  .btn, .quick-work-link, .grade-bar, .chart-tabs button { transition: none; }
+  .staff-content > :not(.skip-link), .student-content > div { animation: surface-in 180ms ease-out both; }
+  @keyframes surface-in { from { opacity: 0.99; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 }
