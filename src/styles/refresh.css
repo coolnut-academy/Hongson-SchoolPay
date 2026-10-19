@@ -1435,17 +1435,18 @@ textarea:focus {
   margin: 0 auto 12px;
 }
 .login-brand-bar {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  width: 100%;
+  gap: 16px;
+  width: fit-content;
+  max-width: 100%;
   box-sizing: border-box;
-  padding: 12px 20px;
+  padding: 8px 22px 8px 12px;
   background: linear-gradient(145deg, #ffffff 0%, #fbfcfe 50%, #f1f6f8 100%);
   border: 1px solid rgba(255, 255, 255, 0.95);
   outline: 1px solid rgba(203, 213, 225, 0.55);
-  border-radius: 22px;
+  border-radius: 24px;
   box-shadow:
     0 10px 26px -4px rgba(16, 62, 43, 0.08),
     0 4px 10px -2px rgba(15, 23, 42, 0.03),
@@ -1493,6 +1494,7 @@ textarea:focus {
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #092e22 0%, #0d4633 55%, #156247 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 0;
   white-space: nowrap;
@@ -2094,8 +2096,10 @@ textarea:focus {
     padding-block: 0 6px;
   }
   .login-brand-bar {
-    padding: 10px 14px;
-    border-radius: 18px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 8px 16px 8px 10px;
+    border-radius: 20px;
     gap: 12px;
   }
   .school-emblem {
