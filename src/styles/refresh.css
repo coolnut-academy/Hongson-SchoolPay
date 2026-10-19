@@ -1427,23 +1427,29 @@ textarea:focus {
   line-height: 1.6;
 }
 .login-header {
-  text-align: center;
-  margin-bottom: 8px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.login-brand-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  padding: 0 4px;
 }
 .school-emblem {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 160px;
-  height: 160px;
-  max-width: min(160px, 92vw);
-  max-height: min(160px, 92vw);
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
   margin: 0;
   padding: 0;
   border: none;
   background: transparent;
   box-shadow: none;
-  filter: none;
+  filter: drop-shadow(0 4px 10px rgb(10 110 80 / 14%));
 }
 .school-emblem-img {
   width: 100%;
@@ -1457,18 +1463,24 @@ textarea:focus {
   box-shadow: none;
   filter: none;
 }
+.login-brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
 .login-title {
-  font-size: 25px;
-  font-weight: 600;
+  font-size: 21px;
+  font-weight: 700;
   color: var(--text);
-  line-height: 1.55;
+  line-height: 1.25;
   margin: 0;
+  letter-spacing: -0.015em;
 }
 .login-subtitle {
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-secondary);
-  margin: 4px 0 0;
-  line-height: 1.5;
+  margin: 3px 0 0;
+  line-height: 1.45;
 }
 .input-with-icon {
   position: relative;
