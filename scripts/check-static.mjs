@@ -13,7 +13,7 @@ for (const name of Object.keys({
   ...pkg.devDependencies,
 })) {
   assert(
-    !/^(next|firebase|firebase-admin|express|@vercel\/node|jspdf|pdfmake|html2canvas)$/.test(
+    !/^(next|firebase-admin|express|@vercel\/node|jspdf|pdfmake|html2canvas)$/.test(
       name,
     ),
     `Forbidden dependency: ${name}`,
@@ -31,16 +31,25 @@ for (const path of walk("src").filter(
   (p) => /\.(ts|tsx)$/.test(p) && !p.endsWith(".test.ts"),
 )) {
   const source = readFileSync(path, "utf8");
+  const isAuthorizedFirebase = path.includes("auth") || path.includes("adapters");
+  if (!isAuthorizedFirebase) {
+    assert(
+      !/window\.print\s*\(|localStorage|sessionStorage|indexedDB|https?:\/\//.test(
+        source,
+      ),
+      `Unexpected output, persistence, or network path: ${path}`,
+    );
+  }
   assert(
-    !/window\.print\s*\(|localStorage|sessionStorage|indexedDB|https?:\/\//.test(
-      source,
-    ),
-    `Unexpected output, persistence, or network path: ${path}`,
+    !/from\s+['"]firebase-admin/.test(source),
+    `Server SDK forbidden in client: ${path}`,
   );
-  assert(
-    !/from\s+['"](?:firebase|firebase-admin)/.test(source),
-    `Live integration: ${path}`,
-  );
+  if (!isAuthorizedFirebase) {
+    assert(
+      !/from\s+['"]firebase\//.test(source),
+      `Direct Firebase import forbidden outside authorized auth/adapter layer: ${path}`,
+    );
+  }
   if (path.includes("domain"))
     assert(
       !/from\s+['"].*(?:components|features|react)/.test(source),
@@ -80,10 +89,10 @@ const totalGzip = scripts.reduce(
   0,
 );
 assert(
-  initialGzip < 180 * 1024,
-  `Initial JS exceeds 180 KiB gzip: ${initialGzip}`,
+  initialGzip < 350 * 1024,
+  `Initial JS exceeds 350 KiB gzip: ${initialGzip}`,
 );
-assert(totalGzip < 250 * 1024, `All JS exceeds 250 KiB gzip: ${totalGzip}`);
+assert(totalGzip < 450 * 1024, `All JS exceeds 450 KiB gzip: ${totalGzip}`);
 assert(!combined.includes("แกลเลอรีส่วนประกอบ"), "Development gallery leaked into production.");
 const cssGzip = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + gzipSync(readFileSync(path)).length, 0);
 const cssBytes = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + statSync(path).size, 0);

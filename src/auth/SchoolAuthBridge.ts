@@ -1,5 +1,5 @@
 import { isStaffRole } from "../domain/permissions";
-import type { AuthBridgeAdapter, BridgeSession, FirebaseAuthDriver, SchoolIdentitySource } from "../ports/AuthBridgeAdapter";
+import type { AuthBridgeAdapter, BridgeSession, FirebaseAuthDriver, SchoolIdentitySource, SignInOptions } from "../ports/AuthBridgeAdapter";
 
 /** Integration orchestration, not a configured school Firebase connection.
  * The host must supply an approved SDK driver and authorized source transport.
@@ -43,7 +43,7 @@ export class SchoolAuthBridge implements AuthBridgeAdapter {
     if (epoch === this.epoch && !controller.signal.aborted && !this.disposed) this.publish(session);
     return this.state;
   }
-  async signIn() { await this.auth.useMemoryPersistence(); await this.auth.signIn(); return this.resolveSession(); }
+  async signIn(options?: SignInOptions) { await this.auth.useMemoryPersistence(); await this.auth.signIn(options); return this.resolveSession(); }
   async signOut() { ++this.epoch; this.controller?.abort(); this.publish({ kind: "signed_out" }); await this.auth.signOut(); }
   subscribe(listener: (session: BridgeSession) => void) { this.listeners.add(listener); listener(this.state); return () => { this.listeners.delete(listener); }; }
   dispose() { this.disposed = true; ++this.epoch; this.controller?.abort(); this.stop(); this.publish({ kind: "signed_out" }); this.listeners.clear(); }

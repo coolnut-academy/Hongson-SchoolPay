@@ -1,14 +1,19 @@
 import type { StaffPrincipal } from "../domain/permissions";
-export type FirebaseIdentity = { uid: string; projectId: string };
+export type FirebaseIdentity = { uid: string; projectId: string; email?: string | null };
 export type StaffSourceProfile = { staffId: string; fullName: string; position: string; updatedAt: string };
 export type BridgeSession =
   | { kind: "signed_out" }
   | { kind: "access_pending"; reason: string }
   | { kind: "unavailable"; reason: string }
   | { kind: "ready"; principal: StaffPrincipal; profile: StaffSourceProfile };
+export type SignInOptions = {
+  method?: "google" | "password";
+  email?: string;
+  password?: string;
+};
 export interface AuthBridgeAdapter {
   resolveSession(): Promise<BridgeSession>;
-  signIn(): Promise<BridgeSession>;
+  signIn(options?: SignInOptions): Promise<BridgeSession>;
   signOut(): Promise<void>;
   subscribe(listener: (session: BridgeSession) => void): () => void;
   dispose(): void;
@@ -18,7 +23,7 @@ export interface AuthBridgeAdapter {
 export interface FirebaseAuthDriver {
   useMemoryPersistence(): Promise<void>;
   currentIdentity(): Promise<FirebaseIdentity | null>;
-  signIn(): Promise<void>;
+  signIn(options?: SignInOptions): Promise<void>;
   signOut(): Promise<void>;
   onIdentityChanged(listener: () => void): () => void;
 }

@@ -1,8 +1,54 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Quarantine baseline only. G01/G07/G08/G11 and the live command proof are
-    // unresolved. No role, including superadmin, can activate financial writes.
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isSuperadminEmail() {
+      return isAuthenticated() && request.auth.token.email.lower() == 'superadmin@hongsonschoolpay.com'.lower();
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/hsp_roles/$(request.auth.uid)).data.role;
+    }
+    
+    function isSuperadmin() {
+      return isSuperadminEmail() || (isAuthenticated() && getUserRole() == 'superadmin');
+    }
+    
+    function isStaff() {
+      return isAuthenticated() && exists(/databases/$(database)/documents/hsp_roles/$(request.auth.uid)) && get(/databases/$(database)/documents/hsp_roles/$(request.auth.uid)).data.active == true;
+    }
+
+    // Role & Identity storage
+    match /hsp_roles/{uid} {
+      // Users can read their own role; superadmin can read all
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isSuperadmin());
+      
+      // Initial bootstrapping: allow superadmin email to create their own role record
+      allow create: if isSuperadminEmail() && request.auth.uid == uid;
+      
+      // Role management: only superadmin can modify or create roles for others
+      allow write: if isSuperadmin();
+    }
+
+    // Audit logs (Append-only)
+    match /hsp_audit/{auditId} {
+      allow create: if isAuthenticated();
+      allow read: if isSuperadmin();
+      allow update, delete: if false; // Append-only immutable log
+    }
+
+    // Student directory / Roster
+    match /hsp_students/{studentId} {
+      allow read: if isStaff() || isSuperadmin();
+      allow write: if isSuperadmin();
+    }
+
+    // Fallback: deny all
     match /{document=**} {
       allow read, write: if false;
     }

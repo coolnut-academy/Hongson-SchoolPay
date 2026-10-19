@@ -1,6 +1,8 @@
 import type { SchoolPayAdapter } from "../ports/SchoolPayAdapter";
 import type { AuthBridgeAdapter } from "../ports/AuthBridgeAdapter";
 import type { StaffAccess } from "../domain/workspace";
+import { createFirebaseSchoolAuthBridge } from "../auth/firebaseDriver";
+import { FirestoreSchoolPayAdapter } from "../adapters/firebase/FirestoreSchoolPayAdapter";
 
 export interface Runtime {
   adapter: SchoolPayAdapter;
@@ -22,5 +24,12 @@ export function unavailableAdapter(): SchoolPayAdapter {
 // Bind the approved SchoolAuthBridge and authorized data adapter here when supplied.
 // Do not infer roles from email, URL parameters, or browser storage.
 export function schoolRuntime(): Runtime {
-  return { adapter: unavailableAdapter(), auth: null };
+  try {
+    const auth = createFirebaseSchoolAuthBridge();
+    const adapter = new FirestoreSchoolPayAdapter();
+    return { adapter, auth };
+  } catch {
+    return { adapter: unavailableAdapter(), auth: null };
+  }
 }
+

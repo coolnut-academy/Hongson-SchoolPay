@@ -15,9 +15,8 @@ try {
     await page.goto("http://127.0.0.1:4173" + route);
     await page.getByTestId("entry-page").waitFor();
     assert.equal(await page.getByTestId("review-accounts").count(), 0);
-    assert(await page.getByTestId("student-login").isDisabled());
-    assert(await page.getByTestId("staff-login").isDisabled());
-    assert((await page.getByTestId("connection-status").innerText()).includes("อยู่ระหว่างเชื่อมต่อ"));
+    assert(await page.getByTestId("student-login").isEnabled());
+    assert(await page.getByTestId("staff-login").isEnabled());
   }
   const response = await page.request.get("http://127.0.0.1:4173/assets/missing.js");
   assert.equal(response.status(), 404);

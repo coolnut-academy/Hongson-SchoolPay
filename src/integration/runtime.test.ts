@@ -3,14 +3,19 @@ import { schoolRuntime } from "./runtime";
 import { reviewRuntime } from "./review";
 import type { PaymentCommand } from "../domain/model";
 
-it("unconfigured production fails closed without granting any role or returning fabricated data", async () => {
+import { unavailableAdapter } from "./runtime";
+
+it("production runtime binds authorized AuthBridge and Firestore adapter without review backdoor", async () => {
   const runtime = schoolRuntime();
-  expect(runtime.auth).toBeNull();
+  expect(runtime.auth).not.toBeNull();
   expect(runtime.review).toBeUndefined();
   expect(await runtime.adapter.currentStaff("superadmin")).toBeNull();
-  await expect(runtime.adapter.lookup("TEST-STUDENT")).rejects.toThrow();
-  await expect(runtime.adapter.read()).rejects.toThrow();
   await expect(runtime.adapter.receive({} as PaymentCommand, "superadmin")).rejects.toThrow();
+
+  const fallback = unavailableAdapter();
+  expect(await fallback.currentStaff("superadmin")).toBeNull();
+  await expect(fallback.lookup("TEST-STUDENT")).rejects.toThrow();
+  await expect(fallback.read()).rejects.toThrow();
 });
 
 it("review IDs expose empty screens and reject every write, even for admin", async () => {

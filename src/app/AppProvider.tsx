@@ -4,10 +4,11 @@ import type { SchoolPayAdapter } from "../ports/SchoolPayAdapter";
 import type { StaffRole } from "../domain/model";
 import { hasCapability, type Capability } from "../domain/permissions";
 import type { Runtime } from "../integration/runtime";
+import type { SignInOptions } from "../ports/AuthBridgeAdapter";
 const client = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: false, refetchOnWindowFocus: true }, mutations: { retry: false } } });
 type AppContextType = {
   adapter: SchoolPayAdapter; role: StaffRole; visitor: boolean; visitorSession: string;
-  setVisitor: (value: boolean) => void; signInStaff: (id?: string) => Promise<void>;
+  setVisitor: (value: boolean) => void; signInStaff: (options?: string | SignInOptions) => Promise<void>;
   logoutStaff: () => Promise<void>; reviewMode: boolean; connected: boolean; staffAuthenticated: boolean;
 };
 const AppContext = createContext<AppContextType | null>(null);
@@ -30,17 +31,24 @@ function Context({ children, runtime }: { children: ReactNode; runtime: Runtime 
   const setVisitor = (value: boolean) => {
     clearScope(); updateVisitor(value); setVisitorSession(value ? crypto.randomUUID() : "");
   };
-  async function signInStaff(id = "") {
+  async function signInStaff(options?: string | SignInOptions) {
     clearScope();
     await runtime.adapter.endVisitorSession();
     if (runtime.review) {
+      const id = typeof options === "string" ? options : "";
       const staff = runtime.review.signIn(id.trim().toUpperCase());
       if (!staff) throw new Error("Test ID ไม่ถูกต้อง กรุณาเลือกบัญชีตรวจหน้าจอด้านล่าง");
       setRole(staff.role); setStaffAuthenticated(true); return;
     }
     if (!runtime.auth) throw new Error("ยังไม่ได้เชื่อมต่อระบบเข้าสู่ระบบของโรงเรียน");
-    const session = await runtime.auth.signIn();
-    if (session.kind !== "ready") throw new Error("ยังไม่ได้รับสิทธิ์ใช้งาน กรุณาติดต่อผู้ดูแลระบบ");
+    const opt = typeof options === "object" ? options : undefined;
+    const session = await runtime.auth.signIn(opt);
+    if (session.kind === "access_pending") {
+      throw new Error("บัญชีนี้ยังไม่ได้รับสิทธิ์ในระบบ กรุณาติดต่อ Superadmin เพื่อกำหนดสิทธิ์");
+    }
+    if (session.kind !== "ready") {
+      throw new Error("ยังไม่ได้รับสิทธิ์ใช้งาน กรุณาติดต่อผู้ดูแลระบบ");
+    }
     setRole(session.principal.role);
   }
   async function logoutStaff() {
