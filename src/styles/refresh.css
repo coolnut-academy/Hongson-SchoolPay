@@ -1459,6 +1459,24 @@ textarea:focus {
   display: flex;
   align-items: center;
 }
+.input-icon-right {
+  position: absolute;
+  right: 12px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.input-icon-right:hover {
+  color: var(--text);
+  background: var(--surface-muted);
+}
 .login-input {
   width: 100%;
   min-height: 48px;
