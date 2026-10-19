@@ -12,8 +12,8 @@ export function SchoolEmblem({ className = "" }: { className?: string }) {
       <img
         src="/logo-SchoolPay.png"
         alt="Hongson SchoolPay"
-        width={500}
-        height={500}
+        width={100}
+        height={100}
         className="school-emblem-img"
       />
     </div>

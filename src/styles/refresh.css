@@ -1434,10 +1434,10 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 500px;
-  height: 500px;
-  max-width: min(500px, 92vw);
-  max-height: min(500px, 92vw);
+  width: 100px;
+  height: 100px;
+  max-width: min(100px, 92vw);
+  max-height: min(100px, 92vw);
   margin: 0;
   padding: 0;
   border: none;
