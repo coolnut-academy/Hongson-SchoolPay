@@ -12,8 +12,8 @@ export function SchoolEmblem({ className = "" }: { className?: string }) {
       <img
         src="/logo-SchoolPay.png"
         alt="Hongson SchoolPay"
-        width={56}
-        height={56}
+        width={76}
+        height={76}
         className="school-emblem-img"
       />
     </div>
@@ -169,7 +169,7 @@ export default function EntryPage() {
             <SchoolEmblem />
             <div className="login-brand-text">
               <h1 className="login-title">Hongson SchoolPay</h1>
-              <p className="login-subtitle">ระบบติดตามภาระชำระและทะเบียนคุมใบเสร็จ · โรงเรียนห้องสอนศึกษา</p>
+              <p className="login-subtitle">ระบบติดตามสถานะชำระค่าเทอม</p>
             </div>
           </div>
         </header>
