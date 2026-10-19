@@ -1438,11 +1438,11 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 17px;
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 10px 24px 10px 14px;
+  padding: 9px 24px 9px 13px;
   background: linear-gradient(145deg, #ffffff 0%, #fbfcfe 50%, #f1f6f8 100%);
   border: 1px solid rgba(255, 255, 255, 0.95);
   outline: 1px solid rgba(203, 213, 225, 0.55);
@@ -1459,8 +1459,8 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 98px;
-  height: 98px;
+  width: 92px;
+  height: 92px;
   flex-shrink: 0;
   margin: 0;
   padding: 0;
@@ -1488,7 +1488,7 @@ textarea:focus {
   min-width: 0;
 }
 .login-title {
-  font-size: 26.5px;
+  font-size: 25.2px;
   font-weight: 800;
   line-height: 1.18;
   letter-spacing: -0.02em;
@@ -1500,7 +1500,7 @@ textarea:focus {
   white-space: nowrap;
 }
 .login-subtitle {
-  font-size: 15px;
+  font-size: 14.2px;
   font-weight: 600;
   color: #1b4d3e;
   margin: 4px 0 0;
@@ -2098,21 +2098,21 @@ textarea:focus {
   .login-brand-bar {
     width: fit-content;
     max-width: 100%;
-    padding: 9px 18px 9px 12px;
+    padding: 8px 18px 8px 11px;
     border-radius: 22px;
     gap: 13px;
   }
   .school-emblem {
-    width: 75px;
-    height: 75px;
+    width: 72px;
+    height: 72px;
   }
   .login-title {
-    font-size: 19.5px;
+    font-size: 19px;
     line-height: 1.22;
     white-space: nowrap;
   }
   .login-subtitle {
-    font-size: 12.5px;
+    font-size: 12px;
     line-height: 1.35;
     white-space: nowrap;
     margin-top: 2px;
