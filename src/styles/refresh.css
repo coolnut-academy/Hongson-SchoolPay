@@ -1442,14 +1442,14 @@ textarea:focus {
   width: fit-content;
   max-width: 100%;
   box-sizing: border-box;
-  padding: 10px 26px 10px 14px;
+  padding: 10px 24px 10px 14px;
   background: linear-gradient(145deg, #ffffff 0%, #fbfcfe 50%, #f1f6f8 100%);
   border: 1px solid rgba(255, 255, 255, 0.95);
   outline: 1px solid rgba(203, 213, 225, 0.55);
-  border-radius: 28px;
+  border-radius: 26px;
   box-shadow:
-    0 12px 30px -4px rgba(16, 62, 43, 0.08),
-    0 4px 12px -2px rgba(15, 23, 42, 0.03),
+    0 10px 26px -4px rgba(16, 62, 43, 0.08),
+    0 4px 10px -2px rgba(15, 23, 42, 0.03),
     inset 0 1px 1.5px #ffffff,
     inset 0 -1px 2px rgba(226, 232, 240, 0.35);
   backdrop-filter: blur(14px);
@@ -1459,8 +1459,8 @@ textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 102px;
-  height: 102px;
+  width: 98px;
+  height: 98px;
   flex-shrink: 0;
   margin: 0;
   padding: 0;
@@ -1488,9 +1488,9 @@ textarea:focus {
   min-width: 0;
 }
 .login-title {
-  font-size: 28px;
+  font-size: 26.5px;
   font-weight: 800;
-  line-height: 1.16;
+  line-height: 1.18;
   letter-spacing: -0.02em;
   background: linear-gradient(135deg, #092e22 0%, #0d4633 55%, #156247 100%);
   -webkit-background-clip: text;
@@ -1500,10 +1500,10 @@ textarea:focus {
   white-space: nowrap;
 }
 .login-subtitle {
-  font-size: 15.5px;
+  font-size: 15px;
   font-weight: 600;
   color: #1b4d3e;
-  margin: 5px 0 0;
+  margin: 4px 0 0;
   line-height: 1.35;
   white-space: nowrap;
   letter-spacing: 0.01em;
@@ -2098,21 +2098,21 @@ textarea:focus {
   .login-brand-bar {
     width: fit-content;
     max-width: 100%;
-    padding: 8px 18px 8px 12px;
+    padding: 9px 18px 9px 12px;
     border-radius: 22px;
-    gap: 14px;
+    gap: 13px;
   }
   .school-emblem {
-    width: 79px;
-    height: 79px;
+    width: 75px;
+    height: 75px;
   }
   .login-title {
-    font-size: 20px;
+    font-size: 19.5px;
     line-height: 1.22;
     white-space: nowrap;
   }
   .login-subtitle {
-    font-size: 13px;
+    font-size: 12.5px;
     line-height: 1.35;
     white-space: nowrap;
     margin-top: 2px;
