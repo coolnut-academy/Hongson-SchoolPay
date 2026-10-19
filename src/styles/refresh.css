@@ -1428,16 +1428,16 @@ textarea:focus {
 }
 .login-header {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 .school-emblem {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 100px;
-  max-width: min(100px, 92vw);
-  max-height: min(100px, 92vw);
+  width: 160px;
+  height: 160px;
+  max-width: min(160px, 92vw);
+  max-height: min(160px, 92vw);
   margin: 0;
   padding: 0;
   border: none;
