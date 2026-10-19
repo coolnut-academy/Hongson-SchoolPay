@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ChevronLeft, ChevronRight, GraduationCap, Lock, ShieldCheck, User } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, CreditCard, GraduationCap, LayoutGrid, Lock, ShieldCheck, Sparkles, User, Wallet } from "lucide-react";
 import { useApp } from "../app/AppProvider";
 import { ConnectionBanner } from "../components/Shell";
 import { Alert, Button, Field } from "../components/ui";
@@ -10,10 +10,10 @@ export function SchoolEmblem({ className = "" }: { className?: string }) {
   return (
     <div className={`school-emblem ${className}`} aria-hidden>
       <svg viewBox="0 0 72 72" fill="none" className="emblem-svg">
-        <circle cx="36" cy="36" r="34" fill="#ffffff" stroke="var(--brand)" strokeWidth="2.5" />
-        <circle cx="36" cy="36" r="30" fill="var(--brand-subtle)" stroke="var(--brand-bright)" strokeWidth="1" strokeDasharray="3 2" />
+        <circle cx="36" cy="36" r="34" fill="#ffffff" stroke="var(--brand)" strokeWidth="2.2" />
+        <circle cx="36" cy="36" r="29.5" fill="var(--brand-subtle)" stroke="var(--brand-border)" strokeWidth="1" strokeDasharray="3 2" />
         <circle cx="36" cy="36" r="23" fill="var(--brand)" />
-        <path d="M36 17 L38.5 23 L43 25.5 L38.5 28 L36 34 L33.5 28 L29 25.5 L33.5 23 Z" fill="var(--brand-bright)" />
+        <path d="M36 17 L38.5 23 L43 25.5 L38.5 28 L36 34 L33.5 28 L29 25.5 L33.5 23 Z" fill="var(--warm-gold)" />
         <path d="M26 36.5 Q36 32 46 36.5 L46 45 Q36 40.5 26 45 Z" fill="#ffffff" />
         <path d="M36 34.5 V43" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M28 47.5 Q36 45 44 47.5" stroke="var(--brand-bright)" strokeWidth="1.8" strokeLinecap="round" />
@@ -34,6 +34,14 @@ export default function EntryPage() {
   const [staffError, setStaffError] = useState("");
   const trackRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<number | null>(null);
+  const isProgrammaticScroll = useRef(false);
+  const scrollTimeout = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimeout.current) window.clearTimeout(scrollTimeout.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (staffAuthenticated) {
@@ -44,6 +52,8 @@ export default function EntryPage() {
   function scrollToCard(index: 0 | 1) {
     setActiveCard(index);
     if (!trackRef.current) return;
+    isProgrammaticScroll.current = true;
+    if (scrollTimeout.current) window.clearTimeout(scrollTimeout.current);
     const cards = trackRef.current.querySelectorAll<HTMLElement>(".login-card");
     if (cards[index]) {
       trackRef.current.scrollTo({
@@ -51,10 +61,13 @@ export default function EntryPage() {
         behavior: "smooth",
       });
     }
+    scrollTimeout.current = window.setTimeout(() => {
+      isProgrammaticScroll.current = false;
+    }, 450);
   }
 
   function handleTrackScroll() {
-    if (!trackRef.current) return;
+    if (!trackRef.current || isProgrammaticScroll.current) return;
     const scrollLeft = trackRef.current.scrollLeft;
     const width = trackRef.current.clientWidth;
     const newIndex = scrollLeft > width * 0.45 ? 1 : 0;
@@ -132,10 +145,10 @@ export default function EntryPage() {
         <header className="login-header">
           <SchoolEmblem />
           <h1 className="login-title">Hongson SchoolPay</h1>
-          <p className="login-subtitle">ระบบติดตามการชำระและค้างชำระเงินบำรุงการศึกษา</p>
+          <p className="login-subtitle">ระบบติดตามภาระชำระและทะเบียนคุมใบเสร็จ · โรงเรียนห้องสอนศึกษา</p>
         </header>
 
-        {/* Game-style Character / Role Selector Bar */}
+        {/* Tactile Role Selector Bar */}
         <div className="role-selector-bar" role="tablist" aria-label="เลือกบทบาทเข้าใช้งาน">
           <button
             type="button"
@@ -163,7 +176,6 @@ export default function EntryPage() {
 
         {/* Carousel Deck Viewport */}
         <div className="deck-viewport">
-          {/* Floating Navigation Controls */}
           <button
             type="button"
             className="deck-nav-btn prev"
@@ -195,16 +207,15 @@ export default function EntryPage() {
             <div
               className={`login-card card-student ${activeCard === 0 ? "is-active" : "is-inactive"}`}
               onClick={() => activeCard !== 0 && scrollToCard(0)}
-              onFocusCapture={() => activeCard !== 0 && scrollToCard(0)}
             >
               <div className="login-card-accent" aria-hidden="true" />
               <div className="card-badge student-badge">
                 <GraduationCap size={13} aria-hidden />
-                <span>STUDENT & PARENT</span>
+                <span>STUDENT & PARENT PORTAL</span>
               </div>
               <div className="card-identity">
                 <h2 className="card-title">นักเรียน / ผู้ปกครอง</h2>
-                <p className="card-desc">เริ่มต้นตรวจสอบข้อมูลการชำระเงินของคุณ</p>
+                <p className="card-desc">ตรวจสอบภาระชำระ ประวัติย้อนหลัง และข้อมูลอ้างอิงใบเสร็จจริง</p>
               </div>
 
               <section className="login-section" aria-label="เข้าสู่ระบบนักเรียนและผู้ปกครอง">
@@ -216,7 +227,7 @@ export default function EntryPage() {
                     hint={
                       import.meta.env.DEV && reviewMode
                         ? "Test ID: TEST-STUDENT · สำหรับตรวจหน้าจอว่าง"
-                        : "ใช้รหัสที่โรงเรียนกำหนด"
+                        : "ใช้รหัสประจำตัวนักเรียนที่โรงเรียนกำหนด"
                     }
                     error={error}
                   >
@@ -254,9 +265,9 @@ export default function EntryPage() {
               <div className="system-info-card mt-5">
                 <div className="system-info-header">
                   <span className="system-info-team">
-                    <ShieldCheck size={14} aria-hidden /> SCHOOLPAY SYSTEM
+                    <ShieldCheck size={14} aria-hidden /> VERIFIED LEDGER
                   </span>
-                  <span className="system-info-dev">Hongson Dev</span>
+                  <span className="system-info-dev">Read-Only Access</span>
                 </div>
                 <div className="system-info-body">
                   <div className="system-info-row">
@@ -264,8 +275,8 @@ export default function EntryPage() {
                     <span className="info-value">งานการเงินและบัญชี โรงเรียนห้องสอนศึกษา</span>
                   </div>
                   <div className="system-info-row">
-                    <span className="info-label">ระบบตรวจสอบ:</span>
-                    <span className="info-value">ความถูกต้อง โปร่งใส ตรวจสอบได้ 100%</span>
+                    <span className="info-label">ใบเสร็จจริง:</span>
+                    <span className="info-value">อ้างอิงเล่มและหน้าเขียนมือ ไม่มีการพิมพ์ซ้ำ</span>
                   </div>
                 </div>
               </div>
@@ -275,16 +286,15 @@ export default function EntryPage() {
             <div
               className={`login-card card-staff ${activeCard === 1 ? "is-active" : "is-inactive"}`}
               onClick={() => activeCard !== 1 && scrollToCard(1)}
-              onFocusCapture={() => activeCard !== 1 && scrollToCard(1)}
             >
               <div className="login-card-accent staff-accent" aria-hidden="true" />
               <div className="card-badge staff-badge">
                 <ShieldCheck size={13} aria-hidden />
-                <span>OFFICIAL STAFF</span>
+                <span>OFFICIAL STAFF WORKSPACE</span>
               </div>
               <div className="card-identity">
                 <h2 className="card-title">บุคลากรทางการศึกษา</h2>
-                <p className="card-desc">เข้าถึงข้อมูลและเครื่องมือตามสิทธิ์ที่โรงเรียนมอบหมาย</p>
+                <p className="card-desc">เข้าถึงแดชบอร์ด ทะเบียนคุมใบเสร็จ และระบบติดตามรายห้องตามสิทธิ์</p>
               </div>
 
               <section className="login-staff-section" aria-label="เข้าสู่ระบบบุคลากร">
@@ -296,11 +306,7 @@ export default function EntryPage() {
                   className="space-y-4"
                 >
                   {import.meta.env.DEV && reviewMode && (
-                    <Field
-                      id="staff-test-id"
-                      label="Test ID บุคลากร"
-                      hint="เลือกปุ่มด้านล่าง หรือกรอก Test ID"
-                    >
+                    <Field id="staff-test-id" label="Test ID บุคลากร" hint="เลือกบทบาทด้านล่าง หรือกรอก Test ID">
                       <div className="input-with-icon">
                         <span className="input-icon-left" aria-hidden>
                           <User size={18} />
@@ -327,22 +333,24 @@ export default function EntryPage() {
                     className="w-full btn-staff-login"
                     data-testid="staff-login"
                   >
-                    <Lock size={16} aria-hidden /> เข้าสู่ระบบบุคลากร (Staff SSO){" "}
-                    <ArrowRight size={17} aria-hidden />
+                    <Lock size={16} aria-hidden /> เข้าสู่ระบบบุคลากร (Staff SSO) <ArrowRight size={17} aria-hidden />
                   </Button>
                 </form>
 
                 {import.meta.env.DEV && reviewMode && (
                   <div className="review-accounts-box" data-testid="review-accounts">
-                    <p className="review-accounts-caption">เลือกตัวละคร / บัญชีตรวจหน้าจอ (Quick Role)</p>
+                    <p className="review-accounts-caption">
+                      <Sparkles size={13} aria-hidden className="inline mr-1" />
+                      เลือกบทบาทตรวจหน้าจอ (Quick Role Switcher)
+                    </p>
                     <div className="entry-options">
                       {[
-                        ["TEST-TEACHER", "ครูที่ปรึกษา"],
-                        ["TEST-FINANCE", "เจ้าหน้าที่การเงิน"],
-                        ["TEST-ADMIN", "ผู้ดูแลระบบ"],
-                        ["TEST-FINANCE-TEACHER", "ครูการเงิน"],
-                        ["TEST-EXECUTIVE", "ผู้บริหาร"],
-                      ].map(([id, label]) => (
+                        ["TEST-TEACHER", "ครูที่ปรึกษา", GraduationCap] as const,
+                        ["TEST-FINANCE", "เจ้าหน้าที่การเงิน", CreditCard] as const,
+                        ["TEST-ADMIN", "ผู้ดูแลระบบ", ShieldCheck] as const,
+                        ["TEST-FINANCE-TEACHER", "ครูการเงิน", Wallet] as const,
+                        ["TEST-EXECUTIVE", "ผู้บริหาร", LayoutGrid] as const,
+                      ].map(([id, label, Icon]) => (
                         <button
                           key={id}
                           type="button"
@@ -354,9 +362,14 @@ export default function EntryPage() {
                             void staffLogin(id);
                           }}
                         >
-                          <div>
-                            <strong>{label}</strong>
-                            <p>{id}</p>
+                          <div className="flex items-center gap-2.5">
+                            <span className="entry-role-icon" aria-hidden>
+                              <Icon size={16} />
+                            </span>
+                            <div>
+                              <strong>{label}</strong>
+                              <p>{id}</p>
+                            </div>
                           </div>
                           <ArrowRight size={14} aria-hidden />
                         </button>
@@ -369,18 +382,18 @@ export default function EntryPage() {
               <div className="system-info-card mt-5">
                 <div className="system-info-header">
                   <span className="system-info-team">
-                    <ShieldCheck size={14} aria-hidden /> SCHOOLPAY AUTH
+                    <ShieldCheck size={14} aria-hidden /> SCHOOLPAY AUTH BRIDGE
                   </span>
-                  <span className="system-info-dev">Hongson Dev</span>
+                  <span className="system-info-dev">Zero-Trust RBAC</span>
                 </div>
                 <div className="system-info-body">
                   <div className="system-info-row">
                     <span className="info-label">ความปลอดภัย:</span>
-                    <span className="info-value">SSO เข้ารหัสตามสิทธิ์โรงเรียน</span>
+                    <span className="info-value">SSO เข้ารหัสตามสิทธิ์และขอบเขตห้องเรียน</span>
                   </div>
                   <div className="system-info-row">
                     <span className="info-label">ระบบตรวจสอบ:</span>
-                    <span className="info-value">ตรวจสอบย้อนหลังได้ตามระเบียบงานราชการ</span>
+                    <span className="info-value">Audit Trail ตรวจสอบย้อนหลังได้ตามระเบียบราชการ</span>
                   </div>
                 </div>
               </div>
@@ -388,7 +401,7 @@ export default function EntryPage() {
           </div>
         </div>
 
-        {/* Carousel Pagination Level Dots */}
+        {/* Carousel Pagination Dots */}
         <div className="deck-pagination" role="group" aria-label="สลับการ์ด">
           <button
             type="button"
@@ -413,7 +426,7 @@ export default function EntryPage() {
 
       <footer className="login-footer">
         <span>© Hongson SchoolPay · งานการเงิน โรงเรียนห้องสอนศึกษา</span>
-        <span>Swipe หรือแตะแท็บเพื่อสลับการ์ดเข้าใช้งาน</span>
+        <span>กดปุ่มลูกศร ← → หรือแตะแท็บเพื่อสลับโหมดเข้าใช้งาน</span>
       </footer>
     </div>
   );

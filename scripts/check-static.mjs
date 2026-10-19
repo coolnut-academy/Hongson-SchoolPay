@@ -68,7 +68,7 @@ const scripts = assets.filter((p) => p.endsWith(".js"));
 const combined = scripts.map((p) => readFileSync(p, "utf8")).join("\n");
 assert(
   !combined.includes("เครื่องมือทดสอบ UI เท่านั้น"),
-  "Dev-only tools leaked into production bundle.",
+  "Dev-only tools leaked into production.",
 );
 assert(!/TEST-(?:ADMIN|STUDENT|TEACHER|FINANCE)|MockAdapter|69024/.test(combined), "Review IDs or seeded records leaked into production.");
 const html = readFileSync("dist/index.html", "utf8");
@@ -88,10 +88,10 @@ assert(!combined.includes("แกลเลอรีส่วนประกอ�
 const cssGzip = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + gzipSync(readFileSync(path)).length, 0);
 const cssBytes = assets.filter(p => p.endsWith(".css")).reduce((sum, path) => sum + statSync(path).size, 0);
 const fontBytes = assets.filter(p => p.endsWith(".woff2")).reduce((sum, path) => sum + statSync(path).size, 0);
-// UI v3 adds the reference dashboard, grade charts, portal and shared responsive
-// visual layer. Measured at 59.5 KiB raw / 12.4 KiB gzip; keep bounded headroom.
-assert(cssBytes <= 64 * 1024, "CSS raw-byte budget exceeded.");
-assert(cssGzip <= 14 * 1024, "CSS gzip budget exceeded.");
+// UI v4 Cozy Light Fintech adds warm alabaster/ivory surfaces, tactile cards,
+// and GPU-accelerated micro-interactions within a bounded 76 KiB raw / 16 KiB gzip cap.
+assert(cssBytes <= 76 * 1024, "CSS raw-byte budget exceeded.");
+assert(cssGzip <= 16 * 1024, "CSS gzip budget exceeded.");
 assert(fontBytes <= 200 * 1024, "Font budget exceeded.");
 for (const feature of ["StudentPage", "FinancePage", "LedgerPage", "FeesPage", "HomeroomPage", "MonthlyPage", "DashboardPage", "RoomPage", "OtherMoneyPage", "AdminPage", "AuditPage", "ReportsPage", "StockPage"])
   assert(

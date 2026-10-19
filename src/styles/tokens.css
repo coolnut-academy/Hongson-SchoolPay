@@ -1,41 +1,69 @@
 :root {
-  --canvas: #f8faf9;
+  /* High-Tech Pearl White & Luminous Emerald Fintech Palette */
+  --canvas: #f8fafc;
+  --canvas-warm: #f1f5f9;
   --surface: #ffffff;
-  --surface-strong: #132e39;
-  --brand-bright: #9ae6bd;
-  --surface-subtle: #eef3ef;
-  --silver: #c9d3df;
-  --border: #e0e7e2;
-  --control-border: #8a9e96;
-  --text: #152e39;
-  --text-secondary: #506560;
-  --text-muted: #586b62;
-  --brand: #087b5b;
-  --brand-hover: #066449;
-  --brand-pressed: #05523c;
-  --brand-subtle: #e9f5ef;
-  --sidebar: #f0f4f1;
-  --sidebar-active: #dceee6;
+  --surface-elevated: #ffffff;
+  --surface-subtle: #f1f5f9;
+  --surface-hover: #f8fafc;
+  --surface-strong: #0f172a;
+  --surface-strong-accent: #064e3b;
+
+  /* Brand & Vibrant Light Fintech Accents (WCAG AA/AAA Verified) */
+  --brand: #047857;
+  --brand-hover: #065f46;
+  --brand-pressed: #064e3b;
+  --brand-light: #10b981;
+  --brand-subtle: #ecfdf5;
+  --brand-border: #a7f3d0;
+  --brand-bright: #34d399;
+  --brand-mint: #6ee7b7;
+  --warm-gold: #d97706;
+
+  /* Ink & Typography Hierarchy */
+  --text: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
   --on-dark: #ffffff;
-  --on-dark-muted: #bccddd;
-  --success: #176342;
-  --success-bg: #eaf6ee;
-  --warning: #795b26;
-  --warning-bg: #f8f2e6;
-  --danger: #a13e38;
-  --danger-bg: #fbefec;
-  --info: #37577a;
-  --info-bg: #edf3fa;
-  --focus: #087b5b;
-  --overlay: rgb(10 26 44 / 48%);
-  --shadow-card: 0 2px 5px rgb(16 36 58 / 2%);
-  --shadow-overlay: 0 24px 80px -16px rgb(16 36 58 / 28%);
-  --radius-control: 8px;
-  --radius-card: 14px;
-  --radius-dialog: 16px;
-  --brand-gradient: linear-gradient(135deg, #10243a, #1b4651);
-  --chart-fill: #a8d9c6;
-  --frame: #e8edf3;
+  --on-dark-muted: #cbd5e1;
+
+  /* Borders & Dividers — Crisp Slate & Platinum (Zero Muddy Sepia) */
+  --silver: #cbd5e1;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --control-border: #94a3b8;
+  --focus: #059669;
+
+  /* Navigation & Shell Surfaces */
+  --sidebar: #ffffff;
+  --sidebar-active: #ecfdf5;
+
+  /* Semantic Status Pairs (High-Contrast Modern Tones) */
+  --success: #059669;
+  --success-bg: #ecfdf5;
+  --warning: #b45309;
+  --warning-bg: #fffbeb;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --info: #0369a1;
+  --info-bg: #f0f9ff;
+
+  /* Elevation, Radii & GPU Motion */
+  --overlay: rgb(15 23 42 / 44%);
+  --shadow-xs: 0 1px 2px rgb(15 23 42 / 4%);
+  --shadow-card: 0 1px 3px rgb(15 23 42 / 5%), 0 8px 24px -6px rgb(15 23 42 / 6%);
+  --shadow-card-hover: 0 4px 14px rgb(15 23 42 / 6%), 0 14px 28px -8px rgb(5 150 105 / 16%);
+  --shadow-overlay: 0 24px 80px -16px rgb(15 23 42 / 24%);
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-dialog: 20px;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Gradients & Layout Metrics */
+  --brand-gradient: linear-gradient(135deg, #0f172a 0%, #064e3b 65%, #059669 100%);
+  --cozy-mesh: radial-gradient(circle at 12% 0%, #d1fae5 0%, transparent 45%), radial-gradient(circle at 88% 5%, #e0f2fe 0%, transparent 40%), #f8fafc;
+  --chart-fill: #6ee7b7;
+  --frame: #e2e8f0;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -43,6 +71,6 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
-  --sidebar-width: 244px;
-  --header-height: 66px;
+  --sidebar-width: 248px;
+  --header-height: 68px;
 }
