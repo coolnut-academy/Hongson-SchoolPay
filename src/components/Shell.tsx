@@ -35,10 +35,11 @@ export function Brand() {
   return (
     <Link className="brand" to="/">
       <span className="brand-mark" aria-hidden>
-        <svg viewBox="0 0 32 32" fill="none">
-          <path d="M7 7h18v6H13v6h12v6H7v-6h12v-6H7V7Z" fill="currentColor" />
-          <path d="m25 7-6 6M13 19l-6 6" stroke="var(--brand-bright)" strokeWidth="1.6" />
-        </svg>
+        <img
+          src="/logo-SchoolPay.png"
+          alt=""
+          className="brand-logo-img"
+        />
       </span>
       <span>
         <strong>

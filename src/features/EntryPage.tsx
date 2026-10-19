@@ -9,15 +9,13 @@ import { Alert, Button, Field } from "../components/ui";
 export function SchoolEmblem({ className = "" }: { className?: string }) {
   return (
     <div className={`school-emblem ${className}`} aria-hidden>
-      <svg viewBox="0 0 72 72" fill="none" className="emblem-svg">
-        <circle cx="36" cy="36" r="34" fill="#ffffff" stroke="var(--brand)" strokeWidth="2.2" />
-        <circle cx="36" cy="36" r="29.5" fill="var(--brand-subtle)" stroke="var(--brand-border)" strokeWidth="1" strokeDasharray="3 2" />
-        <circle cx="36" cy="36" r="23" fill="var(--brand)" />
-        <path d="M36 17 L38.5 23 L43 25.5 L38.5 28 L36 34 L33.5 28 L29 25.5 L33.5 23 Z" fill="var(--warm-gold)" />
-        <path d="M26 36.5 Q36 32 46 36.5 L46 45 Q36 40.5 26 45 Z" fill="#ffffff" />
-        <path d="M36 34.5 V43" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M28 47.5 Q36 45 44 47.5" stroke="var(--brand-bright)" strokeWidth="1.8" strokeLinecap="round" />
-      </svg>
+      <img
+        src="/logo-SchoolPay.png"
+        alt="Hongson SchoolPay"
+        width={500}
+        height={500}
+        className="school-emblem-img"
+      />
     </div>
   );
 }

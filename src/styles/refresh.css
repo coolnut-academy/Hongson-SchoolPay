@@ -165,14 +165,21 @@ textarea:focus {
 .brand-mark {
   width: 38px;
   height: 38px;
-  border-radius: 11px;
-  background: var(--brand-gradient);
+  border-radius: 0;
+  background: transparent;
   color: white;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 22%), 0 4px 10px rgb(17 42 36 / 16%);
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.brand-mark svg {
-  width: 26px;
-  height: 26px;
+.brand-mark svg,
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 .brand strong {
   font-size: 21px;
@@ -202,7 +209,8 @@ textarea:focus {
   border: 0;
 }
 .sidebar .brand-mark {
-  background: var(--brand);
+  background: transparent;
+  box-shadow: none;
 }
 .sidebar .brand small {
   color: var(--text-muted);
@@ -1424,14 +1432,30 @@ textarea:focus {
 }
 .school-emblem {
   display: inline-flex;
-  width: 62px;
-  height: 62px;
-  margin-bottom: 8px;
-  filter: drop-shadow(0 6px 14px rgb(10 110 80 / 14%));
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 500px;
+  max-width: min(500px, 92vw);
+  max-height: min(500px, 92vw);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  filter: none;
 }
-.emblem-svg {
+.school-emblem-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  filter: none;
 }
 .login-title {
   font-size: 25px;

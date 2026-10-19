@@ -69,7 +69,7 @@ assert(existsSync("dist/index.html"), "Run npm run build first.");
 const assets = walk("dist");
 assert(
   assets.every((p) =>
-    [".html", ".js", ".css", ".svg", ".woff2", ".txt"].includes(extname(p)),
+    [".html", ".js", ".css", ".svg", ".woff2", ".txt", ".png"].includes(extname(p)),
   ),
   "Non-static build output.",
 );
